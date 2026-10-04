@@ -36,7 +36,8 @@ export default {
     target.pathname = url.pathname;
     target.search = url.search;
     target.hash = '';
-    const upstream = new Request(target, request);
+    // Use a fresh upgrade request rather than inheriting the visitor's HTTP request metadata.
+    const upstream = new Request(target, socket ? { method: 'GET', headers: request.headers } : request);
     for (const header of ['Host', 'Forwarded', 'X-Forwarded-For', 'X-Forwarded-Host', 'X-Real-IP', 'X-Arena-Proxy-Key', 'X-Arena-Client-IP']) {
       upstream.headers.delete(header);
     }
@@ -48,7 +49,7 @@ export default {
       redirect: 'manual', cf: { cacheTtl: 0, cacheEverything: false },
     };
     try {
-      const response = await fetch(upstream, options);
+      const response = await fetch(upstream, socket ? { redirect: 'manual' } : options);
       // Returning the upgrade response directly lets Cloudflare tunnel binary frames without a JS relay.
       if (response.status === 101) return response;
       const headers = new Headers(response.headers);
