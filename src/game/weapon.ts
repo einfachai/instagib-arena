@@ -141,12 +141,16 @@ export class Railgun {
     // The arena (surface hint): lets the beam skip its impact effect on the
     // invisible collision ceiling of open-top maps. Pass `boxes`' owner.
     surface?: ArenaMap,
+    // Queue immediate feedback when cooldown accepts the shot, before hit
+    // tests and beam/impact construction can consume the rest of the frame.
+    onAccepted?: () => void,
   ): RailFireResult | null {
     if (this.cooldown > 0) return null;
     this.cooldown = this.cooldownTotal;
     localRail.owner = this;
     localRail.charge = 0;
     localRail.shots++;
+    onAccepted?.();
 
     const o: Vec3 = { x: origin.x, y: origin.y, z: origin.z };
     const d: Vec3 = { x: dir.x, y: dir.y, z: dir.z };

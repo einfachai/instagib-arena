@@ -1,14 +1,16 @@
-// ── Menu / UI cue synthesis ───────────────────────────────────────────────────
-// Every deck + rewards cue as a few oscillator / noise nodes — no assets, so the
-// whole bank costs nothing to load and always plays instantly. Pure WebAudio on
-// a BaseAudioContext, so the same code renders in an OfflineAudioContext for
-// loudness checks. The live context, the bus level and the gesture rules live
+// ── Menu / UI recordings, with synthesis while assets load ──────────────────
+// Every deck + rewards cue uses an ElevenLabs recording on a BaseAudioContext,
+// so the same code renders in an OfflineAudioContext for loudness checks.
+// The live context, the bus level and the gesture rules live
 // in src/game/audio.ts (UiSoundBank); this file only knows how each cue sounds.
 //
 // Mix intent: short and tasteful, well under gameplay. Single-voice ticks peak
 // around -22 dBFS before the bus trim; the big moments (level up, legendary
 // unlock) stay under about -12 dBFS. The bus runs through a soft compressor so
 // a fast run of cues can never stack into a spike.
+
+import { GENERATED_SFX_URLS, type GeneratedSfxName } from './generated-pack';
+import { sampleBank } from './samples';
 
 export type UiSoundName =
   // Deck chrome
@@ -82,6 +84,11 @@ export function isGestureUiSound(name: UiSoundName): boolean {
 }
 
 export const RARITY_UNLOCK: readonly UiSoundName[] = ['unlockCommon', 'unlockRare', 'unlockEpic', 'unlockLegendary'];
+
+export function preloadUiCues(ctx: BaseAudioContext): Promise<void> {
+  const names = (Object.keys(GENERATED_SFX_URLS) as GeneratedSfxName[]).filter((name) => name.startsWith('ui-'));
+  return sampleBank(ctx).preload(names);
+}
 
 /* ── Primitives ─────────────────────────────────────────────────────────── */
 
@@ -196,9 +203,31 @@ const semi = (base: number, n: number) => base * Math.pow(2, n / 12);
 // per-cue parameter (see UiSoundName). Returns nothing; nodes clean themselves
 // up when they stop.
 export function playUiCue(ctx: Ctx, dest: AudioNode, name: UiSoundName, t0: number, detail = 0): void {
+  if (!Number.isFinite(detail)) detail = 0;
+  let cue: string = name;
+  let rate = 1;
+  if (name === 'unlock') cue = RARITY_UNLOCK[Math.max(0, Math.min(3, Math.round(detail)))];
+  if (name === 'uiToggle') cue = detail > 0 ? 'uiToggleOn' : 'uiToggleOff';
+  if (name === 'countdownTick' && Math.round(detail) <= 1) cue = 'countdownFinal';
+  if (name === 'stamp') cue = detail > 0 ? 'stampVictory' : detail < 0 ? 'stampDefeat' : 'stamp';
+  if (name === 'xpTick') rate = Math.pow(2, PENTA[Math.max(0, Math.min(PENTA.length - 1, Math.round(detail)))] / 12);
+  if (name === 'caseTick') rate = 1 + Math.max(0, Math.min(1, detail)) * 0.25;
+  const bank = sampleBank(ctx);
+  const key = `ui-${cue}` as GeneratedSfxName;
+  const buffer = bank.buffer(key);
+  if (buffer) {
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+    src.playbackRate.value = rate;
+    src.connect(dest);
+    src.onended = () => src.disconnect();
+    src.start(t0);
+    return;
+  }
+  void bank.preload([key]);
   switch (name) {
     case 'uiHover':
-      tone(ctx, dest, t0, { f0: jit(1850, 0.015), f1: 1700, dur: 0.028, peak: 0.04 });
+      tone(ctx, dest, t0, { type: 'triangle', f0: 700, f1: 420, dur: 0.03, peak: 0.03, attack: 0.003 });
       break;
     case 'uiClick':
       tone(ctx, dest, t0, { type: 'triangle', f0: jit(1400, 0.02), f1: 900, dur: 0.034, peak: 0.12 });
@@ -234,12 +263,12 @@ export function playUiCue(ctx: Ctx, dest: AudioNode, name: UiSoundName, t0: numb
       tone(ctx, dest, t0 + 0.004, { f0: jit(1180, 0.01), f1: 1340, dur: 0.032, peak: 0.06 });
       break;
     case 'modalOpen':
-      noise(ctx, dest, t0, { f0: 700, f1: 2600, q: 1.4, dur: 0.14, peak: 0.03, attack: 0.05 });
-      tone(ctx, dest, t0 + 0.02, { f0: 520, f1: 700, dur: 0.07, peak: 0.028, attack: 0.01 });
+      tone(ctx, dest, t0, { f0: 262, dur: 0.11, peak: 0.04, attack: 0.005 });
+      tone(ctx, dest, t0 + 0.095, { f0: 349, dur: 0.09, peak: 0.035, attack: 0.005 });
       break;
     case 'modalClose':
-      noise(ctx, dest, t0, { f0: 2200, f1: 600, q: 1.4, dur: 0.11, peak: 0.028, attack: 0.012 });
-      tone(ctx, dest, t0, { f0: 640, f1: 460, dur: 0.06, peak: 0.026, attack: 0.006 });
+      tone(ctx, dest, t0, { f0: 523, dur: 0.08, peak: 0.035, attack: 0.005 });
+      tone(ctx, dest, t0 + 0.06, { f0: 262, dur: 0.1, peak: 0.03, attack: 0.005 });
       break;
     case 'equip':
       // Snap-on: a low chunk + a latch click, then a small bright ping.

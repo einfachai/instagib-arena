@@ -1,43 +1,19 @@
 import * as THREE from 'three';
-import { DYE_MODE, createCharacterMaterial, getBodyGeometry, resetDeathLook, tickDyeClock, type CharacterUniforms } from './body';
+import { DYE_MODE, createCharacterMaterial, createCharacterWindowMaterial, getBodyGeometry, resetDeathLook, tickDyeClock, type CharacterUniforms } from './body';
 import type { DyeDef } from '../dyes';
-import { B, Rig, SOCKETS, type SocketName } from './rig';
+import { B, Rig, SOCKETS, REST_ABS, type SocketName } from './rig';
 import { viewPos } from '../fx/fx-settings';
+import { characterAssets, cloneCharacterModel, canonicalBoneName, CODEX_PALETTE } from './assets';
 
-// One arena combatant: a Rig (flat bones + FK/IK), ONE SkinnedMesh sharing the
-// cached body geometry, a per-instance material (for the player colour), and
-// named sockets (helmet crown, gun hand, chest) that ride their bones.
-//
-// `root` is the object callers place/yaw; bones + mesh are its children.
-// Nothing here affects gameplay — it's all visual.
+// One arena combatant: an independently cloned Mixamo skeleton, one shared
+// skinned body geometry, two surface materials, and the existing attachment sockets.
+// The logical Rig is a compatibility facade and a separate breakup skeleton.
+// `root` carries gameplay position/yaw; the model container normalizes the art.
 
-// Bright, saturated "skins" (Quake Live forced-bright style). A player's
-// natural colour is a stable pick from this list keyed by their name, so the
-// same player reads the same colour everywhere (match, killcam, podium).
-// Luminance-banded (fairness): relative luminance kept within ~0.32–0.60 so no
-// name hashes to a skin that is markedly darker (harder to see) than another —
-// the raw palette spanned 0.25 (cobalt/crimson) to 0.75 (volt), a 3× spread.
-export const SKIN_PALETTE: readonly string[] = [
-  '#ff6b4e', // blaze
-  '#ffb21e', // amber
-  '#99df2c', // lime
-  '#1fd6a0', // jade
-  '#27b8ff', // sky
-  '#8791ff', // cobalt
-  '#c976ff', // violet
-  '#ff5fa5', // magenta
-  '#e7cb34', // volt
-  '#ff6873', // crimson
-];
-
-export function skinColorFor(seed: string): string {
-  let h = 2166136261;
-  for (let i = 0; i < seed.length; i++) {
-    h ^= seed.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return SKIN_PALETTE[(h >>> 0) % SKIN_PALETTE.length];
-}
+// The Codex palette is the default across matches, menus and previews. Team,
+// highlight and equipped dye overrides are resolved by the existing callers.
+export const SKIN_PALETTE: readonly string[] = [CODEX_PALETTE.white];
+export function skinColorFor(_seed: string): string { return CODEX_PALETTE.white; }
 
 export type LookMode = 'natural' | 'highlight';
 
@@ -49,6 +25,13 @@ export function characterOfSocket(socket: THREE.Object3D): Character | undefined
 }
 
 const WHITE = new THREE.Color(1, 1, 1);
+const CODEX_BLUE = new THREE.Color(CODEX_PALETTE.blue);
+// Metres in the normalized logical bone frames: crown at 1.8 m, face at the
+// inset visor, chest effect above the emblem and back gear against the shell.
+const ANDROID_SOCKET_POS: Partial<Record<SocketName, readonly [number, number, number]>> = {
+  headTop: [0, 0.235, 0.012], face: [0, 0.045, -0.107],
+  chest: [0, 0.16, -0.145], back: [0, 0.14, 0.125],
+};
 
 // Remember the viewer (finishers aim their debris away from them). Module
 // scope: one shared function for every combatant.
@@ -65,7 +48,19 @@ export class Character {
   readonly root = new THREE.Group();
   readonly rig: Rig;
   readonly mesh: THREE.SkinnedMesh;
+  readonly model: THREE.Group;
+  readonly modelContainer = new THREE.Group();
+  readonly breakupMesh: THREE.SkinnedMesh;
+  readonly canonicalBones = new Map<string, THREE.Bone>();
+  private readonly restInverse = new Map<number, THREE.Matrix4>();
+  private readonly invRoot = new THREE.Matrix4();
+  private readonly facadeMatrix = new THREE.Matrix4();
+  private readonly restTranslation = new THREE.Matrix4();
+  private readonly facadePosition = new THREE.Vector3();
+  private readonly facadeQuaternion = new THREE.Quaternion();
+  private readonly facadeScale = new THREE.Vector3();
   readonly material: THREE.MeshStandardMaterial;
+  readonly windowMaterial: THREE.MeshPhysicalMaterial;
   readonly uniforms: CharacterUniforms;
   readonly sockets: Record<SocketName, THREE.Object3D>;
   private readonly color = new THREE.Color();
@@ -74,36 +69,53 @@ export class Character {
 
   constructor(opts: { castShadow?: boolean; colorHex?: string } = {}) {
     this.root.name = 'combatant';
-    const body = getBodyGeometry();
+    const asset = characterAssets();
     const { material, uniforms } = createCharacterMaterial();
     this.material = material;
     this.uniforms = uniforms;
-    this.rig = new Rig(this.root);
-    this.mesh = new THREE.SkinnedMesh(body.geometry, material);
-    this.mesh.name = 'combatant-body';
+    this.windowMaterial = createCharacterWindowMaterial(uniforms);
+    this.model = cloneCharacterModel();
+    this.modelContainer.name = 'android-normalization';
+    this.modelContainer.matrix.copy(asset.normalization);
+    this.modelContainer.matrixAutoUpdate = false;
+    this.root.add(this.modelContainer);
+    this.modelContainer.add(this.model);
+    let mesh: THREE.SkinnedMesh | undefined;
+    this.model.traverse((o) => {
+      if ((o as THREE.Bone).isBone) this.canonicalBones.set(o.name, o as THREE.Bone);
+      if ((o as THREE.SkinnedMesh).isSkinnedMesh) mesh = o as THREE.SkinnedMesh;
+    });
+    if (!mesh) throw new Error('Codex Android has no skinned body.');
+    this.mesh = mesh;
+    this.mesh.material = [material, this.windowMaterial];
     this.mesh.castShadow = opts.castShadow ?? true;
     this.mesh.receiveShadow = false;
-    // SkinnedMesh caches a bounding sphere computed ONCE from whatever pose the
-    // bones hold at the first cull test (stale bones → a misplaced sphere → the
-    // body culled while its shadow and nameplate still show). Give it a fixed,
-    // generous local sphere instead: every pose and emote stays inside it (gibs
-    // disable culling while they fly).
-    this.mesh.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, 0.95, 0), 1.75);
-    this.mesh.frustumCulled = true;
+    this.mesh.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, 0.95, 0), 2.2);
     this.mesh.onBeforeRender = recordViewer;
-    this.root.add(this.mesh);
-    this.mesh.bind(this.rig.skeleton, new THREE.Matrix4());
-    // The body geometry is a module-level cache shared by every character:
-    // tag it so Game.disposeScene() never frees it.
     this.mesh.userData.shared = true;
-    for (const b of this.rig.bones) b.userData.shared = true;
+    // Legacy logical bones remain a read-only facade for sockets, cape
+    // collision and labs, plus an independent rigid breakup skeleton.
+    this.rig = new Rig(this.root);
+    this.breakupMesh = new THREE.SkinnedMesh(getBodyGeometry().geometry, [material, this.windowMaterial]);
+    this.breakupMesh.name = 'android-rigid-breakup';
+    this.breakupMesh.visible = false;
+    this.breakupMesh.castShadow = this.mesh.castShadow;
+    this.breakupMesh.userData.shared = true;
+    this.root.add(this.breakupMesh);
+    this.breakupMesh.bind(this.rig.skeleton, new THREE.Matrix4());
+    for (let i = 0; i < this.rig.bones.length; i++) {
+      const rest = asset.rest.get(canonicalBoneName(i));
+      if (rest) this.restInverse.set(i, asset.normalization.clone().multiply(rest).invert());
+    }
+    this.syncRigFacade();
 
     const sockets = {} as Record<SocketName, THREE.Object3D>;
     for (const name of Object.keys(SOCKETS) as SocketName[]) {
       const def = SOCKETS[name];
       const o = new THREE.Object3D();
       o.name = `socket.${name}`;
-      o.position.set(def.pos[0], def.pos[1], def.pos[2]);
+      const position = ANDROID_SOCKET_POS[name] ?? def.pos;
+      o.position.set(position[0], position[1], position[2]);
       this.rig.bones[def.bone].add(o);
       sockets[name] = o;
       SOCKET_OWNER.set(o, this);
@@ -123,16 +135,18 @@ export class Character {
     else this.color.copy(color);
     this.mode = mode;
     const u = this.uniforms;
-    u.uPlayer.value.copy(this.color);
+    const codexDefault = mode === 'natural' && this.color.getHexString() === CODEX_PALETTE.white.slice(1);
+    u.uPlayer.value.copy(codexDefault ? WHITE : this.color);
     // Visor: a hot near-white core (blooms) fading to a saturated player-
     // colour edge; the light slits use the edge colour.
-    u.uVisorCore.value.copy(this.color).lerp(WHITE, 0.8).multiplyScalar(mode === 'highlight' ? 3.0 : 2.6);
-    u.uVisorEdge.value.copy(this.color).multiplyScalar(mode === 'highlight' ? 2.4 : 2.0);
+    const visorColor = codexDefault ? CODEX_BLUE : this.color;
+    u.uVisorCore.value.copy(visorColor).lerp(WHITE, 0.8).multiplyScalar(mode === 'highlight' ? 3.0 : 2.6);
+    u.uVisorEdge.value.copy(visorColor).multiplyScalar(mode === 'highlight' ? 2.4 : 2.0);
     // Readability rim: a light tint of the skin colour, strong enough to read
     // as a thin outline at 30 m on same-hue walls. Same for every player.
     u.uRim.value.copy(this.color).lerp(WHITE, 0.15).multiplyScalar(1.15);
-    u.uLift.value = mode === 'highlight' ? 0.55 : 0.22;
-    u.uRimStr.value = mode === 'highlight' ? 1.6 : 1.15;
+    u.uLift.value = mode === 'highlight' ? 0.55 : 0.07;
+    u.uRimStr.value = mode === 'highlight' ? 1.6 : 0.3;
     // A plain look carries no dye pattern (highlight / team colours win).
     u.uDyeP.value.x = 0;
     u.uDyeF.value.set(-1, -1);
@@ -189,7 +203,6 @@ export class Character {
 
   setCrestHidden(hidden: boolean): void {
     this.rig.boneScale[B.crest] = hidden ? 0.0001 : 1;
-    this.rig.writeBones();
   }
 
   getColor(out: THREE.Color): THREE.Color {
@@ -217,9 +230,44 @@ export class Character {
     resetDeathLook(this.uniforms);
   }
 
+  // Project the current canonical deformation into the legacy logical frame.
+  // These matrices do not participate in live skinning.
+  syncRigFacade(): void {
+    if (this.rig.frozen) return;
+    this.root.updateWorldMatrix(true, true);
+    const invRoot = this.invRoot.copy(this.root.matrixWorld).invert();
+    const matrix = this.facadeMatrix, restTranslation = this.restTranslation;
+    const p = this.facadePosition, q = this.facadeQuaternion, scale = this.facadeScale;
+    for (let i = 0; i < this.rig.bones.length; i++) {
+      const bone = this.canonicalBones.get(canonicalBoneName(i));
+      const inverse = this.restInverse.get(i);
+      if (!bone || !inverse) continue;
+      matrix.copy(invRoot).multiply(bone.matrixWorld).multiply(inverse);
+      restTranslation.makeTranslation(...REST_ABS[i]);
+      matrix.multiply(restTranslation);
+      this.rig.bones[i].matrix.copy(matrix);
+      this.rig.bones[i].matrixWorldNeedsUpdate = true;
+      matrix.decompose(p, q, scale);
+      p.toArray(this.rig.mp, i * 3); q.toArray(this.rig.mq, i * 4);
+    }
+    this.root.updateWorldMatrix(false, true);
+  }
+
+  beginBreakup(): void {
+    this.syncRigFacade();
+    this.modelContainer.visible = false;
+    this.breakupMesh.visible = true;
+  }
+  endBreakup(): void {
+    this.modelContainer.visible = true;
+    this.breakupMesh.visible = false;
+  }
+
   dispose(): void {
     this.root.parent?.remove(this.root);
     this.material.dispose();
+    this.windowMaterial.dispose();
     this.rig.skeleton.dispose();
+    this.mesh.skeleton.dispose();
   }
 }

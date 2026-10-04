@@ -1,0 +1,27 @@
+http://51.222.25.178 {
+  encode zstd gzip
+  reverse_proxy 127.0.0.1:8787 {
+    header_up X-Forwarded-For {remote_host}
+  }
+}
+
+# OVH supplies this DNS name; no purchased domain is needed for the Worker upstream.
+vps-555375ab.vps.ovh.ca {
+  encode zstd gzip
+  @worker {
+    path /api /api/* /ws /ws/*
+    header X-Arena-Proxy-Key {$ARENA_PROXY_KEY}
+  }
+  handle @worker {
+    reverse_proxy 127.0.0.1:8787 {
+      # Only the authenticated Worker may supply a player IP or rewrite Origin.
+      header_up X-Forwarded-For {http.request.header.X-Arena-Client-IP}
+      header_up Origin http://51.222.25.178
+      header_up -X-Arena-Proxy-Key
+      header_up -X-Arena-Client-IP
+    }
+  }
+  handle {
+    respond "Forbidden" 403
+  }
+}

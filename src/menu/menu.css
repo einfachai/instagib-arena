@@ -1,7 +1,7 @@
 /* ── Main menu: hero, profile, challenges, Career Road, juice ─────────────
    Same grammar as the rest of the deck (index.css): near-black clipped
-   panels, hairlines, Chakra Petch display type, Geist Mono numerals, cyan =
-   you/selection, emerald = go, amber = rewards. Everything animated here is
+   panels, hairlines, Chakra Petch display type, Geist Mono numerals, Codex blue =
+   you/selection, blue-violet = play, amber = rewards. Everything animated here is
    CSS (keyed by React ids) and switched off under prefers-reduced-motion or
    the reduced-effects setting (.menu-reduced on the menu root). */
 
@@ -74,8 +74,8 @@
   height: 3px;
   width: 100%;
   pointer-events: none;
-  background: linear-gradient(90deg, #d1fae5, #ffffff);
-  box-shadow: 0 0 12px rgba(167, 243, 208, 0.9);
+  background: linear-gradient(90deg, var(--arena-accent-pale), var(--arena-violet));
+  box-shadow: 0 0 12px rgba(var(--arena-accent-soft-rgb), 0.9);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.38s cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -109,8 +109,8 @@
   left: 0;
   height: 2px;
   width: 100%;
-  background: linear-gradient(90deg, transparent, #ecfeff 60%, #fff);
-  box-shadow: 0 0 14px #a5f3fc;
+  background: linear-gradient(90deg, transparent, var(--color-cyan-50) 60%, #fff);
+  box-shadow: 0 0 14px var(--arena-accent-soft);
   transform-origin: left;
   animation: menu-play-beam 0.36s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
@@ -198,7 +198,7 @@
     0 100%,
     0 calc(var(--emb) * 0.18)
   );
-  background: linear-gradient(150deg, #a5f3fc 0%, #22d3ee 42%, #0e7490 100%);
+  background: linear-gradient(150deg, var(--arena-accent-soft) 0%, var(--arena-accent) 42%, var(--arena-accent-deep) 100%);
   color: #021216;
 }
 .menu-emblem[data-tone='guest'] {
@@ -238,8 +238,8 @@
   position: absolute;
   inset: 0;
   transform-origin: 0 50%;
-  background: linear-gradient(90deg, #22d3ee, #a5f3fc);
-  box-shadow: 0 0 12px rgba(103, 232, 249, 0.55);
+  background: linear-gradient(90deg, var(--arena-accent), var(--arena-accent-soft));
+  box-shadow: 0 0 12px rgba(var(--arena-accent-light-rgb), 0.55);
   animation: menu-xp-fill 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s both;
 }
 .menu-xpbar-notch {
@@ -284,7 +284,7 @@
 }
 .menu-profile-btn:hover,
 .menu-profile-btn:focus-visible {
-  border-color: rgba(103, 232, 249, 0.5);
+  border-color: rgba(var(--arena-accent-light-rgb), 0.5);
   background: rgba(8, 13, 17, 0.9);
   outline: none;
 }
@@ -333,7 +333,7 @@
 .menu-cta {
   flex: none;
   clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
-  background: #67e8f9;
+  background: var(--arena-accent-light);
   padding: 0.55rem 0.9rem;
   font-family: var(--font-display);
   font-size: 14px;
@@ -345,7 +345,7 @@
 }
 .menu-cta:hover,
 .menu-cta:focus-visible {
-  background: #cffafe;
+  background: var(--arena-accent-pale);
   outline: none;
 }
 
@@ -373,7 +373,7 @@
 }
 .menu-acct-btn:hover,
 .menu-acct-btn[aria-expanded='true'] {
-  border-color: rgba(103, 232, 249, 0.5);
+  border-color: rgba(var(--arena-accent-light-rgb), 0.5);
   color: #fff;
 }
 .menu-acct-pop {
@@ -433,12 +433,12 @@
 }
 .menu-inbox-btn:hover,
 .menu-inbox-btn:focus-visible {
-  border-color: rgba(103, 232, 249, 0.5);
+  border-color: rgba(var(--arena-accent-light-rgb), 0.5);
   color: #fff;
   outline: none;
 }
 .menu-inbox-btn.has-unread {
-  color: #cffafe;
+  color: var(--arena-accent-pale);
 }
 .menu-inbox-btn.has-gift {
   border-color: rgba(251, 191, 36, 0.55);
@@ -457,8 +457,8 @@
   line-height: 1;
   letter-spacing: 0;
   color: #05141a;
-  background: #67e8f9;
-  box-shadow: 0 0 10px rgba(103, 232, 249, 0.6);
+  background: var(--arena-accent-light);
+  box-shadow: 0 0 10px rgba(var(--arena-accent-light-rgb), 0.6);
 }
 .menu-inbox-btn.has-gift .menu-inbox-badge {
   color: #1a1204;
@@ -510,7 +510,7 @@
 }
 .menu-door:hover,
 .menu-door:focus-visible {
-  border-color: rgba(103, 232, 249, 0.55);
+  border-color: rgba(var(--arena-accent-light-rgb), 0.55);
   background: rgba(10, 16, 22, 0.9);
   outline: none;
 }
@@ -590,8 +590,8 @@
 }
 .menu-reward-key {
   background: radial-gradient(120% 90% at 50% 25%, #0f5f6b, #04191d);
-  box-shadow: inset 0 0 0 1px rgba(103, 232, 249, 0.5);
-  color: #a5f3fc;
+  box-shadow: inset 0 0 0 1px rgba(var(--arena-accent-light-rgb), 0.5);
+  color: var(--arena-accent-soft);
 }
 .menu-reward[data-locked='1'] {
   filter: brightness(0.72) saturate(0.8);
@@ -660,7 +660,7 @@ button.menu-reward:focus-visible {
   gap: 0.5rem;
   padding: 0.5rem 1.1rem;
   clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
-  background: #67e8f9;
+  background: var(--arena-accent-light);
   font-family: var(--font-display);
   font-size: 15px;
   font-weight: 700;
@@ -726,11 +726,11 @@ button.menu-reward:focus-visible {
   transition: color 0.12s;
 }
 .menu-panel-action:hover {
-  color: #a5f3fc;
+  color: var(--arena-accent-soft);
 }
 .menu-chip-btn {
   clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
-  background: #67e8f9;
+  background: var(--arena-accent-light);
   padding: 0.3rem 0.65rem;
   font-family: var(--font-display);
   font-size: 13px;
@@ -742,7 +742,7 @@ button.menu-reward:focus-visible {
 }
 .menu-chip-btn:hover,
 .menu-chip-btn:focus-visible {
-  background: #cffafe;
+  background: var(--arena-accent-pale);
   outline: none;
 }
 .menu-ch-group {
@@ -780,8 +780,8 @@ button.menu-reward:focus-visible {
 .menu-ch-line > span {
   position: absolute;
   inset: 0 auto 0 0;
-  background: #22d3ee;
-  box-shadow: 0 0 6px rgba(34, 211, 238, 0.7);
+  background: var(--arena-accent);
+  box-shadow: 0 0 6px rgba(var(--arena-accent-rgb), 0.7);
 }
 .menu-ch-row[data-state='done'] .menu-ch-line > span {
   background: rgba(110, 231, 183, 0.75);
@@ -796,10 +796,10 @@ button.menu-reward:focus-visible {
   font-size: 13px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  color: #a5f3fc;
+  color: var(--arena-accent-soft);
 }
 .menu-ch-row[data-state='locked'] .menu-ch-xp {
-  color: rgba(165, 243, 252, 0.55);
+  color: rgba(var(--arena-accent-soft-rgb), 0.55);
 }
 .menu-ch-row[data-closest='1'] .menu-ch-name {
   color: #fff;
@@ -811,15 +811,15 @@ button.menu-reward:focus-visible {
   top: 22%;
   bottom: 22%;
   width: 2px;
-  background: #22d3ee;
-  box-shadow: 0 0 8px #22d3ee;
+  background: var(--arena-accent);
+  box-shadow: 0 0 8px var(--arena-accent);
 }
 .menu-ch-icon {
   display: grid;
   flex: none;
   place-items: center;
   width: 1.4rem;
-  color: #67e8f9;
+  color: var(--arena-accent-light);
 }
 .menu-ch-name {
   min-width: 0;
@@ -847,8 +847,8 @@ button.menu-reward:focus-visible {
 .menu-ch-mini-bar > span {
   position: absolute;
   inset: 0 auto 0 0;
-  background: #22d3ee;
-  box-shadow: 0 0 8px rgba(34, 211, 238, 0.6);
+  background: var(--arena-accent);
+  box-shadow: 0 0 8px rgba(var(--arena-accent-rgb), 0.6);
 }
 .menu-ch-count {
   min-width: 3rem;
@@ -947,9 +947,9 @@ button.menu-reward:focus-visible {
   color: rgba(255, 255, 255, 0.6);
 }
 .menu-chm-row[data-closest='1'] {
-  border-color: rgba(103, 232, 249, 0.55);
-  background: rgba(34, 211, 238, 0.06);
-  box-shadow: inset 3px 0 0 #22d3ee;
+  border-color: rgba(var(--arena-accent-light-rgb), 0.55);
+  background: rgba(var(--arena-accent-rgb), 0.06);
+  box-shadow: inset 3px 0 0 var(--arena-accent);
 }
 .menu-chm-side {
   display: flex;
@@ -962,12 +962,12 @@ button.menu-reward:focus-visible {
 .menu-chm-tag {
   margin-left: 0.5rem;
   clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
-  background: rgba(34, 211, 238, 0.18);
+  background: rgba(var(--arena-accent-rgb), 0.18);
   padding: 0.05rem 0.4rem;
   font-family: var(--font-sans);
   font-size: 12px;
   font-weight: 600;
-  color: #a5f3fc;
+  color: var(--arena-accent-soft);
   vertical-align: 1px;
 }
 .menu-chm-claim {
@@ -1008,7 +1008,7 @@ button.menu-reward:focus-visible {
   gap: 1rem;
   padding: 0.85rem 1rem;
   clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
-  background: linear-gradient(90deg, rgba(34, 211, 238, 0.1), rgba(255, 196, 61, 0.08));
+  background: linear-gradient(90deg, rgba(var(--arena-accent-rgb), 0.1), rgba(255, 196, 61, 0.08));
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 .menu-chm-icon {
@@ -1018,8 +1018,8 @@ button.menu-reward:focus-visible {
   width: 2.75rem;
   height: 2.75rem;
   clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
-  background: rgba(34, 211, 238, 0.12);
-  color: #67e8f9;
+  background: rgba(var(--arena-accent-rgb), 0.12);
+  color: var(--arena-accent-light);
 }
 .menu-chm-row[data-state='done'] .menu-chm-icon,
 .menu-chm-row[data-state='claimable'] .menu-chm-icon {
@@ -1047,8 +1047,8 @@ button.menu-reward:focus-visible {
 .menu-chm-bar > span {
   position: absolute;
   inset: 0 auto 0 0;
-  background: linear-gradient(90deg, #22d3ee, #a5f3fc);
-  box-shadow: 0 0 10px rgba(34, 211, 238, 0.55);
+  background: linear-gradient(90deg, var(--arena-accent), var(--arena-accent-soft));
+  box-shadow: 0 0 10px rgba(var(--arena-accent-rgb), 0.55);
 }
 .menu-chm-row[data-state='done'] .menu-chm-bar > span,
 .menu-chm-row[data-state='claimable'] .menu-chm-bar > span {
@@ -1074,8 +1074,8 @@ button.menu-reward:focus-visible {
   white-space: nowrap;
 }
 .menu-chip-xp {
-  background: rgba(34, 211, 238, 0.16);
-  color: #a5f3fc;
+  background: rgba(var(--arena-accent-rgb), 0.16);
+  color: var(--arena-accent-soft);
 }
 .menu-chip-cr {
   background: rgba(255, 196, 61, 0.16);
@@ -1117,7 +1117,7 @@ button.menu-reward:focus-visible {
   color: #fff;
 }
 .menu-dock-chip:hover .menu-dock-open {
-  background: #67e8f9;
+  background: var(--arena-accent-light);
   color: #021216;
 }
 
@@ -1139,7 +1139,7 @@ button.menu-reward:focus-visible {
   font-size: 1.7rem;
   line-height: 1;
   font-variant-numeric: tabular-nums;
-  color: #67e8f9;
+  color: var(--arena-accent-light);
   animation: menu-in-y 0.4s cubic-bezier(0.16, 0.8, 0.24, 1) 0.5s both;
 }
 
@@ -1152,7 +1152,7 @@ button.menu-reward:focus-visible {
   flex-direction: column;
   color: #fff;
   background:
-    radial-gradient(90% 70% at 18% 55%, rgba(34, 211, 238, 0.1), transparent 60%),
+    radial-gradient(90% 70% at 18% 55%, rgba(var(--arena-accent-rgb), 0.1), transparent 60%),
     linear-gradient(180deg, #0a0d13 0%, #06080c 100%);
   outline: none;
 }
@@ -1208,7 +1208,7 @@ button.menu-reward:focus-visible {
 }
 .road-close:hover,
 .road-close:focus-visible {
-  color: #a5f3fc;
+  color: var(--arena-accent-soft);
   outline: none;
 }
 .road-body {
@@ -1224,7 +1224,7 @@ button.menu-reward:focus-visible {
   flex-direction: column;
   overflow: hidden;
   border-right: 1px solid rgba(255, 255, 255, 0.07);
-  background: radial-gradient(80% 60% at 50% 42%, rgba(34, 211, 238, 0.09), transparent 70%);
+  background: radial-gradient(80% 60% at 50% 42%, rgba(var(--arena-accent-rgb), 0.09), transparent 70%);
 }
 .road-stage {
   position: relative;
@@ -1262,8 +1262,8 @@ button.menu-reward:focus-visible {
   text-shadow: 0 0 40px rgba(255, 196, 61, 0.45);
 }
 .road-emblem-key {
-  color: #a5f3fc;
-  filter: drop-shadow(0 0 30px rgba(34, 211, 238, 0.45));
+  color: var(--arena-accent-soft);
+  filter: drop-shadow(0 0 30px rgba(var(--arena-accent-rgb), 0.45));
 }
 .road-emblem[data-locked='1'] {
   opacity: 0.75;
@@ -1304,7 +1304,7 @@ button.menu-reward:focus-visible {
   cursor: grab;
   outline: none;
   scrollbar-width: thin;
-  scrollbar-color: rgba(34, 211, 238, 0.35) transparent;
+  scrollbar-color: rgba(var(--arena-accent-rgb), 0.35) transparent;
   -webkit-user-select: none;
   user-select: none;
   touch-action: pan-x;
@@ -1313,13 +1313,13 @@ button.menu-reward:focus-visible {
   cursor: grabbing;
 }
 .road-scroller:focus-visible {
-  box-shadow: inset 0 0 0 2px rgba(34, 211, 238, 0.6);
+  box-shadow: inset 0 0 0 2px rgba(var(--arena-accent-rgb), 0.6);
 }
 .road-scroller::-webkit-scrollbar {
   height: 8px;
 }
 .road-scroller::-webkit-scrollbar-thumb {
-  background: rgba(34, 211, 238, 0.32);
+  background: rgba(var(--arena-accent-rgb), 0.32);
 }
 .road-scroller::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.04);
@@ -1369,8 +1369,8 @@ button.menu-reward:focus-visible {
 }
 .road-arrow:hover:not(:disabled),
 .road-arrow:focus-visible {
-  border-color: rgba(103, 232, 249, 0.6);
-  color: #a5f3fc;
+  border-color: rgba(var(--arena-accent-light-rgb), 0.6);
+  color: var(--arena-accent-soft);
   outline: none;
 }
 .road-arrow:disabled {
@@ -1401,8 +1401,8 @@ button.menu-reward:focus-visible {
   top: var(--rail-y);
   height: 4px;
   margin-top: -2px;
-  background: linear-gradient(90deg, #0e7490, #22d3ee 85%, #cffafe);
-  box-shadow: 0 0 12px rgba(34, 211, 238, 0.6);
+  background: linear-gradient(90deg, var(--arena-accent-deep), var(--arena-accent) 85%, var(--arena-accent-pale));
+  box-shadow: 0 0 12px rgba(var(--arena-accent-rgb), 0.6);
 }
 .road-node {
   position: relative;
@@ -1437,7 +1437,7 @@ button.menu-reward:focus-visible {
   place-items: center;
   width: 22px;
   height: 22px;
-  background: #22d3ee;
+  background: var(--arena-accent);
   color: #021216;
   clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
   pointer-events: none;
@@ -1569,4 +1569,39 @@ button.menu-reward:focus-visible {
 .road-reduced,
 .road-reduced .menu-xpbar-fill {
   animation: none;
+}
+
+/* Agent Deathmatch identity. Scoped so gameplay team/rarity colors retain meaning. */
+.deathmatch-lobby {
+  --arena-accent: #ff4934;
+  --arena-accent-light: #ff735f;
+  --arena-accent-soft: #ffac9f;
+  --arena-accent-pale: #ffd6cf;
+  --arena-accent-deep: #b12d20;
+  --arena-accent-rgb: 255, 73, 52;
+  --arena-accent-light-rgb: 255, 115, 95;
+  --arena-accent-soft-rgb: 255, 172, 159;
+  --arena-action: #ff4934;
+  --arena-action-hover: #ff735f;
+  background: #0c0d0b;
+}
+.deathmatch-lobby .menu-scrim { background: linear-gradient(90deg, #0c0d0bf5 0%, #0c0d0bed 28%, #0c0d0b33 58%, #0c0d0b99), linear-gradient(0deg, #0c0d0b, transparent 30%, #0c0d0b33 80%, #0c0d0bee); }
+.dm-lobby-shell > header { border-bottom: 1px solid #ffffff26; padding-bottom: 17px; }
+.dm-lobby-launch { padding-right: 24px; }
+.deathmatch-lobby .brand-menu-wordmark { margin-left: -9px; width: calc(100% + 9px); }
+.deathmatch-lobby .menu-tagline { color: #b4b5aa; font-family: var(--font-sans); font-size: 17px; text-transform: none; letter-spacing: -.025em; margin-top: 22px; }
+.deathmatch-lobby .menu-play { clip-path: none; background: #ff4934; color: #120e09; border: none; box-shadow: none; min-height: 92px; }
+.deathmatch-lobby .menu-play:hover:not(:disabled) { background: #ff735f; }
+.deathmatch-lobby .menu-play-label { font-family: var(--font-sans); font-size: 36px; font-weight: 700; letter-spacing: -.05em; text-transform: uppercase; }
+.deathmatch-lobby .menu-play-sub { color: #32110d; font-size: 10px; max-width: 170px; }
+.dm-lobby-handoff { border-left: 2px solid #ff4934; padding-left: 16px; }
+.dm-lobby-handoff label { font-family: var(--font-mono); font-size: 10px; letter-spacing: .04em; text-transform: uppercase; color: #abad9f; }
+.dm-lobby-handoff select { background: #121410; border-color: #ffffff2b; border-radius: 0; font-size: 12px; padding: 11px 9px; }
+.dm-lobby-home { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: .08em; }
+.dm-lobby-home:hover { color: #ff735f; }
+.deathmatch-lobby .menu-door { clip-path: none; background: #0c0d0bc9; }
+.deathmatch-lobby .menu-panel { background: #0c0d0bc9; }
+@media (max-width: 640px) {
+  .dm-lobby-launch { padding-right: 0; }
+  .deathmatch-lobby .brand-menu-wordmark { max-width: 350px; }
 }

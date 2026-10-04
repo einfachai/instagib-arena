@@ -166,7 +166,7 @@ export type RailgunFinishCosmetic = {
 };
 
 export const RAILGUN_FINISHES: readonly RailgunFinishCosmetic[] = [
-  { id: 'gun.stock',   name: 'Standard Issue', blurb: 'The factory gunmetal-and-cyan rail.', rarity: 'common', source: { type: 'default' },              data: { body: 0x171b22, metal: 0x2c333f, metalLt: 0x515d6e, accent: 0x37a6ff, accentHot: 0x8af2ff } },
+  { id: 'gun.stock',   name: 'Standard Issue', blurb: 'R-01: white armor, copper capacitors, electric-blue rails.', rarity: 'common', source: { type: 'default' },              data: { body: 0xe4e8eb, metal: 0x252a30, metalLt: 0x8b939d, accent: 0x008aff, accentHot: 0x66bdff } },
   { id: 'gun.crimson', name: 'Crimson',        blurb: 'Blackened frame, hot red rails.',     rarity: 'rare',   source: { type: 'level', level: 15 },       data: { body: 0x4a0710, metal: 0x2a2226, metalLt: 0x9a2433, accent: 0xff2438, accentHot: 0xff8c8c } },
   { id: 'gun.toxic',   name: 'Biohazard',      blurb: 'Acid-green accelerator rails.',       rarity: 'rare',   source: { type: 'level', level: 31 },      data: { body: 0x121a14, metal: 0x29332b, metalLt: 0x51604f, accent: 0x6fff3b, accentHot: 0xc6ffaa } },
   { id: 'gun.carbon',  name: 'Carbon',         blurb: 'Matte-black with a white-hot core.',  rarity: 'rare',   source: { type: 'credits', price: 1000 },  data: { body: 0x0c0e12, metal: 0x1c2026, metalLt: 0x3a414b, accent: 0xdfe8f4, accentHot: 0xffffff, pattern: 'carbon' } },

@@ -1,0 +1,16 @@
+[Unit]
+Description=Back up Agent Deathmatch SQLite data
+After=agent-deathmatch.service
+
+[Service]
+Type=oneshot
+User=agent-deathmatch
+Group=agent-deathmatch
+ExecStart=/usr/bin/python3 /opt/agent-deathmatch/current/deploy/vps/backup-database.py
+StateDirectory=agent-deathmatch
+StateDirectoryMode=0700
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict

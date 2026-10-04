@@ -11,7 +11,7 @@ import { VIEWMODEL_MOTION as T, WALK_SPEED } from './constants';
 //   land    — damped dip on landing (∝ impact speed) + a tiny cosmetic camera dip
 //   lean    — roll toward strafe direction; dash adds an inertia shove + roll kick
 //   recoil  — two-stage fire kick: sharp back+up, then a slower settle with roll
-//   zoom    — eased tuck toward a lowered offset while zoomed; bob/sway damped
+//   zoom    — damps bob/sway; scope-pose.ts raises and aligns the full assembly
 //   idle    — barely-there breathing so the gun is never frozen
 //
 // Every term is frame-rate independent: springs use the exact damped-oscillator
@@ -26,7 +26,7 @@ export type ViewmodelMotionFrame = {
   groundSpeed: number; // horizontal speed, m/s
   lateralSpeed: number; // signed strafe speed in view space, m/s (+ = right)
   grounded: boolean;
-  zoom: number; // 0 (hipfire) … 1 (fully zoomed), pre-eased by the FOV lerp
+  zoom: number; // 0 (hipfire) … 1 (fully zoomed), from the shared scope transition
   reducedEffects: boolean; // accessibility: suppress the camera dip
 };
 
@@ -45,8 +45,8 @@ const TWO_PI = Math.PI * 2;
 
 // ── Weapon inspect ───────────────────────────────────────────────────────────
 // A CS-style look-over of the railgun: swing it up to the centre of the view,
-// turn it side-on (muzzle to the left) so its left flank — the charge window
-// and, on a Tracked gun, the kill-counter module — faces the camera square and
+// turn it across the view (muzzle to the left) so its left flank — the charge
+// window and, on a Tracked gun, the kill-counter module — faces the camera and
 // holds there a beat, then roll it to show the top, and lower it again. Each
 // key is a viewmodel pose DELTA on top of the resting placement (camera-local
 // units / rad); segments ease with a smootherstep so every key is a brief held
@@ -55,15 +55,12 @@ const TWO_PI = Math.PI * 2;
 type InspectKey = { t: number; x: number; y: number; z: number; rx: number; ry: number; rz: number };
 const INSPECT_KEYS: readonly InspectKey[] = [
   { t: 0, x: 0, y: 0, z: 0, rx: 0, ry: 0, rz: 0 },
-  // raise + centre, tilt the muzzle up a touch
-  { t: 0.5, x: -0.2, y: 0.15, z: 0.09, rx: 0.3, ry: 0.15, rz: 0.06 },
-  // side-on: the barrel across the view, the left flank lifted into the
-  // middle of the frame and rolled a hair toward the eye…
-  { t: 1.1, x: -0.215, y: 0.235, z: 0.135, rx: 0.08, ry: 1.36, rz: -0.1 },
-  // …held (a slow drift) long enough to read the counter
-  { t: 1.5, x: -0.205, y: 0.24, z: 0.14, rx: 0.1, ry: 1.3, rz: -0.14 },
-  // show the top: roll the receiver up toward the camera
-  { t: 2.1, x: -0.2, y: 0.12, z: 0.1, rx: 0.5, ry: 0.55, rz: -0.85 },
+  // Move out from the close carry before turning across the view.
+  { t: 0.5, x: -0.04, y: 0.035, z: -0.13, rx: 0.12, ry: 0.12, rz: 0.04 },
+  { t: 1.1, x: -0.07, y: 0.045, z: -0.22, rx: 0.08, ry: 1.0, rz: -0.12 },
+  { t: 1.5, x: -0.06, y: 0.045, z: -0.22, rx: 0.1, ry: 0.96, rz: -0.16 },
+  // Roll toward the eye without taking the elbows away from the body.
+  { t: 2.1, x: -0.05, y: 0.035, z: -0.14, rx: 0.26, ry: 0.45, rz: -0.55 },
   // lower it back to the carry
   { t: 2.7, x: 0, y: 0, z: 0, rx: 0, ry: 0, rz: 0 },
 ];
@@ -76,13 +73,9 @@ const smootherstep = (x: number) => x * x * x * (x * (x * 6 - 15) + 10);
 // is toed in so its muzzle points up toward the crosshair from the lower right,
 // keeping the coils well clear of the aim point. Applies in every pose (it is
 // placement, not motion, so the motion-intensity setting doesn't scale it).
-// (Nudged 6 mm right/down for the chunkier railgun so its idle screen coverage
-// stays at the old slim gun's — measured in /gunlab: 3.0 % vs 2.96 % at FOV 90.)
-const PLACEMENT = { x: 0.306, y: -0.096, z: 0.02, yaw: 0.075, pitch: 0.035 } as const;
-// Extra zoom tuck on top of VIEWMODEL_MOTION.zoomTuck: the heavier barrel
-// tucks a little further while zoomed so it covers no more of the zoomed view
-// than the old gun did (1.27 % vs 1.22 %).
-const ZOOM_EXTRA = { x: 0.015, y: -0.02 } as const;
+// Close carry: the stock is behind the eye and the receiver enters from below.
+// A slight inward yaw keeps the barrel aligned with the centre of the view.
+const PLACEMENT = { x: 0.11, y: 0.065, z: 0.28, yaw: 0.12, pitch: 0.045 } as const;
 
 function clamp(v: number, lo: number, hi: number): number {
   return v < lo ? lo : v > hi ? hi : v;
@@ -177,8 +170,6 @@ export class ViewmodelMotion {
   private kickSide = 1;
   private muzzle = 0;
 
-  // Zoom tuck (own easing so the gun moves a touch slower than the FOV)
-  private tuck = 0;
 
   // Inspect: clock (s) over the authored curve, `iw` = envelope that kills the
   // cancelled inspect fast; `iScale` = curve amplitude (calmer when reduced).
@@ -226,7 +217,7 @@ export class ViewmodelMotion {
     return this.inspectT >= 0;
   }
 
-  // Seconds into the authored (un-scaled) curve, or -1.
+  // Normalized progress through the authored curve, or -1.
   get inspectProgress(): number {
     return this.inspectT < 0 ? -1 : this.inspectT / this.inspectSpan;
   }
@@ -366,23 +357,20 @@ export class ViewmodelMotion {
     const a = this.kickA;
     const b = this.kickB.x;
 
-    // Zoom tuck.
-    this.tuck += (zoom - this.tuck) * (1 - Math.exp(-T.zoomTuckRate * dt));
-    const tk = this.tuck;
 
     // Idle breathing — two incommensurate slow sines so it never visibly loops.
     const i1 = Math.sin(this.t * TWO_PI * T.idle.hzA);
     const i2 = Math.sin(this.t * TWO_PI * T.idle.hzB + 1.7);
 
     const p = this.pose;
-    p.x = ix + PLACEMENT.x + bobX + this.swayX.x + this.dashX.x + tk * (T.zoomTuck.x + ZOOM_EXTRA.x) + T.idle.x * i2 * k;
+    p.x = ix + PLACEMENT.x + bobX + this.swayX.x + this.dashX.x + T.idle.x * i2 * k;
     p.y =
       iy + PLACEMENT.y + bobY + this.swayY.x + landY + a * T.recoilA.y + b * T.recoilB.y +
-      tk * (T.zoomTuck.y + ZOOM_EXTRA.y) + T.idle.y * i1 * k;
-    p.z = iz + PLACEMENT.z + this.dashZ.x + a * T.recoilA.z + b * T.recoilB.z + tk * T.zoomTuck.z;
+      T.idle.y * i1 * k;
+    p.z = iz + PLACEMENT.z + this.dashZ.x + a * T.recoilA.z + b * T.recoilB.z;
     p.rx =
       irx + PLACEMENT.pitch + this.swayPitch.x + landY * T.landPitch + a * T.recoilA.pitch + b * T.recoilB.pitch +
-      tk * T.zoomTuck.pitch + T.idle.pitch * i1 * k;
+      T.idle.pitch * i1 * k;
     p.ry = iry + PLACEMENT.yaw + this.swayYaw.x;
     p.rz =
       irz + bobRoll + this.swayRoll.x + this.lean.x + b * T.recoilB.roll * this.kickSide +

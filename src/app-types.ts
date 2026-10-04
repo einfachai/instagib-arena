@@ -20,6 +20,7 @@ export type CrosshairConfig = {
 };
 
 export type Settings = {
+  codexExitPolicy: 'completion' | 'attention';
   // Economy v3 (docs/economy.md): the equipped item instance per slot (server
   // truth) and the resolved Looks (def + unusual/sheen/pattern attrs) the
   // renderers use. The legacy per-slot id fields below are kept in sync from
@@ -46,7 +47,7 @@ export type Settings = {
   uiSounds: boolean; // menu clicks / hovers / toggles (still scaled by master × SFX)
   announcerVolume: number;
   announcerEnabled: boolean;
-  announcerPack: AnnouncerPackId; // which announcer voice pack (legacy = default procedural)
+  announcerPack: AnnouncerPackId; // saved pack IDs resolve to the same deep male announcer
   captions: boolean; // a11y: show announcer/medal/match callouts as on-screen text
   showFps: boolean;
   showPing: boolean; // show each player's ping in the Tab scoreboard (online)
@@ -108,7 +109,7 @@ export type ProgressionResp = Partial<RewardExtras> & {
   creditsGained: number; // total, incl. challenge + road credits
   leveledUp: boolean;
   newUnlocks: string[];
-  mode?: 'ffa' | 'duel' | 'tdm' | 'ranked';
+  mode?: 'ffa' | 'duel' | 'tdm' | 'ranked' | 'arcade';
   partial?: boolean; // a mid-match leave, pushed after you're back in the lobby
   progression: {
     totalXp: number;

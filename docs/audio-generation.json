@@ -1,0 +1,1455 @@
+{
+  "provider": "ElevenLabs MCP",
+  "flow": {
+    "flow_id": "BqtTzkB2pZXfG9quZbsY",
+    "name": "Agent Deathmatch — ElevenLabs Audio",
+    "url": "https://elevenlabs.io/app/flows/BqtTzkB2pZXfG9quZbsY"
+  },
+  "announcer": {
+    "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+    "name": "Victor - Deep, Malevolent and Ancient",
+    "model_id": "eleven_v3",
+    "display_name": "Victor",
+    "flow_id": "uCosbkXovVcW6Su7mlNW",
+    "asset_directory": "/sounds/elevenlabs-v1/announcer/victor"
+  },
+  "effects": [
+    {
+      "key": "first-blood",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "text": "First blood!",
+      "prompt": "[deep voice] [dramatically] [confidently] FIRST BLOOD!",
+      "variants": 4,
+      "maxDuration": 3
+    },
+    {
+      "key": "double-kill",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "text": "Double kill!",
+      "prompt": "[deep voice] [excited] [forcefully] DOUBLE KILL!",
+      "variants": 4,
+      "maxDuration": 3
+    },
+    {
+      "key": "triple-kill",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "text": "Triple kill!",
+      "prompt": "[deep voice] [excited] [dramatically] TRIPLE KILL!",
+      "variants": 4,
+      "maxDuration": 3
+    },
+    {
+      "key": "quad-kill",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "text": "Quad kill!",
+      "prompt": "[deep voice] [excited] [shouting] QUAD KILL!",
+      "variants": 4,
+      "maxDuration": 3
+    },
+    {
+      "key": "penta-kill",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "text": "Penta kill!",
+      "prompt": "[deep voice] [dramatically] [shouting] PENTA KILL!",
+      "variants": 4,
+      "maxDuration": 3
+    },
+    {
+      "key": "killing-spree",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "text": "Killing spree!",
+      "prompt": "[deep voice] [confidently] [excited] KILLING SPREE!",
+      "variants": 4,
+      "maxDuration": 3
+    },
+    {
+      "key": "rampage",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "text": "Rampage!",
+      "prompt": "[deep voice] [angry] [forcefully] RAMPAGE!",
+      "variants": 4,
+      "maxDuration": 3
+    },
+    {
+      "key": "dominating",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "text": "Dominating!",
+      "prompt": "[deep voice] [confidently] [dramatically] DOMINATING!",
+      "variants": 4,
+      "maxDuration": 3
+    },
+    {
+      "key": "unstoppable",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "text": "Unstoppable!",
+      "prompt": "[deep voice] [confidently] [forcefully] UNSTOPPABLE!",
+      "variants": 4,
+      "maxDuration": 3
+    },
+    {
+      "key": "godlike",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "text": "Godlike!",
+      "prompt": "[deep voice] [dramatically] [forcefully] GODLIKE!",
+      "variants": 4,
+      "maxDuration": 3
+    },
+    {
+      "key": "headshot",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "text": "Headshot!",
+      "prompt": "[deep voice] [excited] [forcefully] HEADSHOT!",
+      "variants": 4,
+      "maxDuration": 3
+    },
+    {
+      "key": "humiliation",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "text": "Humiliation!",
+      "prompt": "[deep voice] [sarcastic] [dramatically] HUMILIATION!",
+      "variants": 4,
+      "maxDuration": 3
+    },
+    {
+      "key": "comeback",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "text": "Comeback!",
+      "prompt": "[deep voice] [excited] [confidently] COMEBACK!",
+      "variants": 4,
+      "maxDuration": 3
+    },
+    {
+      "key": "match-point",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "text": "Match point!",
+      "prompt": "[deep voice] [serious] [forcefully] MATCH POINT!",
+      "variants": 4,
+      "maxDuration": 3
+    },
+    {
+      "key": "victory",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "text": "Victory!",
+      "prompt": "[deep voice] [triumphant] [dramatically] VICTORY!",
+      "variants": 4,
+      "maxDuration": 3
+    },
+    {
+      "key": "defeat",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "text": "Defeat.",
+      "prompt": "[deep voice] [somber] [serious] Defeat.",
+      "variants": 4,
+      "maxDuration": 3
+    },
+    {
+      "key": "spawn",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "text": "Back in the fight!",
+      "prompt": "[deep voice] [confidently] [forcefully] Back in the fight!",
+      "variants": 4,
+      "maxDuration": 3
+    },
+    {
+      "key": "rail-fire",
+      "category": "weapon",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A powerful futuristic railgun fires once: hard electric crack, metallic punch, deep bass thump, brief sizzling energy tail One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.9,
+      "maxDuration": 0.22,
+      "variants": 1,
+      "processing": {
+        "trimStartMs": 180,
+        "highpassHz": 180,
+        "decayMs": 55,
+        "fadeInMs": 0.25,
+        "fadeOutMs": 12,
+        "rmsDb": -21,
+        "peakDb": -8
+      }
+    },
+    {
+      "key": "rail-charge",
+      "category": "weapon",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "Steady electromagnetic railgun coil recharge hum, smooth rising electrical tension without a release Seamless continuous environmental loop for a sci-fi arena FPS. No music, speech, voices, footsteps or combat.",
+      "duration": 1,
+      "maxDuration": 1,
+      "variants": 1,
+      "loop": true
+    },
+    {
+      "key": "reload-ready",
+      "category": "weapon",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "Railgun recharge complete: precise mechanical latch and bright short two-note electronic ready chirp One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.22,
+      "variants": 1
+    },
+    {
+      "key": "hit",
+      "category": "weapon",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A very tight sharp satisfying electronic hit marker tick with a small metallic snap One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.14,
+      "variants": 1
+    },
+    {
+      "key": "hit-headshot",
+      "category": "weapon",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "Two tight bright metallic hit marker ticks, immediate first click and higher accented second click One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.24,
+      "variants": 1
+    },
+    {
+      "key": "kill",
+      "category": "weapon",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A punchy arena game body burst: heavy wet impact, cracking armor and brief debris One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.7,
+      "maxDuration": 0.7,
+      "variants": 1
+    },
+    {
+      "key": "kill-headshot",
+      "category": "weapon",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A sharp devastating arena headshot body burst: hard armor crack, wet pop and short bass punch One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.7,
+      "maxDuration": 0.7,
+      "variants": 1
+    },
+    {
+      "key": "death",
+      "category": "weapon",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "The player is eliminated: heavy low impact, falling armor debris and a brief descending energy whoosh One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.85,
+      "maxDuration": 0.85,
+      "variants": 1
+    },
+    {
+      "key": "wall-impact",
+      "category": "weapon",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "An energy rail hits a concrete wall once, sharp impact crack with brief electrical sparks and a tiny ricochet ping One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.5,
+      "variants": 1
+    },
+    {
+      "key": "step-default",
+      "category": "movement",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "One quick heavy armored boot footstep on hard smooth concrete, a close heel thud with tactile surface detail One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.24,
+      "variants": 4
+    },
+    {
+      "key": "step-causeway",
+      "category": "movement",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "One quick heavy armored boot footstep on a resonant metal space platform, a close heel thud with tactile surface detail One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.24,
+      "variants": 4
+    },
+    {
+      "key": "step-reactor",
+      "category": "movement",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "One quick heavy armored boot footstep on industrial steel floor grating, a close heel thud with tactile surface detail One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.24,
+      "variants": 4
+    },
+    {
+      "key": "step-lounge",
+      "category": "movement",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "One quick heavy armored boot footstep on a warm wooden floor, a close heel thud with tactile surface detail One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.24,
+      "variants": 4
+    },
+    {
+      "key": "step-nuketown",
+      "category": "movement",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "One quick heavy armored boot footstep on rough outdoor asphalt, a close heel thud with tactile surface detail One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.24,
+      "variants": 4
+    },
+    {
+      "key": "step-containeryard",
+      "category": "movement",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "One quick heavy armored boot footstep on a hollow steel shipping container deck, a close heel thud with tactile surface detail One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.24,
+      "variants": 4
+    },
+    {
+      "key": "step-derrick",
+      "category": "movement",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "One quick heavy armored boot footstep on rusted industrial metal plating, a close heel thud with tactile surface detail One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.24,
+      "variants": 4
+    },
+    {
+      "key": "step-training",
+      "category": "movement",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "One quick heavy armored boot footstep on smooth laboratory concrete, a close heel thud with tactile surface detail One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.24,
+      "variants": 4
+    },
+    {
+      "key": "jump",
+      "category": "movement",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "One athletic shoe pushing off a firm floor, with a quick textured rubber sole scuff and light fabric movement. Crisp natural dry close-miked Foley, immediate start and a soft short tail, isolated on silence.",
+      "duration": 1,
+      "maxDuration": 0.32,
+      "variants": 1,
+      "prompt_influence": 0.65,
+      "loop": false,
+      "processing": {
+        "highpassHz": 170,
+        "lowpassHz": 6500,
+        "fadeInMs": 2,
+        "fadeOutMs": 25,
+        "rmsDb": -25,
+        "peakDb": -9,
+        "trimStartMs": 110
+      }
+    },
+    {
+      "key": "airjump",
+      "category": "movement",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "One short forceful air whoosh through a wide nozzle, a continuous textured fwoosh with a full airy body and a smooth falling tail. Dry close-up recording, immediate start, isolated on silence. No pop, whistle or pitched note.",
+      "duration": 1,
+      "maxDuration": 0.34,
+      "variants": 1,
+      "prompt_influence": 0.65,
+      "loop": false,
+      "processing": {
+        "highpassHz": 170,
+        "lowpassHz": 6500,
+        "fadeInMs": 3,
+        "fadeOutMs": 40,
+        "rmsDb": -24,
+        "peakDb": -9,
+        "trimStartMs": 25
+      }
+    },
+    {
+      "key": "walljump",
+      "category": "movement",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "One armored boot kicks off a wall, sharp scrape and heavy impact followed by a fast air swish One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.35,
+      "variants": 1
+    },
+    {
+      "key": "land",
+      "category": "movement",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "An armored combatant lands on a hard surface, one grounded boot thud with a brief gear rattle One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.35,
+      "variants": 1
+    },
+    {
+      "key": "land-heavy",
+      "category": "movement",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A heavy armored combatant lands hard from a great height, deep double boot impact and a short debris rattle One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.6,
+      "maxDuration": 0.6,
+      "variants": 1
+    },
+    {
+      "key": "dash",
+      "category": "movement",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "One fast clean air swish, smooth broadband rush with immediate attack and 180-millisecond decay, close and dry on silence, no voice or tonal ringing.",
+      "duration": 0.5,
+      "maxDuration": 0.23,
+      "variants": 1,
+      "prompt_influence": 0.85,
+      "loop": false,
+      "processing": {
+        "highpassHz": 180,
+        "lowpassHz": 4500,
+        "fadeInMs": 4,
+        "fadeOutMs": 40,
+        "rmsDb": -24,
+        "peakDb": -11,
+        "trimStartMs": 45
+      }
+    },
+    {
+      "key": "boost",
+      "category": "movement",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "One compact low-mid pressure blast, punchy air release fading smoothly over 280 milliseconds, dry and isolated on silence, no engine whine, voice or ringing.",
+      "duration": 0.5,
+      "maxDuration": 0.34,
+      "variants": 1,
+      "prompt_influence": 0.85,
+      "loop": false,
+      "processing": {
+        "highpassHz": 110,
+        "lowpassHz": 5000,
+        "fadeInMs": 2,
+        "fadeOutMs": 50,
+        "rmsDb": -23,
+        "peakDb": -9
+      }
+    },
+    {
+      "key": "finisher-nova",
+      "category": "finisher",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "Small stellar nova explosion, rising shimmer into a deep tight cosmic boom One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.8,
+      "maxDuration": 0.8,
+      "variants": 1
+    },
+    {
+      "key": "finisher-starburst",
+      "category": "finisher",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A bright starburst of six sparkling high crystalline pings One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.65,
+      "maxDuration": 0.65,
+      "variants": 1
+    },
+    {
+      "key": "finisher-voxel",
+      "category": "finisher",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "Digital voxel disintegration, crunchy bit crushed pops and stepped square blips One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.5,
+      "variants": 1
+    },
+    {
+      "key": "finisher-ember",
+      "category": "finisher",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A quick fiery ember burst, bassy flame whoosh with tiny crackling sparks One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.65,
+      "maxDuration": 0.65,
+      "variants": 1
+    },
+    {
+      "key": "finisher-gibstorm",
+      "category": "finisher",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A thick explosive spray of wet gibs and armor fragments with a deep short slam One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.65,
+      "maxDuration": 0.65,
+      "variants": 1
+    },
+    {
+      "key": "finisher-singularity",
+      "category": "finisher",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A tiny black hole collapses, inward vacuum suction rising into a deep bass implosion One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.85,
+      "maxDuration": 0.85,
+      "variants": 1
+    },
+    {
+      "key": "finisher-prism",
+      "category": "finisher",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A bright crystalline prism shimmers through a quick ascending four-note glass chime One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.7,
+      "maxDuration": 0.7,
+      "variants": 1
+    },
+    {
+      "key": "finisher-derez",
+      "category": "finisher",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "Digital disintegration, five rapidly descending glitch stutters and a short fizz One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.5,
+      "variants": 1
+    },
+    {
+      "key": "finisher-shatter",
+      "category": "finisher",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "Glass armor shatters once, sharp bright crack and a short shower of tinkling shards One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.65,
+      "maxDuration": 0.65,
+      "variants": 1
+    },
+    {
+      "key": "finisher-confetti",
+      "category": "finisher",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A punchy compressed-air confetti cannon pops once with a short playful sparkle cascade One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.6,
+      "maxDuration": 0.6,
+      "variants": 1
+    },
+    {
+      "key": "finisher-overload",
+      "category": "finisher",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "An electrical overload, powerful buzzing zap with brief sputtering sparks One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.5,
+      "variants": 1
+    },
+    {
+      "key": "finisher-vaporize",
+      "category": "finisher",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A sci-fi vaporization burst, a quick laser hiss and descending sizzling energy tail One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.65,
+      "maxDuration": 0.65,
+      "variants": 1
+    },
+    {
+      "key": "medal-special",
+      "category": "medal",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A short triumphant special achievement chime, two clear heroic electronic bell tones One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.6,
+      "maxDuration": 0.6,
+      "variants": 1
+    },
+    {
+      "key": "medal-multi-2",
+      "category": "medal",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A tight 2-note rising triumphant arena multikill electronic arpeggio, increasingly energetic and satisfying One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.54,
+      "maxDuration": 0.54,
+      "variants": 1
+    },
+    {
+      "key": "medal-multi-3",
+      "category": "medal",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A tight 3-note rising triumphant arena multikill electronic arpeggio, increasingly energetic and satisfying One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.585,
+      "maxDuration": 0.585,
+      "variants": 1
+    },
+    {
+      "key": "medal-multi-4",
+      "category": "medal",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A tight 4-note rising triumphant arena multikill electronic arpeggio, increasingly energetic and satisfying One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.63,
+      "maxDuration": 0.63,
+      "variants": 1
+    },
+    {
+      "key": "medal-multi-5",
+      "category": "medal",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A tight 5-note rising triumphant arena multikill electronic arpeggio, increasingly energetic and satisfying One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.675,
+      "maxDuration": 0.675,
+      "variants": 1
+    },
+    {
+      "key": "medal-streak-1",
+      "category": "medal",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A powerful arena kill streak reward sting at intensity 1 of 5: low electronic power chord, rising filter swell and a restrained bright final accent One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.8,
+      "maxDuration": 0.8,
+      "variants": 1
+    },
+    {
+      "key": "medal-streak-2",
+      "category": "medal",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A powerful arena kill streak reward sting at intensity 2 of 5: low electronic power chord, rising filter swell and a restrained bright final accent One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.8,
+      "maxDuration": 0.8,
+      "variants": 1
+    },
+    {
+      "key": "medal-streak-3",
+      "category": "medal",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A powerful arena kill streak reward sting at intensity 3 of 5: low electronic power chord, rising filter swell and a restrained bright final accent One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.8,
+      "maxDuration": 0.8,
+      "variants": 1
+    },
+    {
+      "key": "medal-streak-4",
+      "category": "medal",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A powerful arena kill streak reward sting at intensity 4 of 5: low electronic power chord, rising filter swell and a fierce bright final accent One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.8,
+      "maxDuration": 0.8,
+      "variants": 1
+    },
+    {
+      "key": "medal-streak-5",
+      "category": "medal",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A powerful arena kill streak reward sting at intensity 5 of 5: low electronic power chord, rising filter swell and a fierce bright final accent One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.8,
+      "maxDuration": 0.8,
+      "variants": 1
+    },
+    {
+      "key": "ambience-default",
+      "category": "ambience",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "Quiet neutral indoor room tone, distant ventilation and subtle low air movement Seamless continuous environmental loop for a sci-fi arena FPS. No music, speech, voices, footsteps or combat.",
+      "duration": 8,
+      "maxDuration": 8,
+      "variants": 1,
+      "loop": true
+    },
+    {
+      "key": "ambience-causeway",
+      "category": "ambience",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "Dark open space platform ambience, eerie low cosmic wind and distant airy whistling Seamless continuous environmental loop for a sci-fi arena FPS. No music, speech, voices, footsteps or combat.",
+      "duration": 8,
+      "maxDuration": 8,
+      "variants": 1,
+      "loop": true
+    },
+    {
+      "key": "ambience-reactor",
+      "category": "ambience",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "Industrial reactor room tone, distant turbine rumble, subtle electrical mains hum and flowing ventilation Seamless continuous environmental loop for a sci-fi arena FPS. No music, speech, voices, footsteps or combat.",
+      "duration": 8,
+      "maxDuration": 8,
+      "variants": 1,
+      "loop": true
+    },
+    {
+      "key": "ambience-lounge",
+      "category": "ambience",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "Quiet giant scale lounge room tone, warm refrigerator hum and soft interior air Seamless continuous environmental loop for a sci-fi arena FPS. No music, speech, voices, footsteps or combat.",
+      "duration": 8,
+      "maxDuration": 8,
+      "variants": 1,
+      "loop": true
+    },
+    {
+      "key": "ambience-nuketown",
+      "category": "ambience",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "Quiet suburban dusk ambience, a light evening breeze, sparse distant crickets and very faint faraway traffic Seamless continuous environmental loop for a sci-fi arena FPS. No music, speech, voices, footsteps or combat.",
+      "duration": 8,
+      "maxDuration": 8,
+      "variants": 1,
+      "loop": true
+    },
+    {
+      "key": "ambience-containeryard",
+      "category": "ambience",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "Nighttime shipping port ambience, distant ship engine rumble and soft water lapping with faint lamp buzz Seamless continuous environmental loop for a sci-fi arena FPS. No music, speech, voices, footsteps or combat.",
+      "duration": 8,
+      "maxDuration": 8,
+      "variants": 1,
+      "loop": true
+    },
+    {
+      "key": "ambience-derrick",
+      "category": "ambience",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "An exposed rusty oil derrick, gusting industrial wind and a faint resonance whistling through steel Seamless continuous environmental loop for a sci-fi arena FPS. No music, speech, voices, footsteps or combat.",
+      "duration": 8,
+      "maxDuration": 8,
+      "variants": 1,
+      "loop": true
+    },
+    {
+      "key": "ambience-training",
+      "category": "ambience",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "Clean futuristic laboratory room tone, smooth quiet HVAC air and faint electrical equipment hum Seamless continuous environmental loop for a sci-fi arena FPS. No music, speech, voices, footsteps or combat.",
+      "duration": 8,
+      "maxDuration": 8,
+      "variants": 1,
+      "loop": true
+    },
+    {
+      "key": "ui-uiHover",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "One tiny soft muted wooden tick, rounded attack and a dry 50-millisecond decay, close-miked and isolated on silence, no ringing or hiss.",
+      "duration": 0.5,
+      "maxDuration": 0.065,
+      "variants": 1,
+      "prompt_influence": 0.8,
+      "loop": false,
+      "processing": {
+        "highpassHz": 160,
+        "lowpassHz": 2200,
+        "fadeInMs": 3,
+        "fadeOutMs": 18,
+        "rmsDb": -34,
+        "peakDb": -24
+      }
+    },
+    {
+      "key": "ui-uiClick",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "Crisp tactile sci-fi interface button click, small dry digital pop One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.1,
+      "variants": 1
+    },
+    {
+      "key": "ui-uiConfirm",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "Two ascending clean electronic notes confirming a selection One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.3,
+      "variants": 1
+    },
+    {
+      "key": "ui-uiBack",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "Short descending electronic confirmation chirp One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.2,
+      "variants": 1
+    },
+    {
+      "key": "ui-uiError",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A compact low two-note error buzzer, clear and restrained One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.3,
+      "variants": 1
+    },
+    {
+      "key": "ui-uiToggleOn",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A short mechanical toggle click and upward electronic blip One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.1,
+      "variants": 1
+    },
+    {
+      "key": "ui-uiToggleOff",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A short mechanical toggle click and downward electronic blip One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.1,
+      "variants": 1
+    },
+    {
+      "key": "ui-tabSwitch",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "One crisp lightweight interface tab switch click with a short swish One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.1,
+      "variants": 1
+    },
+    {
+      "key": "ui-modalOpen",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "One soft warm electronic pluck gliding gently upward in the low-mid register, rounded attack and smooth 160-millisecond decay, dry and isolated on silence, no ringing or hiss.",
+      "duration": 0.5,
+      "maxDuration": 0.21,
+      "variants": 1,
+      "prompt_influence": 0.8,
+      "loop": false,
+      "processing": {
+        "highpassHz": 160,
+        "lowpassHz": 2800,
+        "fadeInMs": 5,
+        "fadeOutMs": 35,
+        "rmsDb": -29,
+        "peakDb": -20
+      }
+    },
+    {
+      "key": "ui-modalClose",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "One soft warm electronic pluck gliding gently downward in the low-mid register, rounded attack and smooth 140-millisecond decay, dry and isolated on silence, no ringing or hiss.",
+      "duration": 0.5,
+      "maxDuration": 0.19,
+      "variants": 1,
+      "prompt_influence": 0.8,
+      "loop": false,
+      "processing": {
+        "highpassHz": 160,
+        "lowpassHz": 2800,
+        "fadeInMs": 5,
+        "fadeOutMs": 35,
+        "rmsDb": -29,
+        "peakDb": -20
+      }
+    },
+    {
+      "key": "ui-equip",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "Mechanical weapon attachment locks in, a satisfying latch chunk with a tiny bright confirmation ping One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.35,
+      "variants": 1
+    },
+    {
+      "key": "ui-purchase",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A tasteful game purchase confirmation, tight metallic cash register click and short coin chime One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.65,
+      "maxDuration": 0.6,
+      "variants": 1
+    },
+    {
+      "key": "ui-caseTick",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "One compact mechanical roulette detent tick, precise dry click One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.08,
+      "variants": 1
+    },
+    {
+      "key": "ui-caseReveal",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A loot case opens with a punchy snap followed by a bright electronic reward flourish One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.7,
+      "maxDuration": 0.6,
+      "variants": 1
+    },
+    {
+      "key": "ui-xpTick",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "One soft bright game experience reward ping with a tiny crisp attack One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.12,
+      "variants": 1
+    },
+    {
+      "key": "ui-levelUp",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A celebratory game level-up fanfare, ascending bright synth brass arpeggio resolving to a warm sparkling major chord One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 1.2,
+      "maxDuration": 1.2,
+      "variants": 1
+    },
+    {
+      "key": "ui-unlockCommon",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A modest item unlock chime, two bright gentle bell notes One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.6,
+      "maxDuration": 0.45,
+      "variants": 1
+    },
+    {
+      "key": "ui-unlockRare",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A rare item unlock reward, three rising crystalline notes and a brief shimmer One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.8,
+      "maxDuration": 0.65,
+      "variants": 1
+    },
+    {
+      "key": "ui-unlockEpic",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "An epic item unlock flourish, upward whoosh into a brilliant electronic brass chord and sparkles One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 1,
+      "maxDuration": 1,
+      "variants": 1
+    },
+    {
+      "key": "ui-unlockLegendary",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A legendary item unlock fanfare, short rising energy swell into a deep impact, glorious synth brass chord and cascading crystal sparkles One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 1.65,
+      "maxDuration": 1.65,
+      "variants": 1
+    },
+    {
+      "key": "ui-countdownTick",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "One short clear round countdown electronic beep One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.12,
+      "variants": 1
+    },
+    {
+      "key": "ui-countdownFinal",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "One accented higher final round countdown beep One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.5,
+      "maxDuration": 0.16,
+      "variants": 1
+    },
+    {
+      "key": "ui-stamp",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A heavy match results stamp slams down, bass thud and short metallic ring One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.65,
+      "maxDuration": 0.6,
+      "variants": 1
+    },
+    {
+      "key": "ui-stampVictory",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A heavy match victory stamp, bass impact and short triumphant major chord One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.85,
+      "maxDuration": 0.8,
+      "variants": 1
+    },
+    {
+      "key": "ui-stampDefeat",
+      "category": "ui",
+      "type": "sfx",
+      "model": "eleven_text_to_sound_v2",
+      "prompt": "A heavy match defeat stamp, low impact and short solemn minor chord One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+      "duration": 0.85,
+      "maxDuration": 0.8,
+      "variants": 1
+    },
+    {
+      "key": "codex-alone",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "text": "All other Codex users left the arena.",
+      "variants": 4,
+      "maxDuration": 6,
+      "prompt": "[deep voice] [serious] All other Codex users left the arena."
+    },
+    {
+      "key": "codex-attention",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "text": "Codex needs your attention.",
+      "variants": 4,
+      "maxDuration": 6,
+      "prompt": "[deep voice] [serious] [forcefully] Codex needs your attention."
+    },
+    {
+      "key": "codex-entered",
+      "text": "Codex user entered the arena.",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "variants": 4,
+      "maxDuration": 6,
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "prompt": "[deep voice] [confidently] Codex user entered the arena."
+    },
+    {
+      "key": "codex-complete",
+      "text": "Your Codex task is complete. Back to work.",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "variants": 4,
+      "maxDuration": 6,
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "prompt": "[deep voice] [confidently] Your Codex task is complete. [forcefully] Back to work."
+    }
+  ],
+  "arcade_announcements": {
+    "flow_id": "uCosbkXovVcW6Su7mlNW",
+    "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+    "model_id": "eleven_v3",
+    "takes": [
+      {
+        "key": "codex-alone",
+        "text": "All other Codex users left the arena.",
+        "generation_id": "VrTQBb4bI5N5PBqOzmOH",
+        "status": "bundled",
+        "reason": null
+      },
+      {
+        "key": "codex-attention",
+        "text": "Codex needs your attention.",
+        "generation_id": "D6EPhX0XwFaDAA8tNUCZ",
+        "status": "bundled",
+        "reason": null
+      },
+      {
+        "key": "codex-entered",
+        "text": "Codex user entered the arena.",
+        "generation_id": "qDbxY39bBKuczzGYv0hD",
+        "status": "bundled",
+        "reason": null
+      },
+      {
+        "key": "codex-complete",
+        "text": "Your Codex task is complete. Back to work.",
+        "generation_id": "MH8DaPxgUZmRc54Z37Xj",
+        "status": "bundled",
+        "reason": null
+      }
+    ]
+  },
+  "announcer_history": [
+    {
+      "voice_id": "nPczCjzI2devNBz1zQrb",
+      "name": "Brian - Deep, Resonant and Comforting",
+      "model_id": "eleven_v3"
+    }
+  ],
+  "announcer_flow": {
+    "flow_id": "uCosbkXovVcW6Su7mlNW",
+    "name": "Agent Deathmatch — Victor Announcer",
+    "url": "https://elevenlabs.io/app/flows/uCosbkXovVcW6Su7mlNW"
+  },
+  "arcade_announcements_history": [
+    {
+      "flow_id": "zUaaYtnV1SBUx8AI5e4j",
+      "voice_id": "nPczCjzI2devNBz1zQrb",
+      "model_id": "eleven_v3",
+      "takes": [
+        {
+          "key": "codex-entered",
+          "text": "Codex user entered the arena.",
+          "generation_id": "7IMhk3OxP1CdLsSV6Kzz",
+          "status": "blocked-account-access",
+          "reason": "ElevenLabs disabled Free Tier access after detecting unusual account activity."
+        },
+        {
+          "key": "codex-alone",
+          "text": "All other Codex users left the arena.",
+          "generation_id": "O1lBOa1Lcy6Dd25YMqhf",
+          "status": "bundled",
+          "reason": null
+        },
+        {
+          "key": "codex-complete",
+          "text": "Your Codex task is complete. Back to work.",
+          "generation_id": "QycvNp5057LD2js94WDJ",
+          "status": "blocked-account-access",
+          "reason": "ElevenLabs disabled Free Tier access after detecting unusual account activity."
+        },
+        {
+          "key": "codex-attention",
+          "text": "Codex needs your attention.",
+          "generation_id": "BBCVlSRkCgqdakl8JOSD",
+          "status": "bundled",
+          "reason": null
+        }
+      ]
+    }
+  ],
+  "interface_revisions": [
+    {
+      "flow": {
+        "flow_id": "AxtuoM6DwEYxzF88pJ5n",
+        "name": "Agent Deathmatch — Refined Interface Cues",
+        "url": "https://elevenlabs.io/app/flows/AxtuoM6DwEYxzF88pJ5n"
+      },
+      "keys": [
+        "ui-uiHover",
+        "ui-modalOpen",
+        "ui-modalClose"
+      ],
+      "previous_specs": [
+        {
+          "key": "ui-uiHover",
+          "category": "ui",
+          "type": "sfx",
+          "model": "eleven_text_to_sound_v2",
+          "prompt": "Tiny soft high electronic hover tick One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+          "duration": 0.5,
+          "maxDuration": 0.075,
+          "variants": 1
+        },
+        {
+          "key": "ui-modalOpen",
+          "category": "ui",
+          "type": "sfx",
+          "model": "eleven_text_to_sound_v2",
+          "prompt": "Soft short upward digital panel-opening whoosh One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+          "duration": 0.5,
+          "maxDuration": 0.25,
+          "variants": 1
+        },
+        {
+          "key": "ui-modalClose",
+          "category": "ui",
+          "type": "sfx",
+          "model": "eleven_text_to_sound_v2",
+          "prompt": "Soft short downward digital panel-closing whoosh One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+          "duration": 0.5,
+          "maxDuration": 0.25,
+          "variants": 1
+        }
+      ]
+    }
+  ],
+  "movement_revisions": [
+    {
+      "flow": {
+        "flow_id": "VXercKicesQJLsUy1ZpS",
+        "name": "Agent Deathmatch — Refined Movement Cues",
+        "url": "https://elevenlabs.io/app/flows/VXercKicesQJLsUy1ZpS"
+      },
+      "keys": [
+        "jump",
+        "airjump",
+        "dash",
+        "boost"
+      ],
+      "previous_specs": [
+        {
+          "key": "jump",
+          "category": "movement",
+          "type": "sfx",
+          "model": "eleven_text_to_sound_v2",
+          "prompt": "An armored combatant pushes off the ground, quick boot scuff and tight gear swish One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+          "duration": 0.5,
+          "maxDuration": 0.3,
+          "variants": 1
+        },
+        {
+          "key": "airjump",
+          "category": "movement",
+          "type": "sfx",
+          "model": "eleven_text_to_sound_v2",
+          "prompt": "A quick midair energy jump impulse, bright upward electric air burst with a short pneumatic pop One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+          "duration": 0.5,
+          "maxDuration": 0.34,
+          "variants": 1
+        },
+        {
+          "key": "dash",
+          "category": "movement",
+          "type": "sfx",
+          "model": "eleven_text_to_sound_v2",
+          "prompt": "A fast lateral combat dash, tight pressurized air whoosh with a crisp electric snap One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+          "duration": 0.5,
+          "maxDuration": 0.32,
+          "variants": 1
+        },
+        {
+          "key": "boost",
+          "category": "movement",
+          "type": "sfx",
+          "model": "eleven_text_to_sound_v2",
+          "prompt": "A sci-fi jump pad launches a combatant, forceful hydraulic thump and rising energy jet burst One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+          "duration": 0.75,
+          "maxDuration": 0.75,
+          "variants": 1
+        }
+      ]
+    },
+    {
+      "flow": {
+        "flow_id": "VXercKicesQJLsUy1ZpS",
+        "name": "Agent Deathmatch — Refined Movement Cues",
+        "url": "https://elevenlabs.io/app/flows/VXercKicesQJLsUy1ZpS"
+      },
+      "keys": [
+        "jump",
+        "airjump"
+      ],
+      "previous_specs": [
+        {
+          "key": "jump",
+          "category": "movement",
+          "type": "sfx",
+          "model": "eleven_text_to_sound_v2",
+          "prompt": "One light dry boot push-off thump, rounded punchy transient and short 100-millisecond decay, close-miked and isolated on silence, no voice or ringing.",
+          "duration": 0.5,
+          "maxDuration": 0.16,
+          "variants": 1,
+          "prompt_influence": 0.85,
+          "loop": false,
+          "processing": {
+            "highpassHz": 100,
+            "lowpassHz": 4000,
+            "fadeInMs": 2,
+            "fadeOutMs": 25,
+            "rmsDb": -26,
+            "peakDb": -12
+          }
+        },
+        {
+          "key": "airjump",
+          "category": "movement",
+          "type": "sfx",
+          "model": "eleven_text_to_sound_v2",
+          "prompt": "One short soft pressurized air puff with a crisp muted pop, immediate release and 160-millisecond decay, dry and isolated on silence, no voice or ringing.",
+          "duration": 0.5,
+          "maxDuration": 0.21,
+          "variants": 1,
+          "prompt_influence": 0.85,
+          "loop": false,
+          "processing": {
+            "highpassHz": 140,
+            "lowpassHz": 5000,
+            "fadeInMs": 2,
+            "fadeOutMs": 30,
+            "rmsDb": -24,
+            "peakDb": -10
+          }
+        }
+      ]
+    }
+  ],
+  "processing_revisions": [
+    {
+      "date": "2026-10-04",
+      "key": "rail-fire",
+      "operation": "local_remaster",
+      "generation_id": "zpOnjMOklkElXPA0UYfh",
+      "source_flow_id": "BqtTzkB2pZXfG9quZbsY",
+      "path": "public/sounds/elevenlabs-v1/weapon/instant/rail-fire_1.mp3",
+      "reason": "Front-load the recorded discharge so its main impact accompanies the accepted shot instead of building up hundreds of milliseconds later.",
+      "additional_generations": 0,
+      "previous_spec": {
+        "key": "rail-fire",
+        "category": "weapon",
+        "type": "sfx",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "A powerful futuristic railgun fires once: hard electric crack, metallic punch, deep bass thump, brief sizzling energy tail One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+        "duration": 0.9,
+        "maxDuration": 0.9,
+        "variants": 1
+      },
+      "selected_spec": {
+        "key": "rail-fire",
+        "category": "weapon",
+        "type": "sfx",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "A powerful futuristic railgun fires once: hard electric crack, metallic punch, deep bass thump, brief sizzling energy tail One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+        "duration": 0.9,
+        "maxDuration": 0.28,
+        "variants": 1,
+        "processing": {
+          "decayMs": 45,
+          "fadeInMs": 0.5,
+          "fadeOutMs": 12,
+          "rmsDb": -21,
+          "peakDb": -8
+        }
+      }
+    },
+    {
+      "date": "2026-10-04",
+      "key": "rail-fire",
+      "operation": "local_trim",
+      "generation_id": "zpOnjMOklkElXPA0UYfh",
+      "source_flow_id": "BqtTzkB2pZXfG9quZbsY",
+      "path": "public/sounds/elevenlabs-v1/weapon/crack/rail-fire_1.mp3",
+      "reason": "Physically remove the opening 180 ms and begin at the strongest audible crack, rather than only shortening the discharge's envelope.",
+      "additional_generations": 0,
+      "previous_spec": {
+        "key": "rail-fire",
+        "category": "weapon",
+        "type": "sfx",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "A powerful futuristic railgun fires once: hard electric crack, metallic punch, deep bass thump, brief sizzling energy tail One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+        "duration": 0.9,
+        "maxDuration": 0.28,
+        "variants": 1,
+        "processing": {
+          "decayMs": 45,
+          "fadeInMs": 0.5,
+          "fadeOutMs": 12,
+          "rmsDb": -21,
+          "peakDb": -8
+        }
+      },
+      "selected_spec": {
+        "key": "rail-fire",
+        "category": "weapon",
+        "type": "sfx",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "A powerful futuristic railgun fires once: hard electric crack, metallic punch, deep bass thump, brief sizzling energy tail One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+        "duration": 0.9,
+        "maxDuration": 0.22,
+        "variants": 1,
+        "processing": {
+          "trimStartMs": 180,
+          "highpassHz": 180,
+          "decayMs": 55,
+          "fadeInMs": 0.25,
+          "fadeOutMs": 12,
+          "rmsDb": -21,
+          "peakDb": -8
+        }
+      }
+    }
+  ]
+}

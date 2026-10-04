@@ -38,7 +38,7 @@ export class Player {
   airJumpsLeft = AIR_JUMPS;
   dashCooldown = 0;
   dashTimer = 0;
-  // Ratz-style boost jump (RMB). `boostInRange` drives the HUD range ring;
+  // Ratz-style boost jump (boost key). `boostInRange` drives the HUD range ring;
   // `didBoost` is a one-shot flag the game reads to fire SFX/FX, then clears.
   boostCooldown = 0;
   boostInRange = false;
@@ -197,7 +197,7 @@ export class Player {
       }
     }
 
-    // Boost jump (RMB): shove the player along the aimed surface's normal —
+    // Boost jump (boost key): shove the player along the aimed surface's normal —
     // a damage-free rocket-jump. Cancel any velocity going INTO the surface
     // first so a fast approach doesn't eat the launch, then add the impulse.
     if (

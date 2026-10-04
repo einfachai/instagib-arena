@@ -1,3 +1,4 @@
+import type { VisitStats } from './arcade';
 import type { GameMode } from './constants';
 
 export type Vec3 = { x: number; y: number; z: number };
@@ -52,6 +53,8 @@ export type Medal =
 export type MedalTier = 'multi' | 'streak' | 'special';
 
 export type PlayerScore = {
+  visit?: VisitStats;
+  actor?: 'human' | 'bot';
   id: EntityId;
   name: string;
   isLocal: boolean;

@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import { BrandLogo } from '../BrandLogo';
 import { DEFAULT_NAME_COLOR, nameColorById } from '../../game/cosmetics';
 import { TEAM_COLORS, TEAM_NAMES, type GameMode } from '../../game/constants';
 import type { PlayerScore } from '../../game/types';
@@ -66,7 +67,7 @@ function PingBars({ ping }: { ping: number | undefined }) {
 // Monogram tile standing in for a player-card strip: tinted by name colour or
 // team, so a row is recognisable at a glance without any image decode.
 function Avatar({ s, color, size = 'md' }: { s: PlayerScore; color?: string; size?: 'md' | 'lg' }) {
-  const c = color ?? (s.isLocal ? '#67e8f9' : '#94a3b8');
+  const c = color ?? (s.isLocal ? '#a6bcff' : '#94a3b8');
   return (
     <span
       className={`hud-sb-av${size === 'lg' ? ' hud-sb-av-lg' : ''}`}
@@ -119,7 +120,7 @@ function SbRow({
   scale: number;
 }) {
   const color = nameColorOf(s, teamColor);
-  const bot = !online && !s.isLocal;
+  const bot = s.actor === 'bot' || (!online && !s.isLocal);
   const guest = online && isGuestName(s.name);
   return (
     <div className={`hud-sb-grid hud-sb-row${s.isLocal ? ' hud-sb-self' : ''}${showPing ? ' hud-sb-has-ping' : ''}`}>
@@ -146,6 +147,9 @@ function SbRow({
             {s.currentStreak >= 3 && <Tag tone='fire'>On fire {s.currentStreak}</Tag>}
           </span>
           {s.title && <span className='hud-sb-title truncate'>{s.title}</span>}
+          {s.visit && <span className='hud-sb-title truncate' title={`${s.visit.shots} shots · ${s.visit.hits} hits · ${s.visit.headshots} headshots`}>
+            Visit {Math.floor(s.visit.durationMs / 60000)}:{String(Math.floor(s.visit.durationMs / 1000) % 60).padStart(2, '0')} · {s.visit.human.kills} human / {s.visit.bot.kills} bot kills
+          </span>}
         </span>
       </span>
       <span className='hud-sb-frags'>{s.frags}</span>
@@ -213,11 +217,12 @@ function SbHeader({
   return (
     <div className='hud-sb-header'>
       <div className='min-w-0'>
+        <BrandLogo className='brand-scoreboard-logo' />
         <div className='hud-sb-kicker'>
           <span className='hud-sb-modechip'>{mode === 'tdm' ? 'TDM' : mode === 'duel' ? 'Duel' : 'FFA'}</span>
           <span className='truncate'>{modeLine}</span>
         </div>
-        <div className='hud-sb-map'>{info?.mapName || 'Instagib Arena'}</div>
+        <div className='hud-sb-map'>{info?.mapName || 'Agent Deathmatch'}</div>
       </div>
       <div className='flex shrink-0 items-end gap-8'>
         {limit != null && (
@@ -309,9 +314,9 @@ function DuelFaceOff({
   const me = scores.find((s) => s.isLocal) ?? scores[0];
   const foe = scores.find((s) => s !== me) ?? scores[1];
   const side = (s: PlayerScore, self: boolean) => {
-    const color = nameColorOf(s) ?? (self ? '#a5f3fc' : '#ffb4bd');
+    const color = nameColorOf(s) ?? (self ? '#c6d4ff' : '#ffb4bd');
     const leading = s.frags > (self ? foe : me).frags;
-    const bot = !online && !s.isLocal;
+    const bot = s.actor === 'bot' || (!online && !s.isLocal);
     return (
       <div className={`hud-sb-duel-side ${self ? 'hud-sb-duel-me' : 'hud-sb-duel-foe'}${leading ? ' hud-sb-duel-lead' : ''}`}>
         <Avatar s={s} color={color} size='lg' />

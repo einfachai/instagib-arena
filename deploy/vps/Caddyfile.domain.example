@@ -1,0 +1,8 @@
+# Replace arena.example.com with the domain pointing at 51.222.25.178.
+# Caddy obtains and renews its certificate automatically.
+arena.example.com {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:8787 {
+		header_up X-Forwarded-For {remote_host}
+	}
+}

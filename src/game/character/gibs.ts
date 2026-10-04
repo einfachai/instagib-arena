@@ -309,6 +309,7 @@ export class GibBurst {
     this.style = MOTION[style] ? style : 'pulse';
     const mo = (this.mo = MOTION[this.style]);
     const ch = this.ch;
+    ch.beginBreakup();
     const root = ch.root;
     const rig = ch.rig;
     const body = getBodyGeometry();
@@ -344,7 +345,7 @@ export class GibBurst {
       this.startM[i].copy(b.matrix);
     }
     rig.frozen = true;
-    ch.mesh.frustumCulled = false;
+    ch.breakupMesh.frustumCulled = false;
     ch.sockets.gun.visible = false;
     // The hat rides the head bone, which shrinks to nothing — but point-sprite
     // size ignores object scale, so an unusual-effect cloud would collapse into
@@ -355,8 +356,8 @@ export class GibBurst {
     ch.sockets.face.visible = false;
     ch.sockets.back.visible = false;
     // Styles that cut the body with discard would leave a whole-body shadow.
-    this.castShadow0 = ch.mesh.castShadow;
-    ch.mesh.castShadow = this.castShadow0 && !(this.style === 'derez' || this.style === 'vaporize' || this.style === 'ember');
+    this.castShadow0 = ch.breakupMesh.castShadow;
+    ch.breakupMesh.castShadow = this.castShadow0 && !(this.style === 'derez' || this.style === 'vaporize' || this.style === 'ember');
 
     // Parent-space frame: floor height + velocity rotation.
     const parent = root.parent;
@@ -1502,8 +1503,9 @@ export class GibBurst {
     this.done = false;
     const ch = this.ch;
     ch.rig.frozen = false;
-    ch.mesh.frustumCulled = true;
-    ch.mesh.castShadow = this.castShadow0;
+    ch.endBreakup();
+    ch.breakupMesh.frustumCulled = true;
+    ch.breakupMesh.castShadow = this.castShadow0;
     ch.sockets.gun.visible = true;
     ch.sockets.headTop.visible = true;
     ch.sockets.face.visible = true;

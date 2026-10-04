@@ -3,6 +3,7 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
 import { CharacterAnimator } from './character-anim';
 import { DYE_TIME } from './character/body';
 import { Character } from './character/character';
+import { CODEX_PALETTE, preloadCharacterAssets } from './character/assets';
 import { attachRailgun, disposeRailgun } from './character/gun';
 import { EffectsManager } from './effects';
 import { emoteClip } from './emotes';
@@ -57,11 +58,9 @@ import {
 
 const SIZE = 256;
 const IDLE_RELEASE_MS = 30_000;
-const STORE_PREFIX = 'ig-thumb:v16:';
-// A neutral armour so every thumbnail reads on all four rarity backgrounds.
-const THUMB_SKIN = '#c3ccda';
-// Hats sit on a mid-slate helmet: white caps read lighter, black hats darker.
-const HAT_SKIN = '#6f7888';
+const STORE_PREFIX = 'ig-thumb:codex-ybot-v1:';
+const THUMB_SKIN = CODEX_PALETTE.white;
+const HAT_SKIN = CODEX_PALETTE.white;
 const FACE_CAMERA = Math.PI;
 
 const cache = new Map<string, string | null>();
@@ -488,7 +487,7 @@ type Mode = 'thumb' | 'turn';
 
 // A neutral combatant, facing the camera (optionally turned `turn` radians),
 // posed at `t` seconds into `clip` (the breathing idle by default).
-function combatant(turn = 0, clip: EmoteKind = 'idle', t = 0.6, skin = THUMB_SKIN) {
+function combatant(turn = 0, clip: EmoteKind = 'idle', t = 0.6, skin: string = THUMB_SKIN) {
   const holder = new THREE.Group();
   const ch = new Character({ colorHex: skin, castShadow: false });
   holder.add(ch.root);
@@ -1053,6 +1052,7 @@ function fitCamera(cam: THREE.PerspectiveCamera, box: THREE.Box3, target: THREE.
 async function renderThumb(id: string): Promise<string | null> {
   const target = targetOf(id);
   if (!renderableTarget(target)) return null;
+  await preloadCharacterAssets();
   await idle();
   const s = getStudio();
   if (!s) return null;
@@ -1109,6 +1109,7 @@ function placeCamera(s: Studio, subj: Subject): THREE.PerspectiveCamera {
 async function renderTurntable(key: string): Promise<Turntable | null> {
   const target = targetOf(key);
   if (!turntableTarget(target)) return null;
+  await preloadCharacterAssets();
   const s = getStudio();
   if (!s) return null;
   const subj = await buildSubject(s, target, 'turn');

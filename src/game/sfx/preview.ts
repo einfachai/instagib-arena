@@ -1,6 +1,6 @@
 // ── Offline SFX preview / loudness check (dev tooling — not imported by the game)
 //
-// Renders every procedural sound through the REAL master chain (buses, reverb,
+// Renders recorded sounds through the REAL master chain (buses, reverb,
 // limiter, safety clip) in an OfflineAudioContext and reports peak dBFS, RMS
 // dBFS and audible duration, optionally as a 16-bit WAV. Driven from headless
 // Chrome by scripts/sfx-render.mjs (vite serves this module as-is):
@@ -8,6 +8,7 @@
 // Volumes mirror the game's call sites (e.g. play('fire', 0.55)); master = 1.
 import { seedSfxRandom } from './core';
 import { SfxEngine } from './engine';
+import { playUiCue, preloadUiCues, UI_SOUND_NAMES } from './ui-sounds';
 
 type Case = {
   name: string;
@@ -39,6 +40,16 @@ async function loadClip(ctx: BaseAudioContext, url: string): Promise<AudioBuffer
 }
 
 const CASES: Case[] = [
+  ...UI_SOUND_NAMES.map((name): Case => ({
+    name: `UI ${name}`,
+    dur: name === 'unlockLegendary' ? 2.0 : name === 'levelUp' ? 1.6 : 1.2,
+    run: (e, ctx) => playUiCue(ctx, e.mixer.hud, name, T0),
+  })),
+  ...['nova', 'starburst', 'voxel', 'ember', 'gibstorm', 'singularity', 'prism', 'derez', 'shatter', 'confetti', 'overload', 'vaporize'].map((style): Case => ({
+    name: `finisher ${style}`,
+    dur: 1.6,
+    run: (e) => e.replayGib(0, 0, -5, style, false, true, 0.7),
+  })),
   { name: 'rail (local)', dur: 1.6, map: 'reactor', run: (e) => e.railShot(0.55, T0) },
   { name: 'rail remote @6m', dur: 1.4, map: 'reactor', run: (e) => e.railAt(...front(6), 0.5, T0) },
   { name: 'rail remote @25m', dur: 1.6, map: 'reactor', run: (e) => e.railAt(...right(25), 0.5, T0) },
@@ -71,7 +82,7 @@ const CASES: Case[] = [
   },
   { name: 'remote step @4m', dur: 0.4, map: 'reactor', run: (e) => e.remoteMove('step', ...right(4), 10, T0) },
   { name: 'remote step @12m', dur: 0.4, map: 'reactor', run: (e) => e.remoteMove('step', ...front(12), 10, T0) },
-  { name: 'jump (hup)', dur: 0.5, run: (e) => e.localMove('jump', 0, T0) },
+  { name: 'jump', dur: 0.5, run: (e) => e.localMove('jump', 0, T0) },
   { name: 'double jump', dur: 0.5, run: (e) => e.localMove('airjump', 0, T0) },
   { name: 'land soft (5 m/s)', dur: 0.5, map: 'causeway', run: (e) => e.localMove('land', 5, T0) },
   { name: 'land normal (9 m/s)', dur: 0.6, map: 'causeway', run: (e) => e.localMove('land', 9, T0) },
@@ -94,10 +105,10 @@ const CASES: Case[] = [
     }),
   ),
   {
-    name: 'announcer ref (first-blood.ogg)',
+    name: 'announcer ref (ElevenLabs first blood)',
     dur: 2.2,
     run: async (e, ctx) => {
-      const buf = await loadClip(ctx, '/sounds/instagib/first-blood.ogg');
+      const buf = await loadClip(ctx, '/sounds/elevenlabs-v1/announcer/victor/first-blood_1.mp3');
       if (!buf) return;
       const s = ctx.createBufferSource();
       s.buffer = buf;
@@ -254,6 +265,8 @@ export async function renderCase(name: string, wantWav: boolean): Promise<CaseRe
   e.setMasterVolume(1);
   e.setListenerPos(0, 0, 0);
   e.setMap(c.map ?? 'causeway');
+  await e.preload();
+  if (c.name.startsWith('UI ')) await preloadUiCues(ctx);
   await c.run(e, ctx);
   const buf = await ctx.startRendering();
   const L = buf.getChannelData(0);

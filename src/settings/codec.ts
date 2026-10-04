@@ -42,6 +42,7 @@ export const DEFAULT_CROSSHAIR: CrosshairConfig = {
 };
 
 export const DEFAULT_SETTINGS: Settings = {
+  codexExitPolicy: 'completion',
   sensitivity: DEFAULT_SENSITIVITY,
   dpi: DEFAULT_DPI,
   vertScale: DEFAULT_VERT_SCALE,

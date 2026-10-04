@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "agent_deathmatch": {
+      "command": "node",
+      "cwd": ".",
+      "args": [
+        "server.mjs",
+        "--plugin-version=0.4.0"
+      ],
+      "env": {
+        "AGENT_DEATHMATCH_ORIGIN": "https://instagib.win"
+      },
+      "startup_timeout_sec": 15,
+      "tool_timeout_sec": 60
+    }
+  }
+}

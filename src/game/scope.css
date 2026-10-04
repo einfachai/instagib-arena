@@ -1,0 +1,23 @@
+.r01-scope {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  contain: layout paint;
+}
+.r01-scope[hidden] { display: none; }
+.r01-scope > svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+/* The optic owns aiming/recharge feedback; the rest of the HUD, including hit
+   confirmation and menus, keeps its ordinary stacking and accessibility. */
+.r01-scoped .hud-hip-aim { visibility: hidden; }
+
+.r01-scope-peripheral { position: absolute; inset: 0; pointer-events: none; }
+.r01-scope-peripheral[hidden] { display: none; }

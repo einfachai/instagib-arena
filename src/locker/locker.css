@@ -78,8 +78,8 @@
 }
 .lk-info:hover,
 .lk-info:focus-visible {
-  color: #a5f3fc;
-  border-color: rgba(103, 232, 249, 0.6);
+  color: var(--arena-accent-soft);
+  border-color: rgba(var(--arena-accent-light-rgb), 0.6);
 }
 .lk-info-tip {
   position: absolute;
@@ -134,7 +134,7 @@
 }
 .lk-close:hover,
 .lk-close:focus-visible {
-  color: #a5f3fc;
+  color: var(--arena-accent-soft);
   outline: none;
 }
 
@@ -174,7 +174,7 @@
   mask-image: linear-gradient(90deg, #000 0%, #000 91%, transparent 100%);
 }
 .lk-canvas:focus-visible {
-  box-shadow: inset 0 0 0 2px rgba(34, 211, 238, 0.7);
+  box-shadow: inset 0 0 0 2px rgba(var(--arena-accent-rgb), 0.7);
 }
 .lk-hint {
   position: absolute;
@@ -334,7 +334,7 @@
 .lk-bar > i {
   display: block;
   height: 100%;
-  background: var(--rc, #22d3ee);
+  background: var(--rc, var(--arena-accent));
 }
 .lk-action {
   display: flex;
@@ -367,7 +367,7 @@
   box-shadow: inset 0 0 0 2px #fff;
 }
 .lk-action-equip {
-  background: #67e8f9;
+  background: var(--arena-accent-light);
   color: #031418;
 }
 .lk-action-buy {
@@ -379,9 +379,9 @@
   color: #03140d;
 }
 .lk-action-done {
-  background: rgba(103, 232, 249, 0.1);
-  color: #a5f3fc;
-  box-shadow: inset 0 0 0 1px rgba(103, 232, 249, 0.45);
+  background: rgba(var(--arena-accent-light-rgb), 0.1);
+  color: var(--arena-accent-soft);
+  box-shadow: inset 0 0 0 1px rgba(var(--arena-accent-light-rgb), 0.45);
 }
 /* Secondary action (Preview): outlined, beside the solid CTA. */
 .lk-action-ghost {

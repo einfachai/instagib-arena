@@ -193,7 +193,7 @@ export function Ring({
   pct,
   size = 92,
   stroke = 7,
-  color = '#22d3ee',
+  color = '#7d9bff',
   children,
 }: {
   pct: number;

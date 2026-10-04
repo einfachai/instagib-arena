@@ -1,0 +1,7 @@
+{
+  "release": "20261004T164132Z",
+  "source": "current local workspace snapshot",
+  "source_archive_sha256": "600a0fe69a08be9bda2cf663ba8dd80e4a03acc75d041987f88c835a7ecfbeb9",
+  "node": "v24.21.0",
+  "validation": {"typecheck": "passed", "lint_errors": 0, "lint_warnings": 15, "security_tests": 25, "arcade_tests": 36, "audit_vulnerabilities": 0, "production_build": "passed"}
+}

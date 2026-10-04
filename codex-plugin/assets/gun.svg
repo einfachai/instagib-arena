@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="Railgun">
+  <g fill="#202124">
+    <path d="M3 24h13l5-5h32v4h8v9h-8v4H34l-4 7h-5l4-7h-6v13H12l4-13H3z"/>
+    <rect x="26" y="11" width="15" height="6" rx="2"/>
+    <rect x="30" y="16" width="4" height="4"/>
+  </g>
+  <path d="M36 25v5m6-5v5m6-5v5" stroke="#fff" stroke-width="2"/>
+</svg>

@@ -1,4 +1,8 @@
+import type { ArenaNotice } from './arcade';
+import type { SessionEnded } from './net';
+import type { MovementCue } from './movement-cues';
 import * as THREE from 'three';
+import { equipViewmodelArms, updateViewmodelArms } from './viewmodel-arms';
 import type { ProgressionResp } from '../app-types';
 import { SoundManager, type AnnouncerPackId, type SoundClipName } from './audio';
 import {
@@ -66,6 +70,9 @@ import { setRailBeamsReduced, type RailBeamMode } from './fx/rail-beam';
 import { TrainingRange, type TrainingTeleport } from './training';
 import { TRAINING_LAYOUT } from './maps/training';
 import { InputManager } from './input';
+import { ScopeOverlay } from './scope';
+import { ScopeTransition } from './scope-transition';
+import { applyScopePose, projectScopeSight } from './scope-pose';
 import { buildMapMesh, DEFAULT_MAP, MAPS, mapById, rayAabb, setMapBuildQuality, type ArenaMap } from './map';
 import { BANNER_MEDALS, MEDAL_LABELS, MedalTracker, medalSting } from './medals';
 import { FOOTSTEP_STRIDE, MotionTracker } from './sfx/motion-tracker';
@@ -181,6 +188,7 @@ export type HudListener = (state: HudState) => void;
 
 // Reported to the client when a match ends (frag limit) or the player leaves.
 export type MatchResult = {
+  visit?: SessionEnded['stats'];
   won: boolean;
   kills: number;
   deaths: number;
@@ -195,6 +203,7 @@ export type MatchEndListener = (result: MatchResult) => void;
 // (e.g. "couldn't join — lobby is gone/full" → bounce back to the menu). Map
 // changes are shown in-game via a HUD banner, not through this channel.
 export type NetMatchEvent =
+  | { type: 'session-ended'; session: SessionEnded }
   | { type: 'join-failed'; reason: string }
   | { type: 'spectate-ended' } // the watched match ended / room reaped → leave to lobby
   | { type: 'ranked-result'; result: RankedResult; won: boolean } // ranked match over → show overlay
@@ -394,6 +403,8 @@ export class Game {
   private wantMultiplayer = false;
   private multiplayerUrl = '';
   private multiplayerRoomId = '';
+  private arcadeOptions?: { controllerToken?: string; attemptId?: string };
+  private arenaNoticeIds = new Set<string>();
   // Spectator mode: this client WATCHES the room (no local player sim, no fire,
   // no pos upload). The camera rides `spectatedId`'s first-person POV.
   private spectator = false;
@@ -515,6 +526,7 @@ export class Game {
   private fpsFrames = 0;
   private fpsAccumMs = 0;
   private hudAccumMs = 0; // throttles HUD delivery in runLoop (#24)
+  private scopeDt = 1 / 60; // presentation clock keeps wall time across a slow frame
   private frameDt = 1 / 60; // last real frame delta (s) — for framerate-independent juice
 
   private tmpForward = new THREE.Vector3();
@@ -582,7 +594,7 @@ export class Game {
   // Weapon feedback: viewKick punches the view up on fire (transient, decays to
   // 0 each frame; aim is unaffected — it's layered on top of the real pitch).
   // The gun's own kick — plus bob / look sway / landing dip / dash lean / zoom
-  // tuck / idle breathing — lives in viewmodelMotion (viewmodel-motion.ts) and
+  // sight raise / idle breathing — lives in viewmodelMotion (viewmodel-motion.ts) and
   // is applied in render() on top of the base position + user offset.
   private viewKick = 0;
   private readonly viewmodelMotion = new ViewmodelMotion();
@@ -594,6 +606,14 @@ export class Game {
   private zoomFov = DEFAULT_ZOOM_FOV;
   private zoomSensMul = 1; // ADS sensitivity multiplier (blends in while zoomed)
   private wantZoom = false;
+  private readonly scope: ScopeOverlay;
+  private readonly scopeTransition = new ScopeTransition();
+  private readonly scopeProjection = { x: 0, y: 0, scale: 0.1 };
+  private readonly resetScope = () => {
+    const frame = this.scopeTransition.reset();
+    this.postFx.viewmodel.opacity = 1;
+    this.scope.update(frame, this.baseFov, this.baseFov, 1);
+  };
   // Graphics quality
   private resolutionScale = 1;
   private lowSpec = false;
@@ -606,6 +626,7 @@ export class Game {
     onMatchEnd?: MatchEndListener,
   ) {
     this.onMatchEnd = onMatchEnd ?? (() => {});
+    this.scope = new ScopeOverlay(canvas);
     this.renderer = createRenderer(canvas);
     this.scene = createScene(this.renderer);
     this.camera = createCamera(canvas);
@@ -673,6 +694,7 @@ export class Game {
       canvas,
       (locked) => {
         this.locked = locked;
+        if (!locked) this.resetScope();
         // Losing the pointer (Esc / alt-tab) closes the chat composer too — Esc
         // can't be intercepted before the browser exits pointer lock.
         if (!locked && this.chatOpen) this.closeChat();
@@ -698,6 +720,7 @@ export class Game {
 
     this.resizeHandler = () => this.handleResize();
     window.addEventListener('resize', this.resizeHandler);
+    window.addEventListener('blur', this.resetScope);
     window.addEventListener('keydown', this.tauntKeyHandler);
     this.handleResize();
     this.emitHud();
@@ -861,8 +884,8 @@ export class Game {
     this.applyViewmodelTransform();
   }
 
-  // Viewmodel motion intensity, 0–1 (0 = static gun, only the fire kick and zoom
-  // tuck remain; 1 = full bob / sway / landing dip / dash lean / idle). A
+  // Viewmodel motion intensity, 0–1 (0 = static gun, only the fire kick and
+  // sight raise remain; 1 = full bob / sway / landing dip / dash lean / idle). A
   // settings slider can be wired straight to this.
   setViewmodelMotion(intensity: number) {
     this.viewmodelMotion.setIntensity(intensity);
@@ -1148,6 +1171,7 @@ export class Game {
   // from the constructor and whenever the finish changes (Locker equip / a
   // spectator switching to a player whose gun skin differs).
   private buildViewmodel() {
+    this.resetScope();
     // Spectators show the WATCHED player's finish; normal play shows the local one.
     const finishId = this.viewmodelFinishOverride ?? this.localRailgunFinish;
     const finish = railgunFinishById(isRailgunFinish(finishId) ? finishId : DEFAULT_RAILGUN_FINISH).data;
@@ -1159,6 +1183,7 @@ export class Game {
       // spare (reused on the way back — replays swap to the star's gun and back).
       if (gunModelKey(this.viewmodelRail.modelKey) === wantKey) {
         this.viewmodelRail.setFinish(finish);
+        if (this.botModel) equipViewmodelArms(this.viewmodelRail, finish);
         this.applyViewmodelV3(true);
         return;
       }
@@ -1171,6 +1196,7 @@ export class Game {
     const vm = spare ?? buildRailgun(finish);
     if (spare) vm.setFinish(finish);
     this.viewmodelRail = vm;
+    if (this.botModel) equipViewmodelArms(vm, finish);
     vm.setLowSpec(this.lowSpec);
     // A brand-new build (not the first gun, which the match-load prewarm
     // covers) stays hidden until its programs compile off the frame.
@@ -1712,8 +1738,9 @@ export class Game {
     this.emitHud();
   }
 
-  setMultiplayer(opts: { enabled: boolean; url: string; roomId?: string; spectate?: boolean }) {
+  setMultiplayer(opts: { enabled: boolean; url: string; roomId?: string; spectate?: boolean; arcade?: { controllerToken?: string; attemptId?: string } }) {
     this.wantMultiplayer = opts.enabled;
+    this.arcadeOptions = opts.arcade;
     this.multiplayerUrl = opts.url;
     this.multiplayerRoomId = opts.roomId ?? '';
     this.spectator = opts.enabled && !!opts.spectate;
@@ -1814,6 +1841,7 @@ export class Game {
     }
     if (this.disposed) return;
     this.botModel = model;
+    this.buildViewmodel();
     this.applyBotsState();
     this.applyMultiplayerState();
     // Training mode: a target-practice range (no bots, no return fire).
@@ -1839,6 +1867,8 @@ export class Game {
     }
     this.tickFn = null;
     this.input.detach();
+    this.scope.dispose();
+    window.removeEventListener('blur', this.resetScope);
     window.removeEventListener('resize', this.resizeHandler);
     window.removeEventListener('keydown', this.tauntKeyHandler);
     this.tauntBody?.dispose(this.scene);
@@ -1963,7 +1993,10 @@ export class Game {
         name: this.playerName,
         roomId: this.multiplayerRoomId,
         spectate: this.spectator,
+        arcade: this.arcadeOptions,
         events: {
+          onSessionEnded: (session) => this.finishVisit(session),
+          onArenaNotice: (notice) => this.handleArenaNotice(notice),
           onKill: (ev) => this.handleNetKill(ev),
           onJoined: (info) => this.handleNetJoined(info),
           onJoinFailed: (reason) => this.onNetEvent({ type: 'join-failed', reason }),
@@ -1992,6 +2025,30 @@ export class Game {
       for (const rp of this.remotePlayers.values()) rp.dispose(this.scene);
       this.remotePlayers.clear();
     }
+  }
+
+  endVisit() { this.net?.endVisit(); }
+
+  private finishedVisitId = '';
+  finishVisit(session: SessionEnded) {
+    if (this.finishedVisitId === session.stats.visitId) {
+      if (session.rewards) this.onNetEvent({ type: 'progression', progression: { ...session.rewards, mode: 'arcade', partial: true } });
+      return;
+    }
+    this.finishedVisitId = session.stats.visitId;
+    this.matchOver = true; this.matchSubmitted = true; this.killcam = null; this.pom = null;
+    this.audio.replayEnd(); this.audio.stopAmbience();
+    if (document.pointerLockElement) document.exitPointerLock();
+    if (session.event) this.audio.announce(session.reason === 'completion' ? 'codex-complete' : 'codex-attention', session.stats.visitId);
+    this.onNetEvent({ type: 'session-ended', session }); this.emitHud();
+  }
+
+  private handleArenaNotice(notice: ArenaNotice) {
+    if (this.arenaNoticeIds.has(notice.id)) return;
+    this.arenaNoticeIds.add(notice.id);
+    if (this.arenaNoticeIds.size > 256) this.arenaNoticeIds.delete(this.arenaNoticeIds.values().next().value!);
+    this.audio.announce(notice.clip, notice.id);
+    this.banner = { id: this.nextEventId++, tier: 'special', title: notice.text, subtitle: '', remaining: 3, total: 3 };
   }
 
   // Server confirmed our room join → adopt the room's authoritative map and
@@ -2322,7 +2379,8 @@ export class Game {
   private onContextRestored: () => void = () => {};
 
   private frame(now: number) {
-    const dt = Math.min(0.1, (now - this.lastTime) / 1000);
+    this.scopeDt = Math.max(0, (now - this.lastTime) / 1000);
+    const dt = Math.min(0.1, this.scopeDt);
     this.lastTime = now;
     // Apply mouse look once per RENDERED frame, before stepping the sim, so
     // aim is as smooth as the display refresh (not quantized to the 64Hz sim)
@@ -2433,9 +2491,11 @@ export class Game {
     // Refresh the interpolated view of remote players (render-delayed so we
     // always interpolate between two snapshots — see NetClient.interpolate).
     this.net.interpolate(dt);
-    // Remove disconnected
+    // Dead players are absent from snapshots during the server killcam window.
+    // Finish their corpse animation before removing an absent avatar.
     for (const [id, rp] of this.remotePlayers) {
       if (!this.net.remotes.has(id)) {
+        if (rp.advanceDeathWithoutSnapshot(dt)) continue;
         rp.dispose(this.scene);
         this.remotePlayers.delete(id);
         this.motionSfx.forget(id);
@@ -2470,6 +2530,7 @@ export class Game {
         rp.team = snap.team;
         this.applyRemoteColor(rp);
       }
+      for (const cue of snap.cues ?? []) this.recorder.logMovement(id, cue);
       const respawned = rp.apply(snap, dt);
       if (respawned && !this.reducedEffects) {
         // This remote just materialized at its new spawn — play its effect.
@@ -2745,6 +2806,15 @@ export class Game {
           (v.x * Math.cos(yaw) - v.z * Math.sin(yaw)) / sp, // lateral (+ = right)
         );
       }
+      const ev = this.player.events;
+      const cueDirection = () => { const length = Math.hypot(v.x, v.z) || 1; return { x: v.x / length, z: v.z / length }; };
+      const emitCue = (cue: MovementCue) => { this.net?.sendMovementCue(cue); this.recorder.logMovement('you', cue); };
+      if (ev.jumped) emitCue({ kind: 'jump' });
+      if (ev.airJumped) emitCue({ kind: 'double-jump' });
+      if (ev.wallJumped) emitCue({ kind: 'wall-jump', direction: cueDirection() });
+      if (ev.boosted) emitCue({ kind: 'boost', direction: cueDirection() });
+      if (ev.dashed) emitCue({ kind: 'dash', direction: { x: ev.dashX, z: ev.dashZ } });
+      if (ev.landed) emitCue({ kind: 'landing', impact: Math.min(100, ev.impactSpeed) });
       this.movementSfx(dt);
     }
 
@@ -2790,6 +2860,7 @@ export class Game {
       // `invuln`: bots see your spawn protection and hold fire (they still track).
       if (!dead) enemies.push({ id: 'player', pos: this.player.pos, team: this.localTeam, invuln: this.localRespawnInvuln > 0 });
       for (const b of this.bots.bots) {
+        b.onMovementCue ??= (cue) => this.recorder.logMovement(b.state.id, cue);
         if (b.state.alive) enemies.push({ id: b.state.id, pos: b.state.pos, team: b.getTeam() });
       }
       const intents = this.bots.step(dt, this.map, enemies, this.inCountdown);
@@ -2854,14 +2925,15 @@ export class Game {
           // changed (dedup / paused / frozen sim), so the server holds the
           // previous pose across the gap instead of gliding through it.
           const flags = this.lastSentTick >= 0 && this.simTick - this.lastSentTick > 1 ? POS_FLAG_HOLD : 0;
-          this.net.sendPosition(p.x, p.y, p.z, this.player.yaw, this.player.pitch, this.simTick, flags);
-          this.lastSentTick = this.simTick;
-          this.lastSentPos.x = p.x;
-          this.lastSentPos.y = p.y;
-          this.lastSentPos.z = p.z;
-          this.lastSentYaw = this.player.yaw;
-          this.lastSentPitch = this.player.pitch;
-          this.lastPosSentMs = nowMs;
+          if (this.net.sendPosition(p.x, p.y, p.z, this.player.yaw, this.player.pitch, this.simTick, flags)) {
+            this.lastSentTick = this.simTick;
+            this.lastSentPos.x = p.x;
+            this.lastSentPos.y = p.y;
+            this.lastSentPos.z = p.z;
+            this.lastSentYaw = this.player.yaw;
+            this.lastSentPitch = this.player.pitch;
+            this.lastPosSentMs = nowMs;
+          }
         }
       }
     }
@@ -2989,6 +3061,7 @@ export class Game {
       targets,
       this.tmpBeamOrigin,
       this.map,
+      () => this.audio.play('fire', 0.55),
     );
     // Cooldown blocked the shot → no SFX, no side effects.
     if (!result) return;
@@ -2997,7 +3070,7 @@ export class Game {
     // online play) — no shooting from behind protection.
     if (this.localRespawnInvuln > 0) this.localRespawnInvuln = 0;
 
-    // Real shot: play fire SFX exactly once. The weapon already set cooldown.
+    // The weapon already queued one discharge and set cooldown for this shot.
     // In training, clear the cooldown again and keep weaponWasReady true so the
     // reload-ready ping doesn't replay after every shot.
     this.weaponWasReady = trainingShot;
@@ -3018,7 +3091,6 @@ export class Game {
       'player',
       this.localTeam,
     );
-    this.audio.play('fire', 0.55);
     if (!trainingShot) this.audio.chargeStart(this.weapon.cooldown); // coils recharge hum
     this.addShake(SHAKE_FIRE);
     // Weapon feedback: two-stage gun kick + muzzle bloom (viewmodelMotion), punch
@@ -3863,16 +3935,15 @@ export class Game {
         killerKit: this.killerKitOf(ev.killerId),
       };
     } else {
-      // Bystander — just hide the dead remote player briefly.
-      const rp = this.remotePlayers.get(ev.victimId);
-      if (rp) rp.markDead(finisher);
+      // Bystanders hear the same kill; the shared transition below owns the body.
       this.audio.gibAt(burstAt.x, burstAt.y, burstAt.z, 0.6); // hear frags around you
     }
 
-    // For non-victim clients that are local-rendering the victim, hide them.
+    // Start the corpse once, at the hit location even if a respawn snapshot
+    // has already moved the live avatar elsewhere.
     if (!iAmVictim) {
       const rp = this.remotePlayers.get(ev.victimId);
-      if (rp) rp.markDead(finisher);
+      if (rp) rp.markDead(finisher, ev.victimPos);
     }
 
     // Killfeed everywhere.
@@ -4108,6 +4179,8 @@ export class Game {
       scores[0].title = this.net.localTitleText || titleById(this.localTitle).text;
       // Local player's accuracy is tracked client-side from confirmed kills.
       scores[0].accuracy = pct(this.playerShotsHit, this.playerShotsFired);
+      const own = this.net.localVisit;
+      if (own) { scores[0].visit = own; scores[0].actor = 'human'; scores[0].accuracy = pct(own.hits, own.shots); scores[0].bestStreak = own.bestStreak; scores[0].currentStreak = own.currentStreak; }
       scores[0].ping = Math.round(this.net.rttMs);
       // Build from the meta roster, not `net.remotes`: a player hidden from
       // snapshots during their killcam is absent from `remotes`, so iterating it
@@ -4120,9 +4193,10 @@ export class Game {
           isLocal: false,
           frags: r.frags,
           deaths: r.deaths,
-          bestStreak: 0,
-          currentStreak: 0,
-          accuracy: null, // server doesn't report remote shot counts
+          visit: r.visit, actor: r.actor,
+          bestStreak: r.visit?.bestStreak ?? 0,
+          currentStreak: r.visit?.currentStreak ?? 0,
+          accuracy: r.visit ? pct(r.visit.hits, r.visit.shots) : null,
           team: r.team,
           hat: r.hat,
           emote: r.emote,
@@ -4156,7 +4230,7 @@ export class Game {
     }
 
     // Match-drama cues read the local player's standing — skip while spectating.
-    if (!this.spectator) this.updateMatchDrama(board, teamScores);
+    if (!this.spectator && !this.arcadeOptions) this.updateMatchDrama(board, teamScores);
 
     // Spectator HUD: who's in view + the switch list + their crosshair share-code.
     let spectatorHud: SpectatorHud | null = null;
@@ -4200,7 +4274,7 @@ export class Game {
       killcam: this.killcam ? { ...this.killcam } : null,
       taunting: this.taunt !== null,
       showScoreboard: this.input.scoreboardHeld,
-      matchOver: this.matchOver ? { won: this.matchWon } : null,
+      matchOver: this.matchOver && !this.finishedVisitId ? { won: this.matchWon } : null,
       netStatus: this.net?.status ?? 'off',
       // Room membership (meta roster), NOT the interpolated `remotes` view: a
       // killed player is hidden from snapshots during their killcam, so
@@ -4355,26 +4429,27 @@ export class Game {
       this.camera.position.z += (Math.random() * 2 - 1) * this.shake;
       this.shake *= Math.exp(-9.05 * this.frameDt); // ≈ 0.86/frame at 60fps, fps-independent
     }
-    // Zoom: ease FOV toward the zoom target. The killcam tightens to KILLCAM_FOV
-    // (a cinematic zoom onto your killer); otherwise it's the ADS zoom while held,
-    // else the base FOV. The shared ease handles the smooth zoom-in and the
-    // zoom-out back to gameplay when the killcam ends.
-    const zooming =
-      this.wantZoom && this.locked && !this.killcam && !this.matchOver && !this.vote && !this.replay;
-    const targetFov = this.killcam ? KILLCAM_FOV : zooming ? this.zoomFov : this.baseFov;
-    if (Math.abs(this.camera.fov - targetFov) > 0.01) {
-      this.camera.fov += (targetFov - this.camera.fov) * (1 - Math.exp(-18 * this.frameDt));
+    // The shared scope phase drives FOV, pose, and overlay together. Killcam
+    // keeps its own cinematic FOV easing after the local scope is cleared.
+    // Read held input each render so release/blur is immediate even between sim
+    // steps. Never carry a local optic into a cinematic, chat, or spectator POV.
+    this.wantZoom = this.input.zoomHeld;
+    const scopeAllowed = this.locked && !this.killcam && !this.matchOver &&
+      !this.vote && !this.replay && !this.spectator && !this.taunt && !this.chatOpen;
+    const scopeFrame = this.scopeTransition.update(this.wantZoom, this.scopeDt, scopeAllowed);
+    const scopeFov = Math.min(this.zoomFov, this.baseFov - 1);
+    const targetFov = this.killcam ? KILLCAM_FOV : THREE.MathUtils.lerp(this.baseFov, scopeFov, scopeFrame.zoom);
+    if (this.camera.fov !== targetFov) {
+      this.camera.fov = scopeAllowed ? targetFov : this.camera.fov + (targetFov - this.camera.fov) * (1 - Math.exp(-18 * this.frameDt));
       this.camera.updateProjectionMatrix();
     }
     // Scale look sensitivity with the current (lerping) FOV so zoomed aim stays
     // steady, then fold in the ADS multiplier — which eases in as you zoom (1×
     // at hipfire → zoomSensMul at full zoom) so hipfire feel is untouched.
     const fovRatio = this.baseFov > 0 ? this.camera.fov / this.baseFov : 1;
-    const zoomT =
-      this.baseFov > this.zoomFov
-        ? Math.max(0, Math.min(1, (this.baseFov - this.camera.fov) / (this.baseFov - this.zoomFov)))
-        : 0;
+    const zoomT = scopeFrame.zoom;
     this.input.lookScale = fovRatio * (1 + (this.zoomSensMul - 1) * zoomT);
+    this.postFx.viewmodel.opacity = scopeFrame.weaponOpacity;
     // Decay weapon feedback — exp easing keyed to real dt so the punch feels the
     // same at 60fps and uncapped (the marketed FPS-uncap would otherwise change
     // recoil/kick feel with framerate). Constants match the old /frame factors.
@@ -4388,7 +4463,7 @@ export class Game {
     // Viewmodel: show while actively playing in first person, OR while watching a
     // player in first-person spectator POV (so you see THEIR gun skin). The
     // motion helper layers bob / look sway / landing dip / dash lean / the
-    // two-stage fire kick / zoom tuck / idle breathing on top of the base
+    // two-stage fire kick / sight raise / idle breathing on top of the base
     // position + the user's offset (viewmodel-motion.ts; all exp/spring-smoothed
     // on real dt, so the feel is identical at 60fps and uncapped).
     this.applyViewmodelV3();
@@ -4405,7 +4480,7 @@ export class Game {
       // shaders (vmWarming) instead of stalling a frame.
       const rp = this.replay;
       this.viewmodel.visible =
-        !this.hideViewmodel && !this.vmWarming && (this.locked || specPov || !!rp) && (!this.killcam || !!rp) && !this.taunt;
+        scopeFrame.weaponOpacity > 0 && !this.hideViewmodel && !this.vmWarming && (this.locked || specPov || !!rp) && (!this.killcam || !!rp) && !this.taunt;
       if (rp && this.viewmodelRail) {
         // Replay: the star's killstreak drives the gun's sheen as it climbs…
         const n = rp.starStreak;
@@ -4431,13 +4506,16 @@ export class Game {
         zoom: zoomT,
         reducedEffects: this.reducedEffects,
       });
-      if (this.viewmodel.visible) {
+      if (this.viewmodel.visible || scopeFrame.progress > 0) {
         this.viewmodel.position.set(
           VIEWMODEL_BASE.x + this.viewmodelOffset.x + pose.x,
           VIEWMODEL_BASE.y + this.viewmodelOffset.y + pose.y,
           VIEWMODEL_BASE.z + this.viewmodelOffset.z + pose.z,
         );
         this.viewmodel.rotation.set(pose.rx, pose.ry, pose.rz);
+        applyScopePose(this.viewmodel, this.viewmodelRail?.sight, scopeFrame);
+        projectScopeSight(this.viewmodel, this.viewmodelRail?.sight, this.camera, this.scopeProjection);
+        updateViewmodelArms(this.viewmodel);
       }
       // Muzzle bloom: pops on fire, then expands as it dims. Hidden at rest so
       // it costs nothing between shots.
@@ -4455,6 +4533,9 @@ export class Game {
       // player.pitch/yaw, never the camera, so aim is untouched.
       if (localPov && !this.taunt && pose.camPitch !== 0) this.camera.rotation.x += pose.camPitch;
     }
+    this.scope.update(scopeFrame, this.baseFov, this.camera.fov,
+      1 - this.weapon.cooldown / Math.max(0.001, this.weapon.cooldownTotal),
+      this.hideViewmodel ? undefined : this.scopeProjection, this.reducedEffects || this.lowSpec);
     // Track the HRTF audio listener to the (now finalized) camera so spatial
     // sounds — other players' rail fire etc. — pan to where they actually are.
     this.camera.getWorldDirection(this.tmpForward);

@@ -187,7 +187,7 @@ export function SettingsModal({
         row(
           'zoomfov',
           'zoom fov ads',
-          <SliderRow label='Zoom FOV' hint='Your view while holding Zoom.' value={settings.zoomFov} min={MIN_ZOOM_FOV} max={MAX_ZOOM_FOV} step={1} def={D.zoomFov} format={deg} onChange={(v) => set({ zoomFov: v })} />,
+          <SliderRow label='Zoom FOV' hint='Your scope view while holding right mouse or the alternate scope key.' value={settings.zoomFov} min={MIN_ZOOM_FOV} max={MAX_ZOOM_FOV} step={1} def={D.zoomFov} format={deg} onChange={(v) => set({ zoomFov: v })} />,
         ),
         row(
           'zoomsens',
@@ -213,7 +213,7 @@ export function SettingsModal({
       rows: [
         row(
           'keys',
-          'keybind bind key rebind move forward back strafe left right jump dash zoom scoreboard chat taunt inspect weapon',
+          'keybind bind key rebind move forward back strafe left right jump dash boost scope zoom scoreboard chat taunt inspect weapon',
           <KeybindGrid keybinds={settings.keybinds} onChange={(b) => set({ keybinds: b })} />,
         ),
       ],
@@ -364,7 +364,7 @@ export function SettingsModal({
       id: 'viewmodel',
       tab: 'video',
       title: 'Weapon viewmodel',
-      note: 'The railgun sits low and to the side so it never blocks your aim. Bind “Zoom (hold)” under Controls to narrow your FOV.',
+      note: 'The railgun sits low and to the side so it never blocks your aim. Hold right mouse to look through the scope. Adjust Zoom FOV under Controls.',
       rows: [
         row('hidevm', 'hide viewmodel weapon gun', <ToggleRow label='Hide viewmodel' value={settings.hideViewmodel} def={D.hideViewmodel} onChange={(v) => set({ hideViewmodel: v })} />),
         ...(settings.hideViewmodel

@@ -156,7 +156,7 @@ function CreateCode({ onCreated }: { onCreated: (c: RedeemCodeWire) => void }) {
             </div>
             {expiryErr && <div className='text-[12px] text-[var(--adm-bad)]'>{expiryErr}</div>}
             <Field label='Note' hint='shown to players on their receipt · ≤ 200'>
-              <input className='adm-input' maxLength={200} value={note} onChange={(e) => setNote(e.target.value)} placeholder='Thanks for playing Instagib Arena.' data-field='code-note' />
+              <input className='adm-input' maxLength={200} value={note} onChange={(e) => setNote(e.target.value)} placeholder='Thanks for playing Agent Deathmatch.' data-field='code-note' />
             </Field>
           </div>
 

@@ -1,3 +1,4 @@
+import type { MovementCue } from '../movement-cues';
 import * as THREE from 'three';
 import { HATS, type EmoteKind } from '../cosmetics';
 import { WornHat } from '../hats';
@@ -15,7 +16,7 @@ import type { LabDriver } from './lab';
 // not displayed); vertical motion is shown via the slot's height.
 
 type Sample = { x: number; y: number; z: number; yaw: number; pitch: number };
-type Scenario = { dur: number; at(t: number, out: Sample): void; death?: number };
+type Scenario = { cues?: { t: number; cue: MovementCue }[]; dur: number; at(t: number, out: Sample): void; death?: number };
 
 const G = 25;
 function ballistic(t: number, t0: number, vy0: number): number {
@@ -44,7 +45,7 @@ const SCEN: Record<string, Scenario> = {
   fall: { dur: 3, at: (t, o) => set(o, 0, t < 1 ? 3 : Math.max(0, 3 - 0.5 * G * (t - 1) ** 2), -9 * t) },
   // dash burst at 1.0 s for 0.15 s
   dash: {
-    dur: 3,
+    dur: 3, cues: [{ t: 1, cue: { kind: 'dash', direction: { x: 0, z: -1 } } }],
     at: (t, o) => {
       const d = t < 1 ? 10 * t : t < 1.15 ? 10 + 22 * (t - 1) : 13.3 + 10 * (t - 1.15);
       set(o, 0, 0, -d);
@@ -52,7 +53,7 @@ const SCEN: Record<string, Scenario> = {
   },
   // jump toward a wall on the right, kick off it at 1.35 s (away = −X, up)
   walljump: {
-    dur: 3,
+    dur: 3, cues: [{ t: 1.35, cue: { kind: 'wall-jump', direction: { x: -1, z: 0 } } }],
     at: (t, o) => {
       if (t < 1) return set(o, 6 * t, 0, -6 * t);
       if (t < 1.35) return set(o, 6 * t, ballistic(t, 1, 9), -6 * t);
@@ -100,6 +101,7 @@ class Sim {
   // Advance to absolute time T (from the current time).
   advanceTo(T: number) {
     while (this.t + STEP <= T + 1e-9) {
+      const prior = this.t;
       this.t += STEP;
       this.scen.at(this.t, this.s);
       this.pos.set(this.s.x, this.s.y, this.s.z);
@@ -107,7 +109,7 @@ class Sim {
         this.dead = true;
         this.anim.die({ y: 0 });
       }
-      this.anim.update({ dt: STEP, yaw: this.s.yaw, pitch: this.s.pitch, pos: this.pos });
+      this.anim.update({ dt: STEP, yaw: this.s.yaw, pitch: this.s.pitch, pos: this.pos, grounded: this.s.y <= 0, cues: this.scen.cues?.filter((e) => e.t > prior && e.t <= this.t).map((e) => e.cue) });
       this.slot.position.y = this.dead ? 0 : this.s.y;
     }
   }

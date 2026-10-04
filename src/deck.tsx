@@ -46,7 +46,7 @@ const MODAL_SIZE: Record<ModalSize, string> = {
 // Tone drives the ONE accent each dialog carries: the hairline rule along the
 // top edge, the border tint, and the title color. Everything else is quiet.
 const MODAL_TONE: Record<ModalTone, { border: string; title: string; rule: string; glow: string }> = {
-  cyan: { border: 'border-cyan-400/30', title: 'text-cyan-100', rule: 'from-cyan-300/80', glow: 'rgba(34,211,238,0.32)' },
+  cyan: { border: 'border-cyan-400/30', title: 'text-cyan-100', rule: 'from-cyan-300/80', glow: 'rgba(var(--arena-accent-rgb),0.32)' },
   emerald: { border: 'border-emerald-400/30', title: 'text-emerald-100', rule: 'from-emerald-300/80', glow: 'rgba(52,211,153,0.28)' },
   amber: { border: 'border-amber-400/30', title: 'text-amber-100', rule: 'from-amber-300/80', glow: 'rgba(251,191,36,0.26)' },
   rose: { border: 'border-rose-400/30', title: 'text-rose-100', rule: 'from-rose-300/80', glow: 'rgba(251,113,133,0.28)' },
@@ -298,8 +298,8 @@ const OUTLINE: Record<DeckAccent, string> = {
 };
 const SOLID: Record<DeckAccent, string> = {
   plain: 'border-white/80 bg-white/90 text-zinc-950 hover:bg-white',
-  cyan: 'border-cyan-300 bg-cyan-300 text-zinc-950 hover:bg-cyan-200',
-  emerald: 'border-emerald-400 bg-emerald-400 text-zinc-950 hover:bg-emerald-300',
+  cyan: 'deck-primary',
+  emerald: 'deck-primary',
   amber: 'border-amber-300 bg-amber-300 text-zinc-950 hover:bg-amber-200',
   rose: 'border-rose-400 bg-rose-400 text-zinc-950 hover:bg-rose-300',
   fuchsia: 'border-fuchsia-400 bg-fuchsia-400 text-zinc-950 hover:bg-fuchsia-300',

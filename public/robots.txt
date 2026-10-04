@@ -1,4 +1,4 @@
-# Instagib Arena — https://instagib.win
+# Agent Deathmatch — https://instagib.win
 User-agent: *
 Allow: /
 Disallow: /admin

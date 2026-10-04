@@ -78,7 +78,7 @@ export function OnboardingModal({
         </span>
         <div className='deck-label !text-cyan-200/80'>Welcome to</div>
         <h2 className='font-display text-3xl font-bold uppercase leading-none tracking-[0.08em] text-white'>
-          Instagib Arena
+          Agent Deathmatch
         </h2>
         <p className='font-display text-sm font-semibold uppercase tracking-[0.24em] text-white/80'>
           One railgun. One shot. Pure movement.

@@ -1,10 +1,11 @@
+import { copyMovementCue, type MovementCue } from './movement-cues';
 import * as THREE from 'three';
 import { RemotePlayer } from './remote-player';
 import type { BotModel } from './bots';
 import type { RemotePlayerSnapshot } from './net';
 import type { Vec3 } from './types';
 import type { KillEffectStyle } from './cosmetics';
-import { EYE_HEIGHT, MULTIKILL_WINDOW_SEC, TEAM_COLORS } from './constants';
+import { EYE_HEIGHT, MULTIKILL_WINDOW_SEC, TEAM_COLORS, RAIL_COOLDOWN } from './constants';
 import {
   REPLAY_VERSION,
   type ReplayActorProfile,
@@ -14,6 +15,7 @@ import {
   type ReplayPose,
   type ReplayShot,
   type ReplayTaunt,
+  type ReplayMovement,
 } from './replay-codec';
 import type { Look } from './items/types';
 import { emoteClip } from './emotes';
@@ -79,6 +81,14 @@ export class MatchRecorder {
   readonly kills: ReplayKill[] = [];
   readonly shots: ReplayShot[] = [];
   readonly taunts: ReplayTaunt[] = [];
+  readonly movement: ReplayMovement[] = [];
+  logMovement(actorId: string, cue: MovementCue): void {
+    const event = { t: Math.max(0, this.clock - (cue.age ?? 0)), actorId, cue: copyMovementCue(cue) };
+    let i = this.movement.length;
+    while (i > 0 && this.movement[i - 1].t > event.t) i--;
+    this.movement.splice(i, 0, event);
+    if (this.movement.length > 16000) this.movement.shift();
+  }
 
   private clock = 0;
   private frameAccum = 0;
@@ -139,6 +149,7 @@ export class MatchRecorder {
     this.kills.length = 0;
     this.shots.length = 0;
     this.taunts.length = 0;
+    this.movement.length = 0;
     this.clock = 0;
     this.frameAccum = 0;
   }
@@ -159,6 +170,7 @@ export class MatchRecorder {
       kills: this.kills,
       shots: this.shots,
       taunts: this.taunts,
+      movement: this.movement,
     };
   }
 
@@ -373,6 +385,7 @@ export type ReplaySource = {
   kills: ReplayKill[];
   shots: ReplayShot[];
   taunts?: ReplayTaunt[];
+  movement?: ReplayMovement[];
 };
 
 function lerpAngle(a: number, b: number, t: number): number {
@@ -407,6 +420,8 @@ export class ReplayPlayer {
   private nextKillIdx = 0;
   private taunts: ReplayTaunt[] = [];
   private nextTauntIdx = 0;
+  private movement: ReplayMovement[] = [];
+  private nextMovementIdx = 0;
   private profiles = new Map<string, ReplayActorProfile>();
   // Each actor's running killstreak this life (drives the gun's killstreak sheen).
   private streaks = new Map<string, number>();
@@ -426,6 +441,7 @@ export class ReplayPlayer {
   // each one — see AIM_LOCK_SEC.
   private starShots: { t: number; yaw: number; pitch: number }[] = [];
   private lastStarShotT = -1e9; // match-time of the star's latest shot (coil recharge)
+  private readonly weaponShotTimes = new Map<string, number>();
   private camPos = new THREE.Vector3();
   private camYaw = 0;
   private camPitch = 0;
@@ -498,6 +514,12 @@ export class ReplayPlayer {
     this.nextShotIdx = firstAtOrAfter(this.shots, t);
     this.nextKillIdx = firstAtOrAfter(this.kills, t);
     this.nextTauntIdx = firstAtOrAfter(this.taunts, t);
+    this.nextMovementIdx = firstAtOrAfter(this.movement, t);
+    for (const actor of this.actors.values()) actor.resetAnimationTimeline();
+    // Restore only the short movement phase that overlaps a seek target.
+    const recent = new Map<string, ReplayMovement>();
+    for (let i = Math.max(0, firstAtOrAfter(this.movement, t - 0.5)); i < this.nextMovementIdx; i++) recent.set(this.movement[i].actorId, this.movement[i]);
+    for (const event of recent.values()) this.actors.get(event.actorId)?.queueMovementCue({ ...event.cue, age: t - event.t });
     this.seekSnap = true;
     this.lastStarShotT = -1e9;
     this.starMotion.clear();
@@ -548,6 +570,7 @@ export class ReplayPlayer {
     this.kills = src.kills;
     this.shots = src.shots;
     this.taunts = src.taunts ?? [];
+    this.movement = src.movement ?? [];
     this.profiles = src.profiles;
     this.t = clip.startT;
     this.timeScale = opts.timeScale && opts.timeScale > 0 ? opts.timeScale : 1;
@@ -577,7 +600,7 @@ export class ReplayPlayer {
       const actor = pooled ?? new RemotePlayer(id, profile.name, this.deps.scene, this.deps.botModel);
       if (pooled) {
         // A body from an earlier replay: drop what it was doing there.
-        pooled.endTaunt();
+        pooled.resetAnimationTimeline();
         pooled.replayFinisher = null;
       }
       actor.team = profile.team;
@@ -621,6 +644,7 @@ export class ReplayPlayer {
       this.nextKillIdx++;
     }
     this.nextTauntIdx = firstAtOrAfter(this.taunts, clip.startT);
+    this.nextMovementIdx = firstAtOrAfter(this.movement, clip.startT);
     this.recomputeStreaks(clip.startT);
 
     // Seed the camera in the star's eyes so it doesn't snap on the first frame.
@@ -661,6 +685,10 @@ export class ReplayPlayer {
     // snap that hides (gibs) them plays the right death.
     const advancing = !this.frozen && !this.paused && !this.seekSnap;
     const poses = this.sampleAll();
+    while (this.nextMovementIdx < this.movement.length && this.movement[this.nextMovementIdx].t <= this.t) {
+      const event = this.movement[this.nextMovementIdx++];
+      if (poses[event.actorId]?.visible) this.actors.get(event.actorId)?.queueMovementCue({ ...event.cue, age: Math.min(2, this.t - event.t) });
+    }
     for (let i = this.nextKillIdx; i < this.kills.length && this.kills[i].t <= this.t; i++) {
       const k = this.kills[i];
       const victim = this.actors.get(k.victimId);
@@ -685,7 +713,7 @@ export class ReplayPlayer {
         this.deps.spawnIn?.(new THREE.Vector3(pose.x, pose.y, pose.z), actor.equippedSpawnEffect);
       }
       this.wasVisible.set(id, pose.visible);
-      actor.snap(pose, dt);
+      actor.snap(pose, advancing ? dt * this.timeScale : 0);
     }
 
     // Taunts that started in this slice of time: the emote clip + its aura.
@@ -727,6 +755,7 @@ export class ReplayPlayer {
     while (this.nextShotIdx < this.shots.length && this.shots[this.nextShotIdx].t <= this.t) {
       const s = this.shots[this.nextShotIdx++];
       const star = s.killerId === this.clip.starId;
+      this.actors.get(s.killerId)?.notifyFire();
       this.deps.spawnBeam(s.origin, s.end, s.killerId, star);
       if (!reduced && !(star && this.deps.starViewmodel)) this.deps.spawnMuzzleFlash(s.origin);
       if (star) {
@@ -762,6 +791,23 @@ export class ReplayPlayer {
       if (isStarKill) this.deps.onStarKill?.(k.headshot, chain);
     }
 
+    // Sample recharge from recorded time even when event cursors have skipped
+    // over a shot during a seek. Death cancels the previous life's recharge.
+    this.weaponShotTimes.clear();
+    const from = this.t - RAIL_COOLDOWN;
+    for (let i = firstAtOrAfter(this.shots, from); i < this.shots.length && this.shots[i].t <= this.t; i++) {
+      const shot = this.shots[i]; this.weaponShotTimes.set(shot.killerId, shot.t);
+    }
+    for (let i = firstAtOrAfter(this.kills, from); i < this.kills.length && this.kills[i].t <= this.t; i++) {
+      const kill = this.kills[i];
+      if (kill.t >= (this.weaponShotTimes.get(kill.victimId) ?? Infinity)) this.weaponShotTimes.delete(kill.victimId);
+    }
+    this.lastStarShotT = this.weaponShotTimes.get(this.clip.starId) ?? -1e9;
+    for (const [id, actor] of this.actors) {
+      const shot = this.weaponShotTimes.get(id);
+      actor.setWeaponCharge(poses[id]?.visible && shot !== undefined ? Math.min(1, (this.t - shot) / RAIL_COOLDOWN) : 1);
+    }
+
     // First-person camera riding the star's eyes (snap on the frame after a seek
     // so the view jumps to the new vantage instead of sliding across the map).
     const star = poses[this.clip.starId] ?? this.poseAt(this.clip.starId, this.t);
@@ -772,6 +818,7 @@ export class ReplayPlayer {
   dispose() {
     const release = this.deps.releaseActor;
     for (const actor of this.actors.values()) {
+      actor.setWeaponCharge(1);
       if (release) release(actor);
       else actor.dispose(this.deps.scene);
     }
@@ -849,6 +896,8 @@ export class ReplayPlayer {
     const f2 = this.frames[Math.min(this.frames.length - 1, this.frameIdx + 2)];
     for (const id of this.actors.keys()) {
       out[id] = cubicPose(fm.poses[id], f0.poses[id], f1.poses[id], f2.poses[id], alpha);
+      const a = f0.poses[id], b = f1.poses[id];
+      if (span > 0 && a?.visible && b?.visible) out[id].velocity = { x: (b.x - a.x) / span, y: (b.y - a.y) / span, z: (b.z - a.z) / span };
     }
     // The star isn't an actor (we ride their eyes) but is sampled the same way.
     const sid = this.clip.starId;

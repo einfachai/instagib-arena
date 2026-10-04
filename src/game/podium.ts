@@ -6,6 +6,7 @@ import { WornHat } from './hats';
 import { emoteById } from './cosmetics';
 import { CharacterAnimator } from './character-anim';
 import { Character, skinColorFor } from './character/character';
+import { preloadCharacterAssets } from './character/assets';
 import { dyeById } from './dyes';
 import { attachRailgun, disposeRailgun } from './character/gun';
 import { WornGearCtor, wearLook, type GearLike } from '../economy/gear';
@@ -638,8 +639,7 @@ export class PodiumScene {
     if (this.disposed) return;
     const gen = ++this.gen;
     this.clearChars();
-    await this.fontsReady();
-    await this.built;
+    await Promise.all([this.fontsReady(), this.built, preloadCharacterAssets()]);
     if (this.disposed || gen !== this.gen) return;
     const used = new Set(winners.slice(0, 3).map((w) => Math.max(0, Math.min(2, w.place - 1))));
     this.stages.forEach((st, i) => {

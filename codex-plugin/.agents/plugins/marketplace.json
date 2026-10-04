@@ -1,0 +1,12 @@
+{
+  "name": "agent-deathmatch-local",
+  "interface": { "displayName": "Agent Deathmatch Local" },
+  "plugins": [
+    {
+      "name": "agent-deathmatch",
+      "source": { "source": "local", "path": "./" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_USE" },
+      "category": "Developer Tools"
+    }
+  ]
+}

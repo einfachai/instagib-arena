@@ -1,0 +1,8 @@
+{
+  "asset": "public/og-agent-deathmatch.png",
+  "tool": "image_gen.imagegen (built-in)",
+  "operation": "edit",
+  "width": 1731,
+  "height": 909,
+  "promptSummary": "Use case: text-localization. Edit target: the supplied game social preview card. Replace the old brand and marketing text with Agent Deathmatch branding. Keep the near-black navy background, thin glowing blue-to-violet rail beam, crisp white typography and wide social-card layout. Main title on two stacked lines: \"AGENT\" and \"DEATHMATCH\"; resize lettering so both are fully visible with generous margins. Small top line: \"PLAY WHILE CODEX WORKS\". Supporting tagline below title: \"Kill time while your coding agent works.\" Small footer: \"Task done. Scoreboard. Back to work.\" Use only those exact four text blocks. Remove all previous text, including the previous product name, no download and browser FPS claims. No extra illustrations or logos. Produce a polished wide image about 1.9:1 aspect ratio, readable at social thumbnail scale."
+}

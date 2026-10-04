@@ -75,12 +75,7 @@ function LobbySkeleton() {
   );
 }
 
-const MODE_FILTERS: ReadonlyArray<{ id: 'all' | GameMode; label: string }> = [
-  { id: 'all', label: 'All' },
-  { id: 'ffa', label: 'FFA' },
-  { id: 'duel', label: '1v1' },
-  { id: 'tdm', label: 'TDM' },
-];
+
 
 function RoomCard({
   room: r,
@@ -154,16 +149,15 @@ export function OpenLobbies({
   onSpectate: (r: LobbyRoom) => void;
   onRefresh: () => void;
 }) {
-  const [modeFilter, setModeFilter] = useState<'all' | GameMode>('all');
   const [hideFull, setHideFull] = useState(false);
   const failed = status === 'closed' || status === 'error';
   const shown = useMemo(
-    () => rooms.filter((r) => (modeFilter === 'all' || r.mode === modeFilter) && (!hideFull || r.joinable)),
-    [rooms, modeFilter, hideFull],
+    () => rooms.filter((r) => !hideFull || r.joinable),
+    [rooms, hideFull],
   );
   const shotIds = useMemo(() => Array.from(new Set(shown.map((r) => r.mapId))), [shown]);
   const shots = useLevelshots(shotIds);
-  const filtering = modeFilter !== 'all' || hideFull;
+  const filtering = hideFull;
   return (
     <>
       <div className='flex shrink-0 items-center justify-between px-4 pb-2 pt-3 font-mono text-[10px] uppercase tracking-[0.16em] text-white/45'>
@@ -186,18 +180,6 @@ export function OpenLobbies({
       </div>
       {online && rooms.length > 0 && (
         <div className='lb-filters' role='group' aria-label='Filter lobbies'>
-          {MODE_FILTERS.map((f) => (
-            <button
-              key={f.id}
-              type='button'
-              aria-pressed={modeFilter === f.id}
-              onClick={() => setModeFilter(f.id)}
-              {...sfxProps('uiClick')}
-              className='lb-chipbtn'
-            >
-              {f.label}
-            </button>
-          ))}
           <button
             type='button'
             aria-pressed={hideFull}

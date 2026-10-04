@@ -1,5 +1,6 @@
 import { announcerVariantCount } from './announcer-lines';
 import { SfxEngine, type LocalMoveKind } from './sfx/engine';
+import { GENERATED_SFX_URLS } from './sfx/generated-pack';
 import type { MotionEventKind } from './sfx/motion-tracker';
 import type { StingKind } from './sfx/stings';
 
@@ -24,74 +25,51 @@ export type SoundClipName =
   | 'match-point'
   | 'victory'
   | 'defeat'
-  | 'spawn';
+  | 'spawn'
+  | 'codex-entered' | 'codex-alone' | 'codex-complete' | 'codex-attention';
 
-// Announcer voice packs. The default ('legacy') uses the flat SOUND_URLS files
-// below + the procedural/TTS fallback — unchanged behavior. Other packs are sets
-// of generated clips under /sounds/instagib/announcer/<id>/<clip>.mp3 (see
-// scripts/gen-announcers.mjs). Only ANNOUNCER_CLIPS are pack-swappable; weapon SFX
-// (fire/hit/kill/reload-ready) always use SOUND_URLS.
+// Keep old saved pack IDs readable. Every spoken event resolves to the same
+// deep male ElevenLabs announcer, including old Kuon selections.
 export type AnnouncerPackId = 'legacy' | 'kuon';
 export type AnnouncerPack = { id: AnnouncerPackId; name: string; blurb: string };
 export const ANNOUNCER_PACKS: ReadonlyArray<AnnouncerPack> = [
-  { id: 'legacy', name: 'Classic', blurb: 'Original deep-voice announcer' },
-  { id: 'kuon', name: 'Kuon (Anime)', blurb: 'Cheerful Japanese anime VO' },
+  { id: 'legacy', name: 'Victor · Deep male', blurb: 'Victor, a deep male announcer with expressive arena callouts' },
 ];
 export const DEFAULT_ANNOUNCER_PACK: AnnouncerPackId = 'legacy';
 
-// User-supplied .ogg files override the procedural / TTS fallback when present.
-// Drop CC-licensed clips at these public/ paths. See plan §6.
-export const SOUND_URLS: Record<SoundClipName, string> = {
-  'fire':          '/sounds/instagib/rail-fire.ogg',
-  'hit':           '/sounds/instagib/hit.ogg',
-  'kill':          '/sounds/instagib/kill.ogg',
-  'reload-ready':  '/sounds/instagib/reload-ready.ogg',
-  'first-blood':   '/sounds/instagib/first-blood.ogg',
-  'double-kill':   '/sounds/instagib/double-kill.ogg',
-  'triple-kill':   '/sounds/instagib/triple-kill.ogg',
-  'quad-kill':     '/sounds/instagib/quad-kill.ogg',
-  'penta-kill':    '/sounds/instagib/penta-kill.ogg',
-  'killing-spree': '/sounds/instagib/killing-spree.ogg',
-  'rampage':       '/sounds/instagib/rampage.ogg',
-  'dominating':    '/sounds/instagib/dominating.ogg',
-  'unstoppable':   '/sounds/instagib/unstoppable.ogg',
-  'godlike':       '/sounds/instagib/godlike.ogg',
-  'headshot':      '/sounds/instagib/headshot.ogg',
-  'humiliation':   '/sounds/instagib/humiliation.ogg',
-  'comeback':      '/sounds/instagib/comeback.ogg',
-  'match-point':   '/sounds/instagib/match-point.ogg',
-  'victory':       '/sounds/instagib/victory.ogg',
-  'defeat':        '/sounds/instagib/defeat.ogg',
-  'spawn':         '', // deploy/encouragement — pack-only (no legacy file or TTS)
-};
-
-const SPOKEN_TEXT: Record<SoundClipName, string> = {
-  'fire':          '',
-  'hit':           '',
-  'kill':          '',
-  'reload-ready':  '',
-  'first-blood':   'First Blood',
-  'double-kill':   'Double Kill',
-  'triple-kill':   'Triple Kill',
-  'quad-kill':     'Quad Kill',
-  'penta-kill':    'Penta Kill',
-  'killing-spree': 'Killing Spree',
-  'rampage':       'Rampage',
-  'dominating':    'Dominating',
-  'unstoppable':   'Unstoppable',
-  'godlike':       'God like',
-  'headshot':      'Headshot',
-  'humiliation':   'Humiliation',
-  'comeback':      'Comeback',
-  'match-point':   'Match point',
-  'victory':       'Victory',
-  'defeat':        'Defeat',
-  'spawn':         '', // no TTS fallback — only voiced by packs that define spawn lines
+// Public recordings. Weapon playback goes through the spatial gameplay engine.
+export const SOUND_URLS: Partial<Record<SoundClipName, string>> = {
+  'fire':          GENERATED_SFX_URLS['rail-fire'][0],
+  'hit':           '/sounds/elevenlabs-v1/weapon/hit_1.mp3',
+  'kill':          '/sounds/elevenlabs-v1/weapon/kill_1.mp3',
+  'reload-ready':  '/sounds/elevenlabs-v1/weapon/reload-ready_1.mp3',
+  'first-blood':   '/sounds/elevenlabs-v1/announcer/victor/first-blood_1.mp3',
+  'double-kill':   '/sounds/elevenlabs-v1/announcer/victor/double-kill_1.mp3',
+  'triple-kill':   '/sounds/elevenlabs-v1/announcer/victor/triple-kill_1.mp3',
+  'quad-kill':     '/sounds/elevenlabs-v1/announcer/victor/quad-kill_1.mp3',
+  'penta-kill':    '/sounds/elevenlabs-v1/announcer/victor/penta-kill_1.mp3',
+  'killing-spree': '/sounds/elevenlabs-v1/announcer/victor/killing-spree_1.mp3',
+  'rampage':       '/sounds/elevenlabs-v1/announcer/victor/rampage_1.mp3',
+  'dominating':    '/sounds/elevenlabs-v1/announcer/victor/dominating_1.mp3',
+  'unstoppable':   '/sounds/elevenlabs-v1/announcer/victor/unstoppable_1.mp3',
+  'godlike':       '/sounds/elevenlabs-v1/announcer/victor/godlike_1.mp3',
+  'headshot':      '/sounds/elevenlabs-v1/announcer/victor/headshot_1.mp3',
+  'humiliation':   '/sounds/elevenlabs-v1/announcer/victor/humiliation_1.mp3',
+  'comeback':      '/sounds/elevenlabs-v1/announcer/victor/comeback_1.mp3',
+  'match-point':   '/sounds/elevenlabs-v1/announcer/victor/match-point_1.mp3',
+  'victory':       '/sounds/elevenlabs-v1/announcer/victor/victory_1.mp3',
+  'defeat':        '/sounds/elevenlabs-v1/announcer/victor/defeat_1.mp3',
+  'spawn':         '/sounds/elevenlabs-v1/announcer/victor/spawn_1.mp3',
+  'codex-entered': '/sounds/elevenlabs-v1/announcer/victor/codex-entered_1.mp3',
+  'codex-complete': '/sounds/elevenlabs-v1/announcer/victor/codex-complete_1.mp3',
+  'codex-alone': '/sounds/elevenlabs-v1/announcer/victor/codex-alone_1.mp3',
+  'codex-attention': '/sounds/elevenlabs-v1/announcer/victor/codex-attention_1.mp3',
 };
 
 // Which clips are announcer voice lines (vs. weapon SFX). Drives the
 // SFX/announcer volume split and the announcer on/off toggle.
 const ANNOUNCER_CLIPS: ReadonlySet<SoundClipName> = new Set<SoundClipName>([
+  'codex-entered', 'codex-alone', 'codex-complete', 'codex-attention',
   'first-blood',
   'double-kill',
   'triple-kill',
@@ -111,11 +89,9 @@ const ANNOUNCER_CLIPS: ReadonlySet<SoundClipName> = new Set<SoundClipName>([
   'spawn',
 ]);
 
-// Game audio. Weapon / movement / ambience SFX are fully procedural and live in
-// ./sfx (SfxEngine: buses, reverb, limiter, voice pool, per-map ambience). This
-// class owns the AudioContext, the announcer (voice packs / legacy files / TTS)
-// and the optional user-dropped .ogg overrides, and routes everything through
-// the engine's mixer so the master limiter + volume settings cover it all.
+// Recorded game audio through the shared spatial mixer, with synthesis as a
+// loading fallback for nonverbal cues. Spoken callouts use one ElevenLabs voice
+// through the announcer bus, limiter and volume controls.
 export class SoundManager {
   private ctx: AudioContext | null = null;
   private engine: SfxEngine | null = null;
@@ -123,9 +99,8 @@ export class SoundManager {
   private sfxBus: GainNode | null = null;
   private announcerBus: GainNode | null = null;
   private buffers = new Map<string, AudioBuffer>(); // keyed by resolved URL (pack-aware)
-  private loading = new Set<string>(); // URLs with an in-flight fetch (dedupe)
+  private loading = new Map<string, Promise<void>>(); // in-flight fetch + decode
   private missing = new Set<string>(); // URLs that 404'd — don't refetch (use fallback)
-  private voice: SpeechSynthesisVoice | null = null;
   private volume = 0.7;
   private sfxVolume = 1;
   private announcerVolume = 1;
@@ -138,6 +113,10 @@ export class SoundManager {
   // at a time (a new line cuts the previous), so multi-kill + headshot + spree
   // never pile up into a garble.
   private announcerSrc: AudioBufferSourceNode | null = null;
+  private noticeIds = new Set<string>();
+  private speechQueue: { name: SoundClipName; expires: number }[] = [];
+  private loadingSpeech = false;
+  private speechGeneration = 0;
 
   async init() {
     if (this.ctx) return;
@@ -147,7 +126,8 @@ export class SoundManager {
         (window as unknown as { webkitAudioContext: typeof AudioContext })
           .webkitAudioContext;
       if (!AC) return;
-      this.ctx = new AC();
+      // Request the lowest supported device buffering for combat feedback.
+      this.ctx = new AC({ latencyHint: 0 });
       // The engine builds the whole mix graph (SFX + announcer buses → limiter
       // → master volume → destination) synchronously, so sounds work at once.
       this.engine = new SfxEngine(this.ctx);
@@ -159,21 +139,15 @@ export class SoundManager {
       this.engine.setAnnouncerVolume(this.announcerVolume);
       this.engine.setLowSpec(this.lowSpec);
       if (this.mapId) this.engine.setMap(this.mapId);
-      // Best-effort preload of any real audio files dropped in public/. Missing
-      // files fall back to the procedural SFX / TTS announcer.
-      for (const url of Object.values(SOUND_URLS)) {
-        if (url) void this.loadClip(url).catch(() => {});
-      }
-      this.preloadPack(); // + the active announcer pack's clips, if not legacy
+      this.preloadPack();
     } catch {
       // No audio context available — manager becomes a no-op
     }
-    this.initVoice();
   }
 
   // URL of one announcer line variant (1-indexed) for the active pack.
   private announcerVariantUrl(name: SoundClipName, idx: number): string {
-    return `/sounds/instagib/announcer/${this.pack}/${name}_${idx}.mp3`;
+    return `/sounds/elevenlabs-v1/announcer/victor/${name}_${idx}.mp3`;
   }
 
   // Pick a variant index (1..count) for a clip, avoiding an immediate repeat so
@@ -186,9 +160,9 @@ export class SoundManager {
     return idx;
   }
 
-  // Switch announcer voice pack (Settings → Audio). Preloads the new pack's clips
-  // so the first line of a match isn't a fallback miss.
-  setAnnouncerPack(id: AnnouncerPackId) {
+  // Normalize old saved pack selections to the game's single announcer.
+  setAnnouncerPack(_id: AnnouncerPackId) {
+    const id = DEFAULT_ANNOUNCER_PACK;
     if (id === this.pack) return;
     this.pack = id;
     this.lastVariant.clear();
@@ -196,23 +170,46 @@ export class SoundManager {
   }
 
   private preloadPack() {
-    if (!this.ctx || this.pack === 'legacy') return;
+    if (!this.ctx) return;
     for (const name of ANNOUNCER_CLIPS) {
       const count = announcerVariantCount(this.pack, name);
       for (let i = 1; i <= count; i++) void this.loadClip(this.announcerVariantUrl(name, i)).catch(() => {});
     }
   }
 
-  // Cut any announcer line currently playing (buffered clip OR browser TTS) so a
-  // new one never overlaps it.
+  // Cut the current recording so announcer callouts never overlap.
   private stopAnnouncer() {
     if (this.announcerSrc) {
       try { this.announcerSrc.stop(); } catch { /* already stopped */ }
       this.announcerSrc = null;
     }
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      try { window.speechSynthesis.cancel(); } catch { /* ignore */ }
+  }
+
+  announce(name: SoundClipName, id: string) {
+    if (this.noticeIds.has(id)) return;
+    this.noticeIds.add(id);
+    if (this.noticeIds.size > 256) this.noticeIds.delete(this.noticeIds.values().next().value!);
+    if (!this.announcerEnabled || this.announcerVolume === 0 || this.volume === 0) return;
+    if (name === 'codex-complete' || name === 'codex-attention') { this.speechGeneration++; this.speechQueue.length = 0; this.stopAnnouncer(); }
+    this.speechQueue.push({ name, expires: performance.now() + 6000 });
+    void this.drainSpeech();
+  }
+
+  private async drainSpeech() {
+    if (this.announcerSrc || this.loadingSpeech || !this.ctx || !this.announcerEnabled) return;
+    while (this.speechQueue[0] && this.speechQueue[0].expires < performance.now()) this.speechQueue.shift();
+    const next = this.speechQueue.shift();
+    if (!next) return;
+    this.loadingSpeech = true;
+    const generation = this.speechGeneration;
+    try { const url = SOUND_URLS[next.name]; if (url) await this.loadClip(url); } catch { /* Text notice remains available. */ }
+    this.loadingSpeech = false;
+    if (generation !== this.speechGeneration) { void this.drainSpeech(); return; }
+    if (this.announcerSrc) { this.speechQueue.unshift(next); return; }
+    if (next.expires > performance.now() && this.ctx && this.announcerEnabled) {
+      if (this.play(next.name)) return;
     }
+    void this.drainSpeech();
   }
 
   resume() {
@@ -229,9 +226,16 @@ export class SoundManager {
     this.resume();
     const isAnnouncer = ANNOUNCER_CLIPS.has(name);
     if (isAnnouncer && !this.announcerEnabled) return false;
+    if (!isAnnouncer) {
+      switch (name) {
+        case 'fire': this.engine.railShot(volume); return true;
+        case 'hit': this.engine.hitTick(false, volume); return true;
+        case 'kill': this.engine.kill(false, volume); return true;
+        case 'reload-ready': this.engine.ready(volume); return true;
+      }
+    }
     const bus = (isAnnouncer ? this.announcerBus : this.sfxBus) ?? this.master;
-    // Pack announcer clips have N line variants → pick one (no immediate repeat);
-    // everything else (legacy announcer, SFX) uses the flat SOUND_URLS file.
+    // Select a recording from the same announcer for every event.
     const variants = isAnnouncer ? announcerVariantCount(this.pack, name) : 0;
     const url = variants > 0 ? this.announcerVariantUrl(name, this.pickVariant(name, variants)) : SOUND_URLS[name];
     const buf = url ? this.buffers.get(url) : undefined;
@@ -244,40 +248,18 @@ export class SoundManager {
       src.connect(g).connect(bus);
       if (isAnnouncer) {
         this.announcerSrc = src;
-        src.onended = () => { if (this.announcerSrc === src) this.announcerSrc = null; };
+        src.onended = () => { if (this.announcerSrc === src) { this.announcerSrc = null; void this.drainSpeech(); } };
         this.engine.duck(buf.duration); // ambience dips under the voice
       }
       src.start(0);
       return true;
     }
-    // Not cached yet. For a pack variant, kick off a load so the next play is the
-    // real voice (covers the race right after switching packs). Legacy SFX +
-    // announcer files are preloaded at init, so a miss there is genuinely absent
-    // (e.g. victory/defeat have no .ogg) → straight to the procedural/TTS fallback.
+    // A load miss never switches to browser speech. Preload the recording for
+    // the next event; the caller can substitute a nonverbal medal cue.
     if (variants > 0 && url && !this.loading.has(url) && !this.missing.has(url)) {
-      this.loading.add(url);
-      void this.loadClip(url)
-        .catch(() => { this.missing.add(url); })
-        .finally(() => this.loading.delete(url));
+      void this.loadClip(url).catch(() => {});
     }
-    switch (name) {
-      case 'fire':
-        this.engine.railShot(volume);
-        return true;
-      case 'hit':
-        this.engine.hitTick(false, volume);
-        return true;
-      case 'kill':
-        this.engine.kill(false, volume);
-        return true;
-      case 'reload-ready':
-        this.engine.ready(volume);
-        return true;
-      default:
-        // Announcer TTS fallback — but only if this clip HAS fallback text. A
-        // pack-only clip (e.g. 'spawn') stays silent on the legacy pack.
-        return SPOKEN_TEXT[name] ? this.speak(SPOKEN_TEXT[name], volume) : false;
-    }
+    return false;
   }
 
   // Position + orient the HRTF listener at the camera each frame so spatialized
@@ -333,7 +315,7 @@ export class SoundManager {
       case 'kill': this.engine.gibAt(x, y, z, volume); return;
       case 'hit': this.engine.hitTick(false, volume); return;
       case 'reload-ready': this.engine.ready(volume); return;
-      default: this.play(name, volume); // non-spatial clips (announcer/TTS)
+      default: this.play(name, volume); // centered announcer recordings
     }
   }
 
@@ -344,13 +326,9 @@ export class SoundManager {
     this.engine.hitTick(headshot, volume);
   }
 
-  // Kill confirm (your frag): the gib burst. Honors a user-dropped kill.ogg.
+  // Kill confirm (your frag): preserve the distinct headshot recording.
   killConfirm(headshot: boolean, volume = 1) {
     if (!this.engine) return;
-    if (this.buffers.has(SOUND_URLS.kill)) {
-      this.play('kill', volume);
-      return;
-    }
     this.resume();
     this.engine.kill(headshot, volume);
   }
@@ -426,7 +404,7 @@ export class SoundManager {
     else this.engine.remoteMove(kind, x, y, z, strength);
   }
 
-  // Procedural medal cue (used when the announcer can't voice a medal).
+  // Nonverbal medal cue (used when the announcer can't voice a medal).
   medalSting(kind: StingKind, level: number) {
     if (!this.engine) return;
     this.resume();
@@ -456,27 +434,6 @@ export class SoundManager {
     this.engine?.setLowSpec(on);
   }
 
-  speak(text: string, volume = 1): boolean {
-    if (!this.announcerEnabled) return false;
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return false;
-    if (!text) return false;
-    try {
-      this.stopAnnouncer(); // cut any prior announcer line (TTS or buffered)
-      const u = new SpeechSynthesisUtterance(text);
-      u.rate = 0.92;
-      u.pitch = 0.55;
-      // TTS volume isn't routed through the WebAudio buses, so fold in the
-      // master + announcer volumes here for rough parity.
-      u.volume = clamp01(volume * this.volume * this.announcerVolume);
-      if (this.voice) u.voice = this.voice;
-      window.speechSynthesis.speak(u);
-      this.engine?.duck(1.4); // TTS length is unknown — a typical line
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
   setVolume(v: number) {
     this.volume = clamp01(v);
     this.engine?.setMasterVolume(this.volume);
@@ -494,17 +451,13 @@ export class SoundManager {
 
   setAnnouncerEnabled(on: boolean) {
     this.announcerEnabled = on;
-    if (!on && typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      try {
-        window.speechSynthesis.cancel(); // kill any in-flight TTS line
-      } catch {
-        // ignore
-      }
-    }
+    if (!on) { this.speechGeneration++; this.speechQueue.length = 0; this.stopAnnouncer(); }
   }
 
   dispose() {
-    this.announcerSrc = null;
+    this.speechGeneration++;
+    this.speechQueue.length = 0;
+    this.stopAnnouncer();
     this.engine?.dispose();
     this.engine = null;
     if (this.ctx) {
@@ -518,46 +471,29 @@ export class SoundManager {
     this.loading.clear();
     this.missing.clear();
     this.lastVariant.clear();
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+  }
+
+  private loadClip(url: string): Promise<void> {
+    const ctx = this.ctx;
+    if (!ctx || !url || this.buffers.has(url) || this.missing.has(url)) return Promise.resolve();
+    const pending = this.loading.get(url);
+    if (pending) return pending;
+    const job = (async () => {
       try {
-        window.speechSynthesis.cancel();
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`${url}: ${res.status}`);
+        const buf = await ctx.decodeAudioData(await res.arrayBuffer());
+        if (this.ctx === ctx) this.buffers.set(url, buf);
       } catch {
-        // ignore
+        if (this.ctx === ctx) this.missing.add(url);
+      } finally {
+        this.loading.delete(url);
       }
-    }
+    })();
+    this.loading.set(url, job);
+    return job;
   }
 
-  private async loadClip(url: string) {
-    if (!this.ctx || !url || this.buffers.has(url)) return;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`${url}: ${res.status}`);
-    const arr = await res.arrayBuffer();
-    const buf = await this.ctx.decodeAudioData(arr);
-    this.buffers.set(url, buf);
-  }
-
-  private initVoice() {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-    const choose = () => {
-      const voices = window.speechSynthesis.getVoices();
-      const eng = voices.filter((v) => v.lang.toLowerCase().startsWith('en'));
-      this.voice =
-        eng.find((v) =>
-          /daniel|alex|fred|aaron|david|male|google.*us|microsoft.*david/i.test(
-            v.name,
-          ),
-        ) ??
-        eng[0] ??
-        voices[0] ??
-        null;
-    };
-    choose();
-    try {
-      window.speechSynthesis.addEventListener('voiceschanged', choose);
-    } catch {
-      // ignore
-    }
-  }
 }
 
 function clamp01(n: number): number {
@@ -567,7 +503,7 @@ function clamp01(n: number): number {
 }
 
 /* ── Menu / UI sounds ───────────────────────────────────────────────────────
-   The synthesized cue set for the deck chrome and the rewards reveal (buttons,
+   The recorded cue set for the deck chrome and the rewards reveal (buttons,
    tabs, toggles, modals, toasts, XP ticks, unlock stings…). How each cue sounds
    lives in src/game/sfx/ui-sounds.ts; this bank owns the live context + level.
 
@@ -580,7 +516,7 @@ function clamp01(n: number): number {
    Timer-driven cues (hover, the rewards reveal, case spins, modal mounts) are
    dropped until the context is actually running, so a page load never queues
    a burst of sounds that fires on the first click. */
-import { isGestureUiSound, playUiCue, type UiSoundName } from './sfx/ui-sounds';
+import { isGestureUiSound, playUiCue, preloadUiCues, type UiSoundName } from './sfx/ui-sounds';
 
 export type { UiSoundName } from './sfx/ui-sounds';
 
@@ -623,6 +559,7 @@ class UiSoundBank {
         comp.attack.value = 0.002;
         comp.release.value = 0.12;
         this.bus.connect(comp).connect(this.ctx.destination);
+        void preloadUiCues(this.ctx);
       } catch {
         this.ctx = null;
         this.bus = null;

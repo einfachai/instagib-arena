@@ -6,7 +6,7 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
-import { Pass } from 'three/examples/jsm/postprocessing/Pass.js';
+import { Pass, FullScreenQuad } from 'three/examples/jsm/postprocessing/Pass.js';
 import { VignetteShader } from 'three/examples/jsm/shaders/VignetteShader.js';
 import { FOV_DEG } from './constants';
 import type { ArenaMap } from './map';
@@ -310,6 +310,23 @@ const VIEWMODEL_KEY = 0.55;
 const WHITE = new THREE.Color(0xffffff);
 
 export class ViewmodelLayer {
+  opacity = 1;
+  private fadeTarget: THREE.WebGLRenderTarget | null = null;
+  private readonly fadeSize = new THREE.Vector2();
+  private readonly fadeClear = new THREE.Color();
+  private readonly fadeMaterial = new THREE.ShaderMaterial({
+    uniforms: { image: { value: null }, opacity: { value: 1 } },
+    vertexShader: 'varying vec2 vUv; void main(){vUv=uv;gl_Position=vec4(position.xy,0.0,1.0);}',
+    fragmentShader: `uniform sampler2D image; uniform float opacity; varying vec2 vUv;
+      void main(){
+        vec4 c=texture2D(image,vUv);
+        gl_FragColor=vec4(c.rgb/max(c.a,0.00001),c.a*opacity);
+        #include <tonemapping_fragment>
+        #include <colorspace_fragment>
+      }`,
+    transparent: true, depthTest: false, depthWrite: false,
+  });
+  private readonly fadeQuad = new FullScreenQuad(this.fadeMaterial);
   readonly scene = new THREE.Scene();
   readonly camera = new THREE.PerspectiveCamera(FOV_DEG, 1, VIEWMODEL_NEAR, VIEWMODEL_FAR);
   private readonly hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 0.5);
@@ -338,6 +355,7 @@ export class ViewmodelLayer {
 
   // True when anything under the camera would draw (skip the pass otherwise).
   get active(): boolean {
+    if (this.opacity <= 0) return false;
     for (const c of this.camera.children) {
       if (c.visible && c !== this.key && c !== this.key.target) return true;
     }
@@ -393,14 +411,42 @@ export class ViewmodelLayer {
 
   // Draw the gun over whatever is in the currently bound target.
   render(renderer: THREE.WebGLRenderer) {
+    if (this.opacity <= 0) return;
     const auto = renderer.autoClear;
     renderer.autoClear = false;
-    renderer.clearDepth();
-    renderer.render(this.scene, this.camera);
-    renderer.autoClear = auto;
+    const destination = renderer.getRenderTarget();
+    const alpha = renderer.getClearAlpha();
+    renderer.getClearColor(this.fadeClear);
+    try {
+      if (this.opacity >= 1) {
+        renderer.clearDepth();
+        renderer.render(this.scene, this.camera);
+      } else {
+        // Render the whole held assembly once, preserving self-occlusion, then
+        // fade that image. Gun/hand/cosmetic materials never become transparent.
+        if (destination) this.fadeSize.set(destination.width, destination.height);
+        else renderer.getDrawingBufferSize(this.fadeSize);
+        this.fadeTarget ??= new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 });
+        this.fadeTarget.setSize(this.fadeSize.x, this.fadeSize.y);
+        renderer.setRenderTarget(this.fadeTarget);
+        renderer.setClearColor(0x000000, 0); renderer.clear();
+        renderer.render(this.scene, this.camera);
+        renderer.setRenderTarget(destination);
+        this.fadeMaterial.uniforms.image.value = this.fadeTarget.texture;
+        this.fadeMaterial.uniforms.opacity.value = this.opacity;
+        this.fadeQuad.render(renderer);
+      }
+    } finally {
+      renderer.setRenderTarget(destination);
+      renderer.setClearColor(this.fadeClear, alpha);
+      renderer.autoClear = auto;
+    }
   }
 
   dispose() {
+    this.fadeTarget?.dispose();
+    this.fadeQuad.dispose();
+    this.fadeMaterial.dispose();
     // The gun is the caller's (it disposes its own model); the IBL is the
     // world scene's. Only detach here.
     this.scene.environment = null;

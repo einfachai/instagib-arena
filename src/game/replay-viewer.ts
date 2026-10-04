@@ -136,6 +136,7 @@ export class ReplayViewer {
       kills: this.data.kills,
       shots: this.data.shots,
       taunts: this.data.taunts,
+      movement: this.data.movement,
     };
     const localName = source.profiles.get(this.data.localId)?.name ?? 'Runner';
 

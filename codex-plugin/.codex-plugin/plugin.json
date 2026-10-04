@@ -1,0 +1,26 @@
+{
+  "name": "agent-deathmatch",
+  "version": "0.4.0",
+  "description": "Kill time in a robot deathmatch while Codex works, then return when your task finishes.",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Agent Deathmatch",
+    "shortDescription": "Play while Codex works.",
+    "longDescription": "Fight as a Codex-themed robot in a shared deathmatch, with bots while alone. A paired local companion watches supported local and cloud Codex tasks. When a task finishes, see your personal scoreboard for five seconds and return to Codex. Codex is the only supported coding agent.",
+    "developerName": "Agent Deathmatch",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Shared arcade",
+      "Local companion"
+    ],
+    "composerIcon": "./assets/gun.svg",
+    "composerIconDark": "./assets/gun-dark.svg",
+    "logo": "./assets/gun.svg",
+    "logoDark": "./assets/gun-dark.svg",
+    "defaultPrompt": [
+      "Open Agent Deathmatch"
+    ]
+  },
+  "hooks": "./hooks/hooks.json"
+}

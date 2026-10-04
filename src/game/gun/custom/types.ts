@@ -21,6 +21,7 @@ export type CustomGunState = {
 export type CustomGunInstance = {
   group: THREE.Group;
   muzzle: THREE.Object3D; // beam origin + flash anchor
+  sight?: THREE.Object3D; // optional rear optical centre for aiming alignment
   // Where the Tracked kill-counter module seats on this model (model space, on
   // the camera-facing −X flank). Absent → the standard gun's mount. Same frame
   // as gun/tracker.ts: `position` = the flank point the module's back (its

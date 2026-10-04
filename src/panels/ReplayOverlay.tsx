@@ -160,7 +160,7 @@ export function ReplayViewerOverlay({
           ) : countdown !== null ? (
             <>
               <div className='text-[10px] uppercase tracking-[0.3em] text-cyan-300/80'>Starting run</div>
-              <div className='mt-1 font-display text-7xl font-bold tabular-nums text-white drop-shadow-[0_0_24px_rgba(34,211,238,0.5)]'>
+              <div className='mt-1 font-display text-7xl font-bold tabular-nums text-white drop-shadow-[0_0_24px_rgba(125,155,255,0.5)]'>
                 {countdown}
               </div>
             </>

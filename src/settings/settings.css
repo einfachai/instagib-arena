@@ -7,8 +7,8 @@
 .st-panel {
   --st-line: rgba(255, 255, 255, 0.09);
   --st-line-strong: rgba(255, 255, 255, 0.16);
-  --st-acc: #67e8f9;
-  --st-acc-dim: rgba(103, 232, 249, 0.16);
+  --st-acc: var(--arena-accent-light);
+  --st-acc-dim: rgba(var(--arena-accent-light-rgb), 0.16);
   --st-text: rgba(255, 255, 255, 0.9);
   --st-mute: rgba(255, 255, 255, 0.5);
   --st-well: rgba(0, 0, 0, 0.4);
@@ -47,8 +47,8 @@
   transition: border-color 0.12s, box-shadow 0.12s;
 }
 .st-search:focus-within {
-  border-color: rgba(103, 232, 249, 0.7);
-  box-shadow: inset 0 0 0 1px rgba(103, 232, 249, 0.25);
+  border-color: rgba(var(--arena-accent-light-rgb), 0.7);
+  box-shadow: inset 0 0 0 1px rgba(var(--arena-accent-light-rgb), 0.25);
   color: var(--st-acc);
 }
 .st-search input {
@@ -121,7 +121,7 @@
   background: rgba(255, 255, 255, 0.04);
 }
 .st-tab[aria-selected='true'] {
-  color: #cffafe;
+  color: var(--arena-accent-pale);
   background: linear-gradient(90deg, var(--st-acc-dim), transparent 90%);
 }
 .st-tab[aria-selected='true']::after {
@@ -130,7 +130,7 @@
 }
 .st-tab:focus-visible {
   outline: none;
-  box-shadow: inset 0 0 0 2px rgba(34, 211, 238, 0.8);
+  box-shadow: inset 0 0 0 2px rgba(var(--arena-accent-rgb), 0.8);
 }
 .st-tab.is-empty {
   opacity: 0.35;
@@ -211,7 +211,7 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--st-acc);
-  border: 1px solid rgba(103, 232, 249, 0.4);
+  border: 1px solid rgba(var(--arena-accent-light-rgb), 0.4);
 }
 .st-empty-btn:hover {
   background: var(--st-acc-dim);
@@ -332,7 +332,7 @@
   font-weight: 600;
   text-align: right;
   font-variant-numeric: tabular-nums;
-  color: #cffafe;
+  color: var(--arena-accent-pale);
 }
 .st-select,
 .st-number,
@@ -390,8 +390,8 @@
   width: 13px;
   height: 13px;
   margin-top: -4.5px;
-  background: #ecfeff;
-  border: 2px solid #22d3ee;
+  background: var(--color-cyan-50);
+  border: 2px solid var(--arena-accent);
   transform: rotate(45deg);
   transition: box-shadow 0.12s;
 }
@@ -406,19 +406,19 @@
 .st-range::-moz-range-thumb {
   width: 9px;
   height: 9px;
-  background: #ecfeff;
-  border: 2px solid #22d3ee;
+  background: var(--color-cyan-50);
+  border: 2px solid var(--arena-accent);
   border-radius: 0;
   transform: rotate(45deg);
 }
 .st-range:hover::-webkit-slider-thumb {
-  box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.18);
+  box-shadow: 0 0 0 4px rgba(var(--arena-accent-rgb), 0.18);
 }
 .st-range:focus-visible::-webkit-slider-thumb {
-  box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.45);
+  box-shadow: 0 0 0 4px rgba(var(--arena-accent-rgb), 0.45);
 }
 .st-range:focus-visible::-moz-range-thumb {
-  box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.45);
+  box-shadow: 0 0 0 4px rgba(var(--arena-accent-rgb), 0.45);
 }
 .st-range:disabled {
   cursor: not-allowed;
@@ -509,7 +509,7 @@
   transition: border-color 0.12s, color 0.12s, transform 0.08s;
 }
 .st-key:hover:not(.is-static) {
-  border-color: rgba(103, 232, 249, 0.55);
+  border-color: rgba(var(--arena-accent-light-rgb), 0.55);
 }
 .st-key:active:not(.is-static) {
   transform: translateY(1px);
@@ -520,9 +520,9 @@
   outline-offset: 2px;
 }
 .st-key.is-listening {
-  color: #cffafe;
-  border-color: #22d3ee;
-  background: linear-gradient(180deg, rgba(34, 211, 238, 0.28), rgba(34, 211, 238, 0.12));
+  color: var(--arena-accent-pale);
+  border-color: var(--arena-accent);
+  background: linear-gradient(180deg, rgba(var(--arena-accent-rgb), 0.28), rgba(var(--arena-accent-rgb), 0.12));
   animation: deck-pulse 1.4s ease-in-out infinite;
 }
 .st-key.is-static {
@@ -653,7 +653,7 @@
   background: rgba(6, 8, 12, 0.7);
 }
 .st-xh-zoom .deck-seg[aria-pressed='true'] {
-  background: rgba(34, 211, 238, 0.28);
+  background: rgba(var(--arena-accent-rgb), 0.28);
 }
 .st-xh-swatches {
   display: grid;
@@ -688,12 +688,12 @@
   background: rgba(255, 255, 255, 0.08);
 }
 .st-preset[aria-pressed='true'] {
-  border-color: rgba(103, 232, 249, 0.7);
+  border-color: rgba(var(--arena-accent-light-rgb), 0.7);
   background: var(--st-acc-dim);
 }
 .st-preset:focus-visible {
   outline: none;
-  box-shadow: inset 0 0 0 2px rgba(34, 211, 238, 0.8);
+  box-shadow: inset 0 0 0 2px rgba(var(--arena-accent-rgb), 0.8);
 }
 .st-preset-glyph {
   display: grid;

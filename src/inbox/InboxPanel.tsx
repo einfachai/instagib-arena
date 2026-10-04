@@ -429,7 +429,7 @@ function RedeemBox({ onRedeemed, autoFocus }: { onRedeemed: (r: RedeemResp) => v
 function RedeemReveal({ code, granted, reduced, lowSpec, onDone }: { code: string; granted: Granted; reduced: boolean; lowSpec: boolean; onDone: () => void }) {
   const top = topTier(granted.items);
   const tier: Tier = top ? (TIER_META[top].rank > TIER_META.legendary.rank ? 'legendary' : top) : 'rare';
-  const color = top ? TIER_COLOR[top].edge : '#67e8f9';
+  const color = top ? TIER_COLOR[top].edge : '#a6bcff';
   const unusual = granted.items.some((i) => i.quality.includes('unusual'));
   const ref = useRef<HTMLDivElement>(null);
   const [origin, setOrigin] = useState<FxOrigin | null>(null);

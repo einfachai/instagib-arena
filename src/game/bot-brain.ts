@@ -1,3 +1,4 @@
+import type { MovementCue } from './movement-cues';
 // Bot brain — perception, aim, movement and tactics for one offline bot.
 // THREE-free: bots.ts wraps it in a body, and scripts/bot-sim.ts runs it
 // headless to QA the AI on every map.
@@ -170,6 +171,7 @@ export type BrainStats = {
 };
 
 export class BotBrain {
+  readonly movementCues: MovementCue[] = []; // cosmetic outputs from this simulation tick
   readonly id: string;
   readonly difficulty: BotDifficulty;
   readonly skill: BotSkill;
@@ -312,6 +314,7 @@ export class BotBrain {
 
   // Countdown freeze: stand still, keep nothing moving.
   freeze() {
+    this.movementCues.length = 0;
     this.vel = { x: 0, y: 0, z: 0 };
   }
 
@@ -359,6 +362,7 @@ export class BotBrain {
 
   // ── main step ──────────────────────────────────────────────────────────────
   step(dt: number, map: ArenaMap, enemies: readonly BotTarget[]): BotShot | null {
+    this.movementCues.length = 0;
     if (dt <= 0) return null;
     this.clock += dt;
     this.frame++;
@@ -1324,6 +1328,7 @@ export class BotBrain {
     else this.vel.y -= GRAVITY * dt;
 
     const size = { x: BOT_RADIUS * 2, y: BOT_HEIGHT, z: BOT_RADIUS * 2 };
+    const impactSpeed = Math.max(0, -this.vel.y);
     const r = movePlayer(this.pos, size, { x: this.vel.x * dt, y: this.vel.y * dt, z: this.vel.z * dt }, map.boxes);
     const blocked = r.blocked.x || r.blocked.z;
     if (r.blocked.x) this.vel.x = 0;
@@ -1338,6 +1343,7 @@ export class BotBrain {
     }
     const landed = this.onGround && !this.wasOnGround;
     if (landed) {
+      this.movementCues.push({ kind: 'landing', impact: Math.min(100, impactSpeed) });
       this.airJumpsLeft = AIR_JUMPS;
       this.pendingAirJump = false;
     }
@@ -1363,6 +1369,7 @@ export class BotBrain {
   }
 
   private doJump() {
+    this.movementCues.push({ kind: 'jump' });
     this.vel.y = JUMP_SPEED;
     this.onGround = false;
   }
@@ -1371,6 +1378,7 @@ export class BotBrain {
   private doAirJump(dirX = 0, dirZ = 0) {
     if (this.airJumpsLeft <= 0) return;
     this.airJumpsLeft -= 1;
+    this.movementCues.push({ kind: 'double-jump' });
     this.vel.y = JUMP_SPEED;
     if (dirX !== 0 || dirZ !== 0) {
       const len = Math.hypot(dirX, dirZ) || 1;
@@ -1384,6 +1392,7 @@ export class BotBrain {
     const len = Math.hypot(dx, dz);
     if (len < 1e-4) return;
     this.dashDir = { x: dx / len, z: dz / len };
+    this.movementCues.push({ kind: 'dash', direction: { ...this.dashDir } });
     this.dashTimer = DASH_DURATION;
     this.dashCooldown = DASH_COOLDOWN;
   }
@@ -1407,6 +1416,8 @@ export class BotBrain {
     this.airJumpsLeft = AIR_JUMPS;
     this.boostCooldown = this.mv.boostCooldown;
     this.lastBoostAt = this.clock;
+    const horizontal = Math.hypot(dx, dz) || 1;
+    this.movementCues.push({ kind: 'boost', direction: { x: dx / horizontal, z: dz / horizontal } });
   }
 }
 

@@ -103,7 +103,7 @@ export class CharacterLab {
     const hl = this.params.get('hl') === '1';
     const colorParam = this.params.get('color');
     for (let i = 0; i < n; i++) {
-      const color = colorParam ? `#${colorParam.replace('#', '')}` : SKIN_PALETTE[grid ? i % SKIN_PALETTE.length : 4];
+      const color = colorParam ? `#${colorParam.replace('#', '')}` : SKIN_PALETTE[i % SKIN_PALETTE.length];
       const ch = new Character({ colorHex: color });
       ch.setLook(color, hl ? 'highlight' : 'natural');
       const col = i % cols;

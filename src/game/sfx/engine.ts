@@ -1,11 +1,12 @@
-// ── SfxEngine: the procedural game-audio front end ───────────────────────────
+// ── SfxEngine: recorded game audio with a procedural loading fallback ───────
 //
 // Owns the Mixer (buses / reverb / limiter / voice pool), the NoiseBank, the
-// current map's room + surface + ambience bed, and one method per game sound.
+// ElevenLabs recordings, current map's room + surface + ambience bed, and one
+// method per game sound. Recordings use the same routing and voice pools.
 // Works on any BaseAudioContext: the SoundManager (audio.ts) drives it live,
 // preview.ts renders it offline to measure levels. Every method takes an
 // optional `at` (context time) so sequences can be scheduled offline.
-import { NoiseBank, Voice, clamp, type AC, type VoiceCat } from './core';
+import { NoiseBank, Voice, clamp, rnd, type AC, type VoiceCat } from './core';
 import { AmbienceBed, mapAudio } from './map-audio';
 import { Mixer, type SpatialOpts } from './mixer';
 import type { MotionEventKind } from './motion-tracker';
@@ -22,6 +23,8 @@ import {
 import { medalSting, type StingKind } from './stings';
 import { finisherAccent, wallImpact } from './finisher-sfx';
 import { chargeHum, death, gib, hitTick, railShot, readyCue } from './weapon-sfx';
+import { GENERATED_SFX_URLS, type GeneratedSfxName } from './generated-pack';
+import { mapSample, RecordedAmbience, sampleBank, type SampleBank } from './samples';
 
 export type LocalMoveKind = 'step' | 'jump' | 'airjump' | 'walljump' | 'land' | 'dash' | 'boost';
 
@@ -32,33 +35,37 @@ const GIB_3D: SpatialOpts = { ref: 5, rolloff: 1.2, max: 70, send: 0.3 };
 const STEP_3D: SpatialOpts = { ref: 2.5, rolloff: 1.5, max: 30, send: 0.08 };
 const MOVE_3D: SpatialOpts = { ref: 3, rolloff: 1.3, max: 45, send: 0.15 };
 
-// Minimum gap between the local "hup" grunts — bunny-hopping re-jumps every
-// ~0.7 s, and a grunt on every hop is grating.
-const HUP_GAP_SEC = 1.6;
-// Same idea across ALL other combatants (bots hop several times a second between them).
-const REMOTE_HUP_GAP_SEC = 0.6;
-
 export class SfxEngine {
   readonly mixer: Mixer;
   readonly bank: NoiseBank;
+  readonly samples: SampleBank;
   private surface: SurfaceProfile;
   private mapId = '';
-  private bed: AmbienceBed | null = null;
+  private bed: AmbienceBed | RecordedAmbience | null = null;
+  private ambienceRevision = 0;
   private ambienceOn = false;
   private charge: Voice | null = null;
   private stepSide = 1;
-  private lastHup = -99;
-  private lastRemoteHup = -99;
   // Replay slow-mo: cents applied to every new voice's sources while a slowed
   // clip plays (0 = off).
   private replayCents = 0;
 
   constructor(readonly ctx: AC, dest?: AudioNode) {
     this.bank = new NoiseBank(ctx);
+    this.samples = sampleBank(ctx);
     this.mixer = new Mixer(ctx, dest);
     const a = mapAudio('');
     this.surface = a.surface;
     this.mixer.setRoom(a.room);
+    void this.preload();
+  }
+
+  /** Load gameplay recordings and the current map. Also used before offline renders. */
+  async preload() {
+    const names = (Object.keys(GENERATED_SFX_URLS) as GeneratedSfxName[]).filter(
+      (name) => !name.startsWith('ui-') && !name.startsWith('ambience-') && !name.startsWith('step-'),
+    );
+    await this.samples.preload([...names, mapSample('step', this.mapId), mapSample('ambience', this.mapId)]);
   }
 
   // ── Mix controls ───────────────────────────────────────────────────────────
@@ -91,6 +98,7 @@ export class SfxEngine {
     const a = mapAudio(id);
     this.surface = a.surface;
     this.mixer.setRoom(a.room);
+    void this.samples.preload([mapSample('step', id), mapSample('ambience', id)]);
     if (this.ambienceOn) this.swapBed(2.0);
   }
 
@@ -101,6 +109,7 @@ export class SfxEngine {
   }
 
   stopAmbience(fade = 0.6) {
+    this.ambienceRevision++;
     this.ambienceOn = false;
     this.bed?.stop(fade);
     this.bed = null;
@@ -108,8 +117,16 @@ export class SfxEngine {
 
   // Crossfade: the old bed fades out while the new one fades in.
   private swapBed(fadeIn: number) {
+    const revision = ++this.ambienceRevision;
     this.bed?.stop(1.5);
-    this.bed = new AmbienceBed(this.ctx, this.bank, mapAudio(this.mapId).bed, this.mixer.ambience, fadeIn);
+    const key = mapSample('ambience', this.mapId);
+    const buffer = this.samples.buffer(key);
+    this.bed = buffer
+      ? new RecordedAmbience(this.ctx, buffer, this.mixer.ambience, fadeIn)
+      : new AmbienceBed(this.ctx, this.bank, mapAudio(this.mapId).bed, this.mixer.ambience, fadeIn);
+    if (!buffer) void this.samples.preload([key]).then(() => {
+      if (this.ambienceOn && revision === this.ambienceRevision && this.samples.buffer(key)) this.swapBed(0.8);
+    });
   }
 
   // ── Voice plumbing ─────────────────────────────────────────────────────────
@@ -132,7 +149,7 @@ export class SfxEngine {
   /** Your own rail shot: full layered stereo discharge + room reverb. */
   railShot(vol = 1, at?: number) {
     const v = this.voice(vol, at);
-    railShot(v, this.bank, true, 1);
+    if (!this.samples.play(v, 'rail-fire')) railShot(v, this.bank, true, 1);
     this.mixer.toWorld(v, this.mixer.sendMid);
     return this.commit(v, 'self');
   }
@@ -143,7 +160,7 @@ export class SfxEngine {
     if (d < 0) return null;
     // Others' shots sit ~6 dB under your own at the same distance.
     const v = this.voice(vol * 0.5, at);
-    railShot(v, this.bank, false, 0.5);
+    if (!this.samples.play(v, 'rail-fire')) railShot(v, this.bank, false, 0.5);
     this.mixer.spatial(v, x, y, z, d, RAIL_3D);
     return this.commit(v, 'rail');
   }
@@ -153,7 +170,7 @@ export class SfxEngine {
     this.chargeStop();
     if (!(dur > 0.1)) return;
     const v = this.voice(1, at);
-    chargeHum(v, dur);
+    if (!this.samples.play(v, 'rail-charge', 1, dur)) chargeHum(v, dur);
     v.out.connect(this.mixer.hud);
     this.charge = this.commit(v, 'hud');
   }
@@ -165,7 +182,7 @@ export class SfxEngine {
 
   ready(vol = 1, at?: number) {
     const v = this.voice(vol, at);
-    readyCue(v, this.bank);
+    if (!this.samples.play(v, 'reload-ready')) readyCue(v, this.bank);
     v.out.connect(this.mixer.hud);
     return this.commit(v, 'hud');
   }
@@ -173,7 +190,7 @@ export class SfxEngine {
   // ── Hit / kill ─────────────────────────────────────────────────────────────
   hitTick(headshot: boolean, vol = 1, at?: number) {
     const v = this.voice(vol, at);
-    hitTick(v, this.bank, headshot);
+    if (!this.samples.play(v, headshot ? 'hit-headshot' : 'hit')) hitTick(v, this.bank, headshot);
     v.out.connect(this.mixer.hud);
     return this.commit(v, 'hud');
   }
@@ -181,7 +198,7 @@ export class SfxEngine {
   /** Kill confirm: the victim bursting (non-positional — it's your frag). */
   kill(headshot: boolean, vol = 1, at?: number) {
     const v = this.voice(vol, at);
-    gib(v, this.bank, headshot, 1);
+    if (!this.samples.play(v, headshot ? 'kill-headshot' : 'kill')) gib(v, this.bank, headshot, 1);
     this.mixer.toWorld(v, this.mixer.sendLo);
     return this.commit(v, 'self');
   }
@@ -191,7 +208,7 @@ export class SfxEngine {
     const d = this.mixer.audible(x, y, z, GIB_3D.max);
     if (d < 0) return null;
     const v = this.voice(vol, at);
-    gib(v, this.bank, false, 0.5);
+    if (!this.samples.play(v, 'kill')) gib(v, this.bank, false, 0.5);
     this.mixer.spatial(v, x, y, z, d, GIB_3D);
     return this.commit(v, 'impact');
   }
@@ -200,14 +217,15 @@ export class SfxEngine {
   death(vol = 1, at?: number) {
     this.chargeStop();
     const v = this.voice(vol, at);
-    death(v, this.bank);
+    if (!this.samples.play(v, 'death')) death(v, this.bank);
     this.mixer.toWorld(v, this.mixer.sendLo);
     return this.commit(v, 'self');
   }
 
   medalSting(kind: StingKind, level: number, vol = 1, at?: number) {
     const v = this.voice(vol, at);
-    medalSting(v, kind, level);
+    const key = (kind === 'special' ? 'medal-special' : `medal-${kind}-${Math.round(clamp(level, kind === 'multi' ? 2 : 1, 5))}`) as GeneratedSfxName;
+    if (!this.samples.play(v, key)) medalSting(v, kind, level);
     v.out.connect(this.mixer.hud);
     return this.commit(v, 'hud');
   }
@@ -229,7 +247,7 @@ export class SfxEngine {
     const d = this.mixer.audible(x, y, z, GIB_3D.max);
     if (d < 0) return null;
     const v = this.voice(vol);
-    wallImpact(v, this.bank);
+    if (!this.samples.play(v, 'wall-impact')) wallImpact(v, this.bank);
     this.mixer.spatial(v, x, y, z, d, GIB_3D);
     return this.commit(v, 'impact');
   }
@@ -238,21 +256,27 @@ export class SfxEngine {
   replayGib(x: number, y: number, z: number, style: string, headshot: boolean, star: boolean, vol = 1) {
     if (star) {
       const v = this.voice(vol);
-      gib(v, this.bank, headshot, 1);
-      finisherAccent(v, this.bank, style);
+      if (!this.samples.play(v, headshot ? 'kill-headshot' : 'kill')) gib(v, this.bank, headshot, 1);
+      this.finisher(v, style);
       this.mixer.toWorld(v, this.mixer.sendLo);
       return this.commit(v, 'self');
     }
     const d = this.mixer.audible(x, y, z, GIB_3D.max);
     if (d < 0) return null;
     const v = this.voice(vol);
-    gib(v, this.bank, false, 0.5);
-    finisherAccent(v, this.bank, style);
+    if (!this.samples.play(v, 'kill')) gib(v, this.bank, false, 0.5);
+    this.finisher(v, style);
     this.mixer.spatial(v, x, y, z, d, GIB_3D);
     return this.commit(v, 'impact');
   }
 
   // ── Local movement ─────────────────────────────────────────────────────────
+  private finisher(v: Voice, style: string) {
+    const key = `finisher-${style}`;
+    if (Object.hasOwn(GENERATED_SFX_URLS, key) && this.samples.play(v, key as GeneratedSfxName)) return;
+    finisherAccent(v, this.bank, style);
+  }
+
   /**
    * Your own movement. `a` = horizontal speed (step), impact speed (land) or
    * lateral dash direction -1..1 (dash).
@@ -267,7 +291,7 @@ export class SfxEngine {
       case 'step': {
         const k = clamp(a / 10, 0, 1);
         v = this.voice(0.16 * (0.75 + 0.25 * k), t);
-        footstep(v, this.bank, s, k);
+        if (!this.samples.play(v, mapSample('step', this.mapId), 0.96 + rnd() * 0.08)) footstep(v, this.bank, s, k);
         // Alternate feet: a slight L/R offset.
         this.stepSide = -this.stepSide;
         const p = v.pan(0.12 * this.stepSide);
@@ -276,35 +300,33 @@ export class SfxEngine {
         return this.commit(v, 'local');
       }
       case 'jump': {
-        const hup = t - this.lastHup >= HUP_GAP_SEC;
-        if (hup) this.lastHup = t;
         v = this.voice(0.42, t);
-        jump(v, this.bank, s, hup);
+        if (!this.samples.play(v, 'jump')) jump(v, this.bank, s);
         break;
       }
       case 'airjump':
         v = this.voice(0.36, t);
-        airJump(v, this.bank);
+        if (!this.samples.play(v, 'airjump')) airJump(v, this.bank);
         break;
       case 'walljump':
         v = this.voice(0.4, t);
-        wallKick(v, this.bank, s);
+        if (!this.samples.play(v, 'walljump')) wallKick(v, this.bank, s);
         break;
       case 'land': {
         if (a < 2.5) return null; // stepping off a kerb
         const k = clamp((a - 3) / 17, 0, 1);
         v = this.voice(0.28 + 0.22 * k, t);
-        land(v, this.bank, s, a);
+        if (!this.samples.play(v, a >= 12 ? 'land-heavy' : 'land')) land(v, this.bank, s, a);
         send = k > 0.5 ? this.mixer.sendMid : this.mixer.sendLo;
         break;
       }
       case 'dash':
         v = this.voice(0.4, t);
-        dash(v, this.bank, clamp(a, -1, 1), true);
+        if (!this.samples.play(v, 'dash')) dash(v, this.bank, clamp(a, -1, 1), true);
         break;
       case 'boost':
         v = this.voice(0.42, t);
-        boost(v, this.bank, 1);
+        if (!this.samples.play(v, 'boost')) boost(v, this.bank, 1);
         send = this.mixer.sendMid;
         break;
     }
@@ -326,35 +348,32 @@ export class SfxEngine {
       case 'step': {
         const k = clamp(strength / 10, 0, 1);
         v = this.voice(0.13 * (0.75 + 0.25 * k), t);
-        footstep(v, this.bank, s, k);
+        if (!this.samples.play(v, mapSample('step', this.mapId), 0.96 + rnd() * 0.08)) footstep(v, this.bank, s, k);
         break;
       }
       case 'jump': {
-        // Everyone hops constantly — cap the grunt chorus across all remotes.
-        const hup = t - this.lastRemoteHup >= REMOTE_HUP_GAP_SEC;
-        if (hup) this.lastRemoteHup = t;
         v = this.voice(0.36, t);
-        jump(v, this.bank, s, hup);
+        if (!this.samples.play(v, 'jump')) jump(v, this.bank, s);
         break;
       }
       case 'airjump':
         v = this.voice(0.32, t);
-        airJump(v, this.bank);
+        if (!this.samples.play(v, 'airjump')) airJump(v, this.bank);
         break;
       case 'land': {
         if (strength < 3) return null;
         const k = clamp((strength - 3) / 17, 0, 1);
         v = this.voice(0.2 + 0.16 * k, t);
-        land(v, this.bank, s, strength);
+        if (!this.samples.play(v, strength >= 12 ? 'land-heavy' : 'land')) land(v, this.bank, s, strength);
         break;
       }
       case 'dash':
         v = this.voice(0.34, t);
-        dash(v, this.bank, 0, false);
+        if (!this.samples.play(v, 'dash')) dash(v, this.bank, 0, false);
         break;
       case 'boost':
         v = this.voice(0.45, t);
-        boost(v, this.bank, 0.5);
+        if (!this.samples.play(v, 'boost')) boost(v, this.bank, 0.5);
         break;
     }
     this.mixer.spatial(v, x, y, z, d, opts);

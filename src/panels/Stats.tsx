@@ -148,7 +148,7 @@ export function StatsModal({ onClose }: { onClose: () => void }) {
               <div className='font-sans text-[11px] text-white/65'>best single match</div>
             </div>
             <Kpi label='Kills' value={stats.totalKills} sub={`${stats.totalDeaths} deaths`} />
-            <Kpi label='K / D' value={kd} sub='lifetime ratio' accent='#67e8f9' />
+            <Kpi label='K / D' value={kd} sub='lifetime ratio' accent='#a6bcff' />
             <Kpi
               label='Wins'
               value={stats.totalWins}

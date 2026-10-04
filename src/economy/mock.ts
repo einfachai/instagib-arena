@@ -647,7 +647,7 @@ function ibEnsure() {
   const receiptItem = make('face.aviators', { origin: 'code', createdAt: Date.now() - 3 * DAY });
   S.items.push(receiptItem);
   IB.messages.push(
-    ibMsg({ kind: 'code', title: 'Code redeemed: LAUNCH-2026', body: 'Thanks for playing Instagib Arena.', createdAt: Date.now() - 3 * DAY, readAt: Date.now() - 3 * DAY, claimedAt: Date.now() - 3 * DAY, reward: { credits: 250, items: [{ def: 'face.aviators' }] }, granted: [receiptItem] }),
+    ibMsg({ kind: 'code', title: 'Code redeemed: LAUNCH-2026', body: 'Thanks for playing Agent Deathmatch.', createdAt: Date.now() - 3 * DAY, readAt: Date.now() - 3 * DAY, claimedAt: Date.now() - 3 * DAY, reward: { credits: 250, items: [{ def: 'face.aviators' }] }, granted: [receiptItem] }),
     ibMsg({ kind: 'system', title: 'Season 0 is live', body: 'Cases now drop the Origins collection. Older items stay yours forever — tradable, equippable, and tagged with their season.', createdAt: Date.now() - 26 * HOUR, readAt: Date.now() - 20 * HOUR }),
     ibMsg({
       kind: 'gift',
@@ -747,7 +747,7 @@ export function redeem(raw: string): Promise<Res<RedeemResp>> {
   const granted = ibGrant(c.reward, 'code');
   c.uses++;
   (IB.redemptions[code] ??= []).unshift({ player: ME, at: now });
-  const msg = ibMsg({ kind: 'code', title: `Code redeemed: ${code}`, body: c.note || 'Thanks for playing Instagib Arena.', reward: c.reward, granted: granted.items, claimedAt: now, readAt: now });
+  const msg = ibMsg({ kind: 'code', title: `Code redeemed: ${code}`, body: c.note || 'Thanks for playing Agent Deathmatch.', reward: c.reward, granted: granted.items, claimedAt: now, readAt: now });
   IB.messages.push(msg);
   return delay(ok({ code, granted, credits: S.credits, freeRolls: S.freeRolls, messageId: msg.id }), 520);
 }

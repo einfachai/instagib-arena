@@ -317,7 +317,7 @@ export function redeemCode(playerId: string, rawCode: unknown, rateKey: string, 
       {
         kind: 'code',
         title: `Code redeemed: ${code}`,
-        body: c.note ? c.note : 'Thanks for playing Instagib Arena.',
+        body: c.note ? c.note : 'Thanks for playing Agent Deathmatch.',
         reward,
         granted: granted.items.map((i) => i.uid),
         claimedAt: now,

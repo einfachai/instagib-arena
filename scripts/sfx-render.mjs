@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// Offline SFX render + loudness table — dev tooling, no deps.
+// Offline recorded SFX render + loudness table — dev tooling, no deps.
 //
 // Launches its own headless Chrome (own profile + debugging port), opens the
-// vite dev server, imports src/game/sfx/preview.ts and renders every procedural
+// vite dev server, imports src/game/sfx/preview.ts and renders the game's recordings
 // sound through the real master chain in an OfflineAudioContext. Prints peak
 // dBFS / RMS dBFS / duration per sound and writes WAVs so you can listen.
 //
@@ -148,11 +148,36 @@ async function main() {
   }
   console.log('-'.repeat(100));
   console.log(clipped ? `${clipped} sound(s) above -1 dBFS` : 'no sound above -1 dBFS');
+  if (!only || flag('verify-announcer', false) === true) {
+    const audioUrl = new URL('/src/game/audio.ts', base).href;
+    const verified = await callFunction(`async function(url) {
+      const { SoundManager, SOUND_URLS } = await import(url);
+      const audio = new SoundManager();
+      await audio.init();
+      await Promise.all([...audio.loading.values()]);
+      const expected = Object.values(SOUND_URLS).filter((url) => url.includes('/announcer/')).length;
+      if (audio.buffers.size !== expected || audio.missing.size !== 0) throw new Error('Announcer recording preload failed');
+      audio.setAnnouncerPack('kuon');
+      if (audio.pack !== 'legacy') throw new Error('Old pack selection changed the announcer');
+      if (!audio.play('headshot')) throw new Error('Headshot recording did not play');
+      const first = audio.announcerSrc;
+      if (!audio.play('double-kill') || audio.announcerSrc === first) throw new Error('New callout did not replace the previous callout');
+      audio.setAnnouncerEnabled(false);
+      if (audio.announcerSrc || audio.play('godlike')) throw new Error('Announcer mute did not stop playback');
+      audio.setAnnouncerEnabled(true);
+      audio.setAnnouncerVolume(0.35);
+      if (audio.announcerBus.gain.value < 0.34 || audio.announcerBus.gain.value > 0.36) throw new Error('Announcer volume was not applied');
+      const count = audio.buffers.size;
+      audio.dispose();
+      return count;
+    }`, audioUrl);
+    console.log(`announcer verified: ${verified} recordings, one voice, non-overlap, mute and volume`);
+  }
   if (!noWav) console.log(`WAVs → ${outDir}/`);
   for (const line of problems.slice(0, 20)) console.log(logText(line));
   ws.close();
   cleanup();
-  process.exit(0);
+  process.exit(clipped ? 1 : 0);
 }
 
 main().catch((e) => {

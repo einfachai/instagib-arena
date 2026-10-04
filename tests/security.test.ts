@@ -51,9 +51,10 @@ before(async () => {
   let logs = '';
   server.stdout?.on('data', (data) => { logs += data; });
   server.stderr?.on('data', (data) => { logs += data; });
-  for (let i = 0; i < 100; i++) {
+  const bootDeadline = Date.now() + 60_000;
+  while (Date.now() < bootDeadline) {
     if (server.exitCode !== null) throw new Error(`server exited: ${logs}`);
-    try { if ((await fetch(`${url}/api/health`)).ok) return; } catch { /* booting */ }
+    try { if ((await fetch(`${url}/api/health`, { signal: AbortSignal.timeout(1000) })).ok) return; } catch { /* booting */ }
     await new Promise((resolve) => setTimeout(resolve, 50));
   }
   throw new Error(`server did not boot: ${logs}`);

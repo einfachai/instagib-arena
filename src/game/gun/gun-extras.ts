@@ -278,6 +278,7 @@ const BULB_COLS = [
 ];
 
 let festiveGeo: THREE.BufferGeometry | null = null;
+let r01FestiveGeo: THREE.BufferGeometry | null = null;
 let festiveMat: THREE.ShaderMaterial | null = null;
 
 function tag(g: THREE.BufferGeometry, r: number, gg: number, b: number, phase: number): THREE.BufferGeometry {
@@ -359,8 +360,24 @@ function buildFestiveGeometry(): THREE.BufferGeometry {
 
 // A shared festive mesh (geometry + material are process-wide; add it to a gun
 // group). onBeforeRender drives the twinkle from the wall clock.
-export function festiveKit(): THREE.Mesh {
+export function festiveKit(r01 = false): THREE.Mesh {
   festiveGeo ??= buildFestiveGeometry();
+  if (r01 && !r01FestiveGeo) {
+    r01FestiveGeo = festiveGeo.clone();
+    const p = r01FestiveGeo.getAttribute('position');
+    const phase = r01FestiveGeo.getAttribute('aPhase');
+    for (let i = 0; i < p.count; i++) {
+      if (phase.getX(i) < -1.5) {
+        // Seat the bow on the rear cheek plate, clear of the counter and sight.
+        p.setXYZ(i, p.getX(i), p.getY(i) + 0.03, p.getZ(i) + 0.47);
+      } else {
+        // R-01 has a tall rectangular rail shroud, so its string is elliptical.
+        p.setXYZ(i, p.getX(i) * 0.82, (p.getY(i) - BARREL_Y) * 1.35 + 0.037, p.getZ(i));
+      }
+    }
+    r01FestiveGeo.computeVertexNormals();
+    r01FestiveGeo.userData.shared = true;
+  }
   festiveMat ??= new THREE.ShaderMaterial({
     uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uTime: { value: 0 }, uCalm: { value: 0 } }]),
     vertexShader: FESTIVE_VERT,
@@ -368,7 +385,7 @@ export function festiveKit(): THREE.Mesh {
     fog: true,
     toneMapped: false,
   });
-  const m = new THREE.Mesh(festiveGeo, festiveMat);
+  const m = new THREE.Mesh(r01 ? r01FestiveGeo! : festiveGeo, festiveMat);
   m.name = 'railgun-festive';
   m.userData.shared = true;
   m.frustumCulled = false;

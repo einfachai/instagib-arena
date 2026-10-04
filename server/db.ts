@@ -3,6 +3,8 @@
 // NOT EXISTS), so there are no migrations to run.
 
 import zlib from 'node:zlib';
+import { arcadeXpLines } from '../src/game/arcade-rewards';
+import type { VisitStats } from '../src/game/arcade';
 import { createHash } from 'node:crypto';
 import { sqlite } from './sqlite';
 import {
@@ -20,6 +22,7 @@ import {
 } from '../src/game/progression';
 import type { ItemInstanceWire, ItemSlot, Loadout } from '../src/game/items/types';
 import {
+  addStrangeKills,
   ensureEconomySchema,
   ensureOnboarded,
   ensureStaffItems,
@@ -49,6 +52,9 @@ import {
 // The SQLite connection lives in ./sqlite (shared with the economy modules).
 
 sqlite.exec(`
+CREATE TABLE IF NOT EXISTS arena_completed_visits (
+  visit_id TEXT PRIMARY KEY, player_id TEXT NOT NULL, ended_at INTEGER NOT NULL, stats_json TEXT NOT NULL, rewards_json TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS instagib_stats (
   player_id TEXT PRIMARY KEY,
   user_name TEXT NOT NULL,
@@ -588,6 +594,10 @@ export type MatchDelta = {
   // 0..1 share of the flat base XP (online: time present in the match / a full
   // match). Omitted = 1.
   presence?: number;
+  arcade?: VisitStats;
+  strangeUids?: string[];
+  strangeKills?: number;
+  humanPlaytimeSeconds?: number;
   // 0..1 repeat-victim decay on kill/headshot/streak XP (online FFA/TDM). Omitted = 1.
   killWeight?: number;
 };
@@ -827,9 +837,17 @@ export function recordMatch(delta: MatchDelta): MatchRecordResult {
 
 const recordMatchTx = sqlite.transaction((delta: MatchDelta): MatchRecordResult => {
   ensureOnboarded(delta.playerId);
+  if (delta.arcade) {
+    const prior = sqlite.prepare('SELECT player_id, rewards_json FROM arena_completed_visits WHERE visit_id = ?').get(delta.arcade.visitId) as { player_id: string; rewards_json: string } | undefined;
+    if (prior) {
+      if (prior.player_id !== delta.playerId) throw new Error('Visit owner mismatch');
+      return JSON.parse(prior.rewards_json) as MatchRecordResult;
+    }
+  }
   const entsBefore = entitlementsFor(delta.playerId);
   let stats: PublicStats;
-  if (delta.offline) {
+  const humanRecordable = !delta.arcade || delta.arcade.humanDurationMs >= 45_000 || delta.kills > 0 || delta.deaths > 0;
+  if (delta.offline || !humanRecordable) {
     // Offline (client-reported) matches are XP-only: they never feed career
     // totals, leaderboards or achievement titles — a forged POST can't pump them.
     ensureRowStmt.run(delta.playerId, delta.now, delta.now);
@@ -853,7 +871,7 @@ const recordMatchTx = sqlite.transaction((delta: MatchDelta): MatchRecordResult 
   const today = ymd(delta.now);
   const firstWin = won && !delta.offline && l.firstWinDay !== today;
   const offlineUsed = l.offlineDay === today ? l.offlineXp : 0;
-  const { xp: matchXp, lines } = matchXpLines(
+  const normal = matchXpLines(
     {
       kills: delta.kills,
       headshots: delta.headshots,
@@ -870,12 +888,14 @@ const recordMatchTx = sqlite.transaction((delta: MatchDelta): MatchRecordResult 
       offlineXpLeft: delta.offline ? OFFLINE_DAILY_XP_CAP - offlineUsed : undefined,
     },
   );
+  const mixed = delta.arcade ? arcadeXpLines({ human: { kills: delta.kills, headshots: delta.headshots, bestStreak: delta.bestStreak, accuracy: delta.accuracy, shotsFired: delta.shotsFired, killWeight: delta.killWeight, won: false }, bot: delta.arcade.bot, durationMs: delta.arcade.durationMs, humanDurationMs: delta.arcade.humanDurationMs, recordable: delta.arcade.durationMs >= 45000 || delta.arcade.kills > 0 || delta.arcade.deaths > 0 }, OFFLINE_DAILY_XP_CAP - offlineUsed) : null;
+  const { xp: matchXp, lines } = mixed ?? normal;
   l.totalXp += matchXp;
   l.credits += creditsForXp(matchXp);
   if (firstWin) l.firstWinDay = today;
-  if (delta.offline) {
+  if (delta.offline || mixed) {
     l.offlineDay = today;
-    l.offlineXp = offlineUsed + matchXp;
+    l.offlineXp = offlineUsed + (mixed?.practiceXp ?? matchXp);
   }
 
   // Challenges: online matches advance them; any completed-but-unpaid row is
@@ -885,10 +905,10 @@ const recordMatchTx = sqlite.transaction((delta: MatchDelta): MatchRecordResult 
 
   const roadRewards = grantRoad(l);
   saveLedger(l);
-  return {
-    stats,
-    ...buildReply(l, before, { saved: true, offline: delta.offline, xpLines: lines, roadRewards, challenges }),
-  };
+  const reply = { stats, ...buildReply(l, before, { saved: true, offline: delta.offline, xpLines: lines, roadRewards, challenges }) };
+  if (delta.arcade && delta.strangeKills && delta.strangeUids?.length) addStrangeKills(delta.playerId, delta.strangeUids, delta.strangeKills);
+  if (delta.arcade) sqlite.prepare('INSERT INTO arena_completed_visits VALUES (?, ?, ?, ?, ?)').run(delta.arcade.visitId, delta.playerId, delta.now, JSON.stringify(delta.arcade), JSON.stringify(reply));
+  return reply;
 });
 
 // A guest's would-be rewards: the same math from a fresh account (0 XP), never
@@ -897,7 +917,7 @@ function previewMatch(delta: MatchDelta): MatchRecordResult {
   const l = loadLedger('', undefined);
   const before: Before = { totalXp: 0, credits: 0, ents: entitlementsFor('') };
   const won = delta.wins > 0;
-  const { xp, lines } = matchXpLines(
+  const normal = matchXpLines(
     {
       kills: delta.kills,
       headshots: delta.headshots,
@@ -910,6 +930,7 @@ function previewMatch(delta: MatchDelta): MatchRecordResult {
     },
     { offline: delta.offline, firstWin: won && !delta.offline },
   );
+  const { xp, lines } = delta.arcade ? arcadeXpLines({ human: { kills: delta.kills, headshots: delta.headshots, bestStreak: delta.bestStreak, accuracy: delta.accuracy, shotsFired: delta.shotsFired, killWeight: delta.killWeight, won: false }, bot: delta.arcade.bot, durationMs: delta.arcade.durationMs, humanDurationMs: delta.arcade.humanDurationMs, recordable: delta.arcade.durationMs >= 45000 || delta.arcade.kills > 0 || delta.arcade.deaths > 0 }, OFFLINE_DAILY_XP_CAP) : normal;
   l.totalXp += xp;
   l.credits += creditsForXp(xp);
   const roadRewards = grantRoad(l);
@@ -1039,9 +1060,10 @@ function metricValue(metric: ChallengeMetric, d: MatchDelta): number {
   switch (metric) {
     case 'kills': return d.kills;
     case 'headshots': return d.headshots;
-    case 'wins': return d.wins; // 0 or 1
+    case 'wins': return d.wins; // historical match paths
+    case 'playtime': return d.humanPlaytimeSeconds ?? 0;
     case 'streak': return d.bestStreak;
-    case 'games': return 1;
+    case 'games': return d.arcade && d.arcade.humanDurationMs < 45_000 && d.kills === 0 && d.deaths === 0 ? 0 : 1;
   }
 }
 

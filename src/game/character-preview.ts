@@ -508,7 +508,7 @@ export class CharacterPreview {
     if (this.dummy) return;
     const mine = skinColorFor(this.cos.skinSeed || savedName() || 'you');
     // A contrasting "training bot" skin.
-    const skin = mine === '#ff6873' || mine === '#ff6b4e' ? SKIN_PALETTE[4] : '#ff6873';
+    const skin = mine === '#ff6873' || mine === '#ff6b4e' ? SKIN_PALETTE[0] : '#ff6873';
     const d = new Character({ colorHex: skin });
     this.dummy = d;
     this.subject.add(d.root);
