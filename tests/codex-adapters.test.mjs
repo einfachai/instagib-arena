@@ -33,6 +33,19 @@ test('desktop handoff only opens supported local chat links', () => {
   assert.deepEqual(handoffCommand({ source: 'ssh', taskLink: 'https://chatgpt.com/x' }, 'darwin'), ['open', ['-b', 'com.openai.codex']]);
 });
 
+test('remote handoff data cannot select an executable or inject shell syntax', () => {
+  const malicious = ['file:///tmp/run', 'https://evil.test', '-a Calculator', 'codex://threads/x;touch /tmp/pwn', 'codex://threads/x&calc', 'codex://threads/x%0Acalc', 'codex://threads/x\n', 'codex://threads/x\r', 'codex://threads/', { toString: () => 'codex://threads/x' }, ['codex://threads/x']];
+  for (const platform of ['darwin', 'win32', 'linux']) {
+    const fallback = handoffCommand(null, platform);
+    for (const taskLink of malicious) assert.deepEqual(handoffCommand({ source: 'local', taskLink, command: 'evil', args: ['evil'] }, platform), fallback);
+    assert.deepEqual(handoffCommand({ source: 'cloud', taskLink: 'codex://threads/safe' }, platform), fallback);
+    const valid = handoffCommand({ source: 'local', taskLink: 'codex://threads/safe_123-ABC', command: 'evil' }, platform);
+    assert.equal(valid[0], fallback[0]);
+    assert.ok(valid[1].includes('codex://threads/safe_123-ABC'));
+  }
+  for (const target of ['__proto__', 'constructor', 'toString', "claude'; calc; '"]) assert.throws(() => handoffCommand({}, 'darwin', 'claude', target), /Unsupported/);
+});
+
 test('cloud scans never overlap and metadata edits do not replay a completion', async () => {
   let calls = 0, release;
   const gate = new Promise(resolve => { release = resolve; });

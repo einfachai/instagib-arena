@@ -113,7 +113,7 @@ export function handoffCommand(event, platform = process.platform, host = 'codex
     if (platform === 'darwin') {
       const bundles = { terminal: 'com.apple.Terminal', iterm: 'com.googlecode.iterm2', vscode: 'com.microsoft.VSCode',
         wezterm: 'com.github.wez.wezterm', ghostty: 'com.mitchellh.ghostty', claude: 'com.anthropic.claudefordesktop' };
-      if (!bundles[target]) throw new Error('Unsupported Claude return app');
+      if (!Object.hasOwn(bundles, target)) throw new Error('Unsupported Claude return app');
       return ['open', ['-b', bundles[target]]];
     }
     if (platform === 'win32') {
@@ -124,7 +124,11 @@ export function handoffCommand(event, platform = process.platform, host = 'codex
     // Report failure and keep the manual-return action available.
     throw new Error('Automatic Claude return is unavailable on this desktop');
   }
-  const localLink = event?.source === 'local' && /^codex:\/\/threads\/[\w-]+$/.test(event.taskLink ?? '') ? event.taskLink : null;
+  const link = event?.taskLink;
+  const prefix = 'codex://threads/';
+  const threadId = typeof link === 'string' && link.startsWith(prefix) ? link.slice(prefix.length) : '';
+  // A negated character class also rejects trailing newlines (unlike JS `$`).
+  const localLink = event?.source === 'local' && threadId && !/[^A-Za-z0-9_-]/.test(threadId) ? link : null;
   if (platform === 'darwin') return ['open', localLink ? [localLink] : ['-b', 'com.openai.codex']];
   if (platform === 'win32') return ['cmd.exe', ['/d', '/c', 'start', '', localLink ?? 'codex://']];
   return ['xdg-open', [localLink ?? 'codex://']];

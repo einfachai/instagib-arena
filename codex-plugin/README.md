@@ -114,6 +114,13 @@ The default data directory is `~/.local/share/agent-deathmatch/live`. `PLUGIN_DA
 Use a separate data directory when switching origin; credentials belong to their
 issuing backend. Companion/helper logs stay on the execution host.
 
+Companion startup and shutdown serialize changes to `companion.lock` using a
+short-lived `companion.lock.guard`. A stale PID lock is recovered automatically.
+If a process crashes while holding the guard, startup stops instead of risking
+two companions. Inspect the PID in the guard, verify that process has exited,
+and remove only `companion.lock.guard` before retrying. Never remove a live
+process's guard or PID lock.
+
 ## Local game preview
 
 Set `AGENT_DEATHMATCH_ORIGIN=http://localhost:8787` for development. If the installed

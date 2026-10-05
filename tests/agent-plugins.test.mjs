@@ -91,6 +91,7 @@ for archive in root.glob('*.zip'):
   names=z.namelist(); prefix=names[0].split('/')[0]+'/'
   assert all(n.startswith(prefix) for n in names)
   assert not any('/node_modules/' in n or '/controller.json' in n or '/public/models/' in n for n in names)
+  assert prefix+('codex-plugin/' if 'claude-code' in archive.name else '')+'companion-lock.mjs' in names
   if 'claude-code' in archive.name:
    assert prefix+'codex-plugin/server.mjs' in names
    assert prefix+'codex-plugin/claude-notify.mjs' in names

@@ -42,6 +42,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { createServer } from 'node:net';
+import { photoSelectRequest } from './photo-select.mjs';
 
 const args = process.argv.slice(2);
 const flag = (name, def) => {
@@ -170,9 +171,13 @@ async function main() {
   };
   const selectPhoto = async (label, value) => {
     for (let i = 0; i < 240; i++) {
-      const present = await evaluate(`!!document.querySelector('select[aria-label=${JSON.stringify(label)}]')`).catch(() => false);
+      const present = await (async () => {
+        const document = await send('Runtime.evaluate', { expression: 'document' });
+        const result = await send('Runtime.callFunctionOn', photoSelectRequest(document.result.objectId, label, value));
+        if (result.exceptionDetails) throw new Error(result.exceptionDetails.text);
+        return result.result?.value;
+      })().catch(() => false);
       if (present) {
-        await evaluate(`(() => { const select=document.querySelector('select[aria-label=${JSON.stringify(label)}]'); select.value=${JSON.stringify(value)}; select.dispatchEvent(new Event('change',{bubbles:true})); })()`);
         await sleep(150);
         return;
       }

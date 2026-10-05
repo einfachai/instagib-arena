@@ -185,6 +185,11 @@ test('API rejects cross-origin writes and never caches personalized data', async
   assert.equal((await request('/auth/logout', {}, 'alice', { Origin: 'https://evil.test' })).status, 403);
   assert.equal((await request('/auth/logout', {}, 'alice', { Origin: 'https://sub.arena.test' })).status, 403);
   assert.equal((await request('/auth/logout', {}, 'alice', { 'Sec-Fetch-Site': 'cross-site' })).status, 403);
+  assert.equal((await request('/auth/logout', {}, 'alice', { Origin: 'null' })).status, 403);
+  const withoutOrigin = await fetch(`${url}/api/auth/logout`, { method: 'POST', headers: {
+    Cookie: `igsession=${tokens.alice}`, 'Sec-Fetch-Site': 'cross-site', 'Content-Type': 'application/x-www-form-urlencoded',
+  }, body: '' });
+  assert.equal(withoutOrigin.status, 403);
   assert.equal(db.userIdFromSession(tokens.alice), 'alice');
   const profile = await request('/profile', undefined, 'alice');
   assert.equal(profile.status, 200);

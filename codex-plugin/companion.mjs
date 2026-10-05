@@ -2,22 +2,15 @@ import { agent } from './agent.mjs';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { setTimeout as delay } from 'node:timers/promises';
-import { open, writeFile, unlink } from 'node:fs/promises';
 import path from 'node:path';
 import { api, dataDir, register, submitEvent, flushEvents } from './connection.mjs';
 import { CloudMonitor, handoffCommand } from './adapters.mjs';
+import { acquireCompanionLock } from './companion-lock.mjs';
 const execute = promisify(execFile);
+const releaseLock = await acquireCompanionLock(dataDir);
+if (!releaseLock) process.exit(0);
+process.on('exit', releaseLock);
 const c = await register();
-const lockPath = path.join(dataDir, 'companion.lock');
-try {
-  const lock = await open(lockPath, 'wx', 0o600); await lock.writeFile(String(process.pid)); await lock.close();
-} catch (error) {
-  if (error.code !== 'EEXIST') throw error;
-  const { readFile } = await import('node:fs/promises');
-  const pid = Number(await readFile(lockPath, 'utf8'));
-  try { process.kill(pid, 0); process.exit(0); } catch { await unlink(lockPath); await writeFile(lockPath, String(process.pid), { mode: 0o600 }); }
-}
-process.on('exit', () => { void unlink(lockPath).catch(() => {}); });
 const providers = agent === 'claude' ? { companion: 'healthy', local: 'unconfigured', attention: 'unconfigured' } : { companion: 'healthy', local: 'unconfigured', cloud: 'degraded' };
 const cloud = new CloudMonitor({ cli: process.env.AGENT_DEATHMATCH_CLI || 'codex',
   onEvent: e => submitEvent(c, e), onStatus: status => { providers.cloud = status; } });
@@ -60,4 +53,4 @@ while (running) {
   } catch { providers.companion = 'degraded'; }
   await delay(1000);
 }
-await unlink(lockPath).catch(() => {});
+releaseLock();

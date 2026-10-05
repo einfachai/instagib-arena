@@ -9,7 +9,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 RUNTIME = [
-    'agent.mjs', 'adapters.mjs', 'connection.mjs', 'server.mjs', 'companion.mjs',
+    'agent.mjs', 'adapters.mjs', 'connection.mjs', 'server.mjs', 'companion.mjs', 'companion-lock.mjs',
     'notify.mjs', 'claude-notify.mjs', 'play.html', 'setup.py',
     '.mcp.json', '.codex-plugin/plugin.json', 'assets/gun.svg', 'assets/gun-dark.svg',
 ]
