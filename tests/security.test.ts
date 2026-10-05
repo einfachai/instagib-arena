@@ -190,6 +190,9 @@ test('API rejects cross-origin writes and never caches personalized data', async
   assert.equal(profile.status, 200);
   assert.equal(profile.headers.get('cache-control'), 'no-store');
   assert.match(profile.headers.get('content-security-policy') ?? '', /frame-ancestors 'none'/);
+  const scriptPolicy = (profile.headers.get('content-security-policy') ?? '').split(';').find(value => value.trim().startsWith('script-src ')) ?? '';
+  assert.match(scriptPolicy, /'wasm-unsafe-eval'/, 'Compressed texture decoding requires WebAssembly');
+  assert.ok(!scriptPolicy.includes("'unsafe-eval'"), 'JavaScript string evaluation stays disabled');
 });
 test('malformed and oversized HTTP bodies fail without stack traces', async () => {
   const malformed = await fetch(`${url}/api/auth/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{' });
