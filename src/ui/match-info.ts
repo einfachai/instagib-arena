@@ -14,6 +14,7 @@ import { MAPS } from '../game/map';
 import type { PlayerScore } from '../game/types';
 
 export type MatchFlavor = {
+  arcade?: boolean;
   mode: GameMode;
   training?: boolean;
   challenge?: boolean;
@@ -23,13 +24,14 @@ export type MatchFlavor = {
 // The frag limit the match is played to (null = endless training). Mirrors the
 // engine's own limit resolution (game.ts checkMatchEnd / updateMatchDrama).
 export function fragLimitFor(f: MatchFlavor): number | null {
-  if (f.training) return null;
+  if (f.training || f.arcade) return null;
   if (f.mode === 'tdm') return TDM_FRAG_LIMIT;
   if (f.mode === 'duel') return f.ranked ? RANKED_DUEL_FRAG_LIMIT : DUEL_FRAG_LIMIT;
   return f.challenge ? WEEKLY_CHALLENGE_FRAG_LIMIT : MATCH_FRAG_LIMIT;
 }
 
 export function modeTitle(f: MatchFlavor): string {
+  if (f.arcade) return 'Agent Deathmatch';
   if (f.training) return 'Training range';
   if (f.challenge) return 'Weekly challenge';
   if (f.mode === 'tdm') return 'Team deathmatch';
@@ -39,6 +41,7 @@ export function modeTitle(f: MatchFlavor): string {
 
 // "Free-for-all · first to 25 frags"
 export function modeLine(f: MatchFlavor): string {
+  if (f.arcade) return 'Continuous FFA · independent visits';
   const limit = fragLimitFor(f);
   if (limit == null) return `${modeTitle(f)} · free practice`;
   return `${modeTitle(f)} · first to ${limit} ${f.mode === 'tdm' ? 'team frags' : 'frags'}`;

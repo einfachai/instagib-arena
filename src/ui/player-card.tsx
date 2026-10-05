@@ -136,7 +136,7 @@ export function PlayerCard({
               {card.title}
             </div>
           ) : (
-            <div className='text-[9px] uppercase tracking-[0.2em] text-white/55'>Instagib Arena</div>
+            <div className='text-[9px] uppercase tracking-[0.2em] text-white/55'>Agent Deathmatch</div>
           )}
         </div>
       </div>

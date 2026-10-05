@@ -1,4 +1,4 @@
-# Instagib Arena — working notes for Claude
+# Agent Deathmatch — working notes for Claude
 
 Browser instagib FPS. Three.js 0.184 (WebGL) client + React 19 / Tailwind 4 UI, Node
 `ws` server, SQLite. Live at instagib.win on Railway. Architecture: `docs/ARCHITECTURE.md`.

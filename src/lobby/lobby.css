@@ -40,13 +40,13 @@
   background: rgba(255, 255, 255, 0.08);
 }
 .lb-mode[aria-checked='true'] {
-  border-color: rgba(103, 232, 249, 0.7);
-  background: rgba(103, 232, 249, 0.13);
+  border-color: rgba(var(--arena-accent-light-rgb), 0.7);
+  background: rgba(var(--arena-accent-light-rgb), 0.13);
 }
 .lb-mode:focus-visible,
 .lb-map:focus-visible {
   outline: none;
-  box-shadow: inset 0 0 0 2px rgba(34, 211, 238, 0.8);
+  box-shadow: inset 0 0 0 2px rgba(var(--arena-accent-rgb), 0.8);
 }
 .lb-mode-name {
   font-family: var(--font-display);
@@ -57,7 +57,7 @@
   color: rgba(255, 255, 255, 0.8);
 }
 .lb-mode[aria-checked='true'] .lb-mode-name {
-  color: #cffafe;
+  color: var(--arena-accent-pale);
 }
 .lb-mode-sub {
   font-family: var(--font-sans);
@@ -92,7 +92,7 @@
   border-color: rgba(255, 255, 255, 0.35);
 }
 .lb-map[aria-checked='true'] {
-  border-color: rgba(103, 232, 249, 0.85);
+  border-color: rgba(var(--arena-accent-light-rgb), 0.85);
 }
 .lb-map-shot {
   position: relative;
@@ -192,12 +192,12 @@
   color: rgba(255, 255, 255, 0.85);
 }
 .lb-chipbtn[aria-pressed='true'] {
-  border-color: rgba(103, 232, 249, 0.6);
-  background: rgba(103, 232, 249, 0.13);
-  color: #cffafe;
+  border-color: rgba(var(--arena-accent-light-rgb), 0.6);
+  background: rgba(var(--arena-accent-light-rgb), 0.13);
+  color: var(--arena-accent-pale);
 }
 .lb-chipbtn:focus-visible {
-  outline: 2px solid rgba(34, 211, 238, 0.8);
+  outline: 2px solid rgba(var(--arena-accent-rgb), 0.8);
   outline-offset: 1px;
 }
 
@@ -215,7 +215,7 @@
 }
 .lb-room:hover,
 .lb-room:focus-within {
-  border-color: rgba(103, 232, 249, 0.35);
+  border-color: rgba(var(--arena-accent-light-rgb), 0.35);
   background: rgba(255, 255, 255, 0.06);
 }
 .lb-room-shot {
@@ -310,8 +310,8 @@
   padding: 0.35rem 0.55rem;
 }
 .lb-player[data-you='true'] {
-  border-color: rgba(103, 232, 249, 0.4);
-  background: rgba(103, 232, 249, 0.08);
+  border-color: rgba(var(--arena-accent-light-rgb), 0.4);
+  background: rgba(var(--arena-accent-light-rgb), 0.08);
 }
 .lb-dot {
   display: inline-block;
@@ -337,8 +337,8 @@
   line-height: 1.35;
 }
 .lb-msg[data-mine='true'] .lb-bubble {
-  border-color: rgba(103, 232, 249, 0.28);
-  background: rgba(103, 232, 249, 0.09);
+  border-color: rgba(var(--arena-accent-light-rgb), 0.28);
+  background: rgba(var(--arena-accent-light-rgb), 0.09);
 }
 .lb-chat-input {
   min-width: 0;
@@ -358,7 +358,7 @@
   color: rgba(255, 255, 255, 0.32);
 }
 .lb-chat-input:focus {
-  border-color: rgba(103, 232, 249, 0.7);
+  border-color: rgba(var(--arena-accent-light-rgb), 0.7);
 }
 .lb-chat-input:disabled {
   opacity: 0.45;
@@ -375,9 +375,9 @@
   justify-content: center;
   margin: 0.25rem auto 0;
   clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
-  border: 1px solid var(--lb-c, rgba(103, 232, 249, 0.5));
-  background: color-mix(in srgb, var(--lb-c, #67e8f9) 12%, transparent);
-  color: var(--lb-c, #67e8f9);
+  border: 1px solid var(--lb-c, rgba(var(--arena-accent-light-rgb), 0.5));
+  background: color-mix(in srgb, var(--lb-c, var(--arena-accent-light)) 12%, transparent);
+  color: var(--lb-c, var(--arena-accent-light));
 }
 .lb-hero-icon[data-tone='rose'] {
   --lb-c: #fb7185;
@@ -392,7 +392,7 @@
   content: '';
   position: absolute;
   inset: -1px;
-  border: 1px solid var(--lb-c, #67e8f9);
+  border: 1px solid var(--lb-c, var(--arena-accent-light));
   opacity: 0;
   animation: lb-ping 1.8s ease-out infinite;
 }

@@ -13,20 +13,25 @@
 //   --base URL      dev server origin (default http://localhost:5173)
 //   --path PATH     page to open (default /play?photo=1)
 //   --out PREFIX    output path prefix; each shot → <PREFIX>-<name>.jpg
-//   --solo MAP      click Solo vs Bots → pick MAP → Start match (photo mode)
-//   --mode M        ffa | duel | tdm for --solo (default ffa)
+//   --solo MAP      open the dev-only /mapphoto entry directly (offline)
+//   --quality Q     high = 2K, low = 1K (default high)
 //   --shots LIST    ';'-separated `name[:yaw,pitch[,x,y,z]]` (default "shot");
 //                   a positioned view is held every frame (aerial shots don't fall).
 //                   yaw 0 looks toward −z, π/2 toward −x; pitch < 0 looks down.
 //   --wait MS       settle time after the match starts (default 5000)
 //   --each MS       settle time between shots (default 900)
+//   --benchmark MS  measure steady rendering after the last view (default 0)
+//   --all-maps      capture every retained map in both qualities in one browser
+//   --switch-check  verify live map switches finish loading
+//   --missing-assets block world textures and verify procedural fallback
+//   --movement-check exercise jump and floor boost through real game input
 //   --eval JS       run JS in the page before the first shot
 //   --size WxH      viewport (default 1600x900)
 //   --keep-overlay  don't strip the click-to-play overlay
 //   --no-hud        hide the React HUD layer (pure 3D frame)
 //   --no-gun        hide the first-person railgun (layout / overview shots)
 //   --no-bots       remove the bots (empty arena; they can't kill the camera)
-//   --training      open the Training range from the main menu (instead of --solo)
+//   --training      open Training through /mapphoto (instead of --solo)
 //   --cookie N=V    set a cookie on the base origin before loading (e.g. a
 //                   logged-in igsession from a curl cookie jar)
 //
@@ -37,6 +42,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { createServer } from 'node:net';
+import { photoSelectRequest } from './photo-select.mjs';
 
 const args = process.argv.slice(2);
 const flag = (name, def) => {
@@ -50,9 +56,10 @@ const base = flag('base', 'http://localhost:5173');
 const path = flag('path', '/play?photo=1');
 const out = flag('out', 'design/shots/shot');
 const solo = flag('solo', null);
-const mode = flag('mode', 'ffa');
+const quality = flag('quality', 'high');
 const shotsArg = flag('shots', 'shot');
 const settle = Number(flag('wait', 5000));
+const benchmark = Number(flag('benchmark', 0));
 const each = Number(flag('each', 900));
 const evalJs = flag('eval', null);
 const [vw, vh] = String(flag('size', '1600x900')).split('x').map(Number);
@@ -61,6 +68,10 @@ const noHud = flag('no-hud', false) === true;
 const cookie = flag('cookie', null);
 const noGun = flag('no-gun', false) === true;
 const noBots = flag('no-bots', false) === true;
+const missingAssets = flag('missing-assets', false) === true;
+const allMaps = flag('all-maps', false) === true;
+const switchCheck = flag('switch-check', false) === true;
+const movementCheck = flag('movement-check', false) === true;
 const trainingMode = flag('training', false) === true;
 
 const CHROME =
@@ -98,28 +109,31 @@ async function main() {
       '--hide-scrollbars',
       '--mute-audio',
       '--autoplay-policy=no-user-gesture-required',
-      '--enable-unsafe-swiftshader',
       '--ignore-gpu-blocklist',
       'about:blank',
     ],
-    { stdio: 'ignore' },
+    { stdio: ['ignore','ignore','pipe'] },
   );
+  let launchLog='';
+  chrome.stderr.on('data',chunk=>{launchLog=(launchLog+String(chunk)).slice(-1800);});
+  chrome.on('error',error=>{launchLog+=error.message;});
   const cleanup = () => {
     try { chrome.kill('SIGKILL'); } catch { /* gone */ }
     try { rmSync(profile, { recursive: true, force: true }); } catch { /* best effort */ }
   };
   process.on('exit', cleanup);
+  for(const signal of ['SIGINT','SIGTERM']) process.on(signal,()=>{cleanup();process.exit(1);});
 
   // Wait for the DevTools endpoint, then attach to the first page target.
   let target = null;
-  for (let i = 0; i < 80 && !target; i++) {
+  for (let i = 0; i < 400 && !target; i++) {
     try {
       const list = await (await fetch(`http://127.0.0.1:${port}/json/list`)).json();
       target = list.find((t) => t.type === 'page') ?? null;
     } catch { /* not up yet */ }
     if (!target) await sleep(150);
   }
-  if (!target) throw new Error('Chrome DevTools endpoint never came up');
+  if (!target) throw new Error(`Chrome DevTools endpoint never came up (exit ${chrome.exitCode}, signal ${chrome.signalCode}): ${launchLog}`);
 
   const ws = new WebSocket(target.webSocketDebuggerUrl);
   await new Promise((r, j) => { ws.onopen = r; ws.onerror = j; });
@@ -134,7 +148,9 @@ async function main() {
       if (msg.error) reject(new Error(msg.error.message));
       else resolve(msg.result);
     } else if (msg.method === 'Runtime.exceptionThrown') {
-      consoleLines.push(`[exception] ${msg.params.exceptionDetails?.exception?.description ?? msg.params.exceptionDetails?.text}`);
+      const line = `[exception] ${msg.params.exceptionDetails?.exception?.description ?? msg.params.exceptionDetails?.text}`;
+      consoleLines.push(line);
+      console.error(logText(line));
     } else if (msg.method === 'Runtime.consoleAPICalled' && (msg.params.type === 'error' || msg.params.type === 'warning')) {
       consoleLines.push(`[${msg.params.type}] ${msg.params.args.map((a) => a.value ?? a.description ?? '').join(' ')}`);
     } else if (msg.method === 'Runtime.consoleAPICalled' && msg.params.type === 'info' && String(msg.params.args[0]?.value ?? '').startsWith('[world]')) {
@@ -153,6 +169,23 @@ async function main() {
     if (r.exceptionDetails) throw new Error(r.exceptionDetails.exception?.description ?? r.exceptionDetails.text);
     return r.result?.value;
   };
+  const selectPhoto = async (label, value) => {
+    for (let i = 0; i < 240; i++) {
+      const present = await (async () => {
+        const document = await send('Runtime.evaluate', { expression: 'document' });
+        const result = await send('Runtime.callFunctionOn', photoSelectRequest(document.result.objectId, label, value));
+        if (result.exceptionDetails) throw new Error(result.exceptionDetails.text);
+        return result.result?.value;
+      })().catch(() => false);
+      if (present) {
+        await sleep(150);
+        return;
+      }
+      await sleep(250);
+    }
+    const state = await evaluate(`JSON.stringify({url:location.href,text:document.body.innerText.slice(0,1500)})`);
+    throw new Error(`Missing photo ${label} control: ${state}`);
+  };
 
   await send('Page.enable');
   await send('Runtime.enable');
@@ -166,7 +199,9 @@ async function main() {
     const eq = String(cookie).indexOf('=');
     await send('Network.setCookie', { url: base, name: String(cookie).slice(0, eq), value: String(cookie).slice(eq + 1) });
   }
-  await send('Page.navigate', { url: base + path });
+  if(missingAssets) { await send('Network.enable'); await send('Network.setBlockedURLs',{urls:['*://*/textures/world/*']}); }
+  const photoPath=(solo||trainingMode) ? `/mapphoto?photo=1&map=${encodeURIComponent(trainingMode?'training':solo)}&quality=${encodeURIComponent(quality)}&bots=${noBots?'0':'7'}` : path;
+  await send('Page.navigate', { url: base + photoPath });
   // Wait for the app to mount (a cold vite can take a while to serve the first
   // module graph) rather than a fixed sleep.
   for (let i = 0; i < 120; i++) {
@@ -175,15 +210,6 @@ async function main() {
     if (ready) break;
   }
   await sleep(800);
-
-  const clickByText = async (re) => {
-    const ok = await evaluate(`(() => {
-      const re = new RegExp(${JSON.stringify(re)}, 'i');
-      const el = [...document.querySelectorAll('button,a,[role=button]')].find((e) => re.test((e.textContent || '').trim()));
-      if (!el) return false; el.click(); return true;
-    })()`);
-    if (!ok) throw new Error(`no clickable element matching /${re}/`);
-  };
 
   // Strip the click-to-play overlay's blur, and optionally hide the HUD layer.
   const clearOverlays = async () => {
@@ -205,36 +231,18 @@ async function main() {
     }
   };
 
-  if (solo) {
-    await clickByText('^solo vs bots');
-    await sleep(600);
-    // Mode cards run the name straight into a blurb ("TDMTeam…"), so no \b here.
-    if (mode !== 'ffa') await clickByText(`^${mode === 'tdm' ? 'TDM' : 'Duel'}`);
-    await sleep(200);
-    const picked = await evaluate(`(() => {
-      const card = document.querySelector('[data-map=' + JSON.stringify(${JSON.stringify(solo)}) + ']');
-      if (card) { card.click(); return true; }
-      const sel = document.querySelector('select');
-      if (!sel) return false;
-      const opt = [...sel.options].find((o) => o.value === ${JSON.stringify(solo)});
-      if (!opt) return false;
-      const set = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set;
-      set.call(sel, opt.value);
-      sel.dispatchEvent(new Event('change', { bubbles: true }));
-      return true;
-    })()`);
-    if (!picked) throw new Error(`no map card for ${solo}`);
-    await sleep(300);
-    await clickByText('^start match');
+  if (solo || trainingMode) {
+    let ready=false;
+    for(let i=0;i<240;i++) {
+      ready=await evaluate(`['ready','fallback'].includes(document.querySelector('[data-photo-status]')?.textContent)`);
+      if(ready) break;
+      await sleep(250);
+    }
+    if(!ready) throw new Error('Photo arena did not finish loading');
     await sleep(settle);
+    await evaluate(`(() => {const style=document.createElement('style');style.textContent='[data-photo-controls],body button {display:none!important}';document.head.append(style);})()`);
     await clearOverlays();
-  } else if (trainingMode) {
-    await clickByText('^training range');
-    await sleep(settle);
-    await clearOverlays();
-  } else {
-    await sleep(Math.min(settle, 2500));
-  }
+  } else await sleep(Math.min(settle,2500));
 
   // Settings sync can re-show the viewmodel after the first shot, so the hide is
   // re-applied every frame (the hold loop below also calls it).
@@ -244,28 +252,94 @@ async function main() {
   if (evalJs) await evaluate(String(evalJs));
 
   const shots = String(shotsArg).split(';').map((s) => s.trim()).filter(Boolean);
+  const jobs=allMaps?['causeway','reactor','containeryard','derrick','training'].flatMap(map=>['high','low'].map(quality=>({map,quality}))):[{map:solo,quality}];
   mkdirSync(dirname(out), { recursive: true });
-  for (const spec of shots) {
-    const [name, view] = spec.split(':');
-    if (view) {
-      const n = view.split(',').map(Number);
-      const pos = n.length >= 5 ? `{x:${n[2]},y:${n[3]},z:${n[4]}}` : 'undefined';
-      // Re-pin the pose every frame until the capture, so aerial viewpoints
-      // don't fall (and a positioned camera isn't shoved by physics).
-      await evaluate(`(() => {
-        window.__shotHold = { yaw: ${n[0]}, pitch: ${n[1]}, pos: ${pos} };
-        if (!window.__shotHoldLoop) {
-          window.__shotHoldLoop = true;
-          const f = () => { const h = window.__shotHold; if (h && window.__ig) window.__ig.setPlayerView(h.yaw, h.pitch, h.pos && { ...h.pos }); requestAnimationFrame(f); };
-          f();
-        }
-      })()`);
+  for(const job of jobs) {
+    if(allMaps) {
+      await selectPhoto('Map', job.map);
+      await selectPhoto('Quality', job.quality);
+      let ready=false;
+      for(let i=0;i<600;i++){await sleep(100);ready=await evaluate(`['ready','fallback'].includes(document.querySelector('[data-photo-status]')?.textContent)`);if(ready)break;}
+      if(!ready)throw new Error(`Photo materials stalled: ${job.map}/${job.quality}`);
+      await sleep(settle);
     }
-    await sleep(each);
-    const shot = await send('Page.captureScreenshot', { format: 'jpeg', quality: 85 });
-    const file = `${out}-${name}.jpg`;
-    writeFileSync(file, Buffer.from(shot.data, 'base64'));
-    console.log(logText(file));
+    for (const spec of shots) {
+      const [name, view] = spec.split(':');
+      if (!view && ['wide','surface','combat'].includes(name)) {
+        await selectPhoto('View', name);
+      }
+      if (view) {
+        const n = view.split(',').map(Number);
+        const pos = n.length >= 5 ? `{x:${n[2]},y:${n[3]},z:${n[4]}}` : 'undefined';
+        await evaluate(`(() => {
+          window.__shotHold = { yaw: ${n[0]}, pitch: ${n[1]}, pos: ${pos} };
+          if (!window.__shotHoldLoop) {
+            window.__shotHoldLoop = true;
+            const f = () => { const h = window.__shotHold; if (h && window.__ig) window.__ig.setPhotoView(h.yaw, h.pitch, h.pos && { ...h.pos }); requestAnimationFrame(f); }; f();
+          }
+        })()`);
+      }
+      await sleep(each);
+      const shot = await send('Page.captureScreenshot', { format: 'jpeg', quality: 90 });
+      const file = allMaps?`${out}-${job.map}-${job.quality}-${name}.jpg`:`${out}-${name}.jpg`;
+      writeFileSync(file, Buffer.from(shot.data, 'base64'));
+      console.log(logText(file));
+    }
+    if(benchmark>0) {
+      // Begin after traversal/material/shader warmup; report steady frames only.
+      await evaluate(`window.__ig?.mapAssetsReady()`);
+      await sleep(benchmark);
+    }
+    const metrics=await evaluate(`document.querySelector('[data-photo-metrics]')?.textContent`);
+    if((solo||trainingMode)&&benchmark>0&&!metrics?.includes('render '))throw Error(`Missing timing sample: ${job.map}/${job.quality}`);
+    if(metrics) console.log(`[performance ${job.map}/${job.quality}] ${logText(metrics)}`);
+  }
+  if(switchCheck) {
+    for(const map of ['derrick','reactor','containeryard','training','causeway']) {
+      await selectPhoto('Map', map);
+      let status='';
+      for(let i=0;i<600;i++) {await sleep(100);status=await evaluate(`document.querySelector('[data-photo-status]')?.textContent`);if(status==='ready'||status==='fallback')break;}
+      if(status!=='ready' && status!=='fallback')throw new Error(`Map switch stalled: ${map}`);
+      console.log(`[switch] ${map}: ${status}`);
+    }
+  }
+  if(movementCheck) {
+    await send('Page.bringToFront');
+    const key=async(code,key,pressed,windowsVirtualKeyCode)=>send('Input.dispatchKeyEvent',{type:pressed?'keyDown':'keyUp',code,key,windowsVirtualKeyCode});
+    const beginMovement=async()=>evaluate(`(() => {document.activeElement?.blur();window.__shotMovement=[];window.__shotMovementObserver?.disconnect();const output=document.querySelector('[data-photo-metrics]');window.__shotMovementObserver=new MutationObserver(()=>window.__shotMovement.push(output.textContent));window.__shotMovementObserver.observe(output,{childList:true,subtree:true,characterData:true});})()`);
+    const movement=async(peak=false)=>{
+      const value=await evaluate(peak?`(window.__shotMovement??[]).filter(text=>text.includes('position')).sort((a,b)=>Number(b.match(/position [\\d.-]+, ([\\d.-]+)/)?.[1])-Number(a.match(/position [\\d.-]+, ([\\d.-]+)/)?.[1]))[0]??document.querySelector('[data-photo-metrics]')?.textContent`:`document.querySelector('[data-photo-metrics]')?.textContent ?? ''`);
+      const match=value.match(/position ([\d.-]+), ([\d.-]+), ([\d.-]+)/);
+      if(!match)throw Error(`Missing movement diagnostics: ${value}`);
+      return {x:Number(match[1]),y:Number(match[2]),z:Number(match[3]),text:value};
+    };
+    for(const map of ['causeway','reactor','containeryard','derrick']) {
+      await selectPhoto('Map',map);await selectPhoto('View','surface');
+      await evaluate(`window.__ig?.mapAssetsReady()`);
+      await evaluate(`[...document.querySelectorAll('button')].find(button=>button.textContent==='Playtest').click()`);
+      await sleep(1200);
+      const start=await movement();
+      await beginMovement();
+      await key('Space',' ',true,32);await sleep(220);await key('Space',' ',false,32);await sleep(80);
+      await sleep(600);
+      const jump=await movement(true);
+      if(jump.y<start.y+.5 || !jump.text.includes('airborne'))throw Error(`${map}: jump failed (${jump.text})`);
+      await sleep(1000);
+      await evaluate(`window.__ig.setPlayerView(0,-Math.PI/2)`);
+      await sleep(150);
+      await beginMovement();
+      await key('KeyE','e',true,69);await sleep(100);await key('KeyE','e',false,69);await sleep(300);
+      await sleep(600);
+      const boost=await movement(true);
+      if(boost.y<start.y+3 || !boost.text.includes('airborne'))throw Error(`${map}: floor boost failed (${boost.text})`);
+      const [halfX,halfZ,cap]=['causeway','reactor'].includes(map)?[48,36,30]:[34,29,26];
+      for(const pose of [start,jump,boost]) if(![pose.x,pose.y,pose.z].every(Number.isFinite) || Math.abs(pose.x)>=halfX || Math.abs(pose.z)>=halfZ || pose.y<0 || pose.y>=cap)throw Error(`${map}: invalid movement position (${pose.text})`);
+      console.log(`[movement] ${map}: jump +${(jump.y-start.y).toFixed(2)} m; boost +${(boost.y-start.y).toFixed(2)} m; finite and inside bounds`);
+      const shot=await send('Page.captureScreenshot',{format:'jpeg',quality:90});
+      writeFileSync(`${out}-${map}-boost.jpg`,Buffer.from(shot.data,'base64'));
+      await evaluate(`[...document.querySelectorAll('button')].find(button=>button.textContent==='Playtest').click()`);
+      await sleep(150);
+    }
   }
   const gl = await evaluate(`(() => { try { const c = document.createElement('canvas').getContext('webgl2'); const d = c && c.getExtension('WEBGL_debug_renderer_info'); return d ? c.getParameter(d.UNMASKED_RENDERER_WEBGL) : (c ? 'webgl2' : 'none'); } catch (e) { return String(e); } })()`);
   console.log(`[gl] ${logText(gl)}`);

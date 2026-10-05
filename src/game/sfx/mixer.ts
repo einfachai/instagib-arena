@@ -4,6 +4,7 @@
 //   hud (dry)  ──┤                                  ┌─ announcerBus ─┐
 //   reverb wet ──┼─ sfxBus (SFX vol) ───────────────┤                ├─ mix → limiter → safety clip → out (master vol) → destination
 //   ambience → duck ┘                               └────────────────┘
+//   music → musicBus (music vol) → musicDuck ────────────────→ mix
 //   sends (lo/mid/hi, per-voice for 3D) → reverbIn → convolver → wet
 //
 // The limiter + soft safety clip sit BEFORE the master volume, so the mix never
@@ -52,6 +53,7 @@ export class Mixer {
   readonly out: GainNode; // master volume
   readonly sfxBus: GainNode;
   readonly announcerBus: GainNode;
+  readonly musicBus: GainNode;
   readonly world: GainNode; // dry world SFX (local + 3D)
   readonly hud: GainNode; // dry interface-like SFX (tick, ready, stings) — never reverbed
   readonly ambience: GainNode;
@@ -62,6 +64,7 @@ export class Mixer {
   private readonly convolver: ConvolverNode;
   private readonly wet: GainNode;
   private readonly duckGain: GainNode;
+  private readonly musicDuckGain: GainNode;
   private readonly mix: GainNode;
   // Replay treatment (killcam / Play of the Match): SFX only (the announcer stays
   // clean) → a fade gain + a low-pass that is transparent (20 kHz) until a replay
@@ -89,10 +92,12 @@ export class Mixer {
     this.mix = g(1);
     this.sfxBus = g(1);
     this.announcerBus = g(1);
+    this.musicBus = g(0.3);
     this.world = g(1);
     this.hud = g(1);
     this.ambience = g(1);
     this.duckGain = g(1);
+    this.musicDuckGain = g(1);
     this.reverbIn = g(1);
     this.wet = g(0.25);
     this.sendLo = g(0.08);
@@ -128,6 +133,7 @@ export class Mixer {
     this.reverbIn.connect(this.convolver).connect(this.wet).connect(this.sfxBus);
     this.sfxBus.connect(this.replayGain).connect(this.replayLP).connect(this.mix);
     this.announcerBus.connect(this.mix);
+    this.musicBus.connect(this.musicDuckGain).connect(this.mix);
     this.mix.connect(lim).connect(clip).connect(this.out).connect(dest);
   }
 
@@ -283,14 +289,15 @@ export class Mixer {
     }
   }
 
-  /** Duck the ambience under an announcer line for `sec` seconds. */
+  /** Duck ambience and music under the same announcer envelope. */
   duck(sec: number) {
     const now = this.ctx.currentTime;
-    const p = this.duckGain.gain;
-    p.cancelScheduledValues(now);
-    p.setValueAtTime(p.value, now);
-    p.setTargetAtTime(0.3, now, 0.05);
-    p.setTargetAtTime(1, now + sec, 0.35);
+    for (const p of [this.duckGain.gain, this.musicDuckGain.gain]) {
+      p.cancelScheduledValues(now);
+      p.setValueAtTime(p.value, now);
+      p.setTargetAtTime(0.3, now, 0.05);
+      p.setTargetAtTime(1, now + sec, 0.35);
+    }
   }
 }
 

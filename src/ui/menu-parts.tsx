@@ -1,6 +1,7 @@
 import { useState, type CSSProperties, type ReactNode } from 'react';
 import { sfxProps } from '../deck-core';
 import '../menu/menu.css';
+import { BrandLogo } from './BrandLogo';
 
 // Main-menu building blocks. Game-menu grammar over the live arena: one big
 // wordmark, one solid Play block, a vertical list of big display-type items
@@ -21,12 +22,8 @@ export type MenuAccent = 'cyan' | 'fuchsia' | 'amber' | 'emerald' | 'plain';
 export function MenuWordmark({ as = 'h1' }: { as?: 'h1' | 'div' }) {
   const Tag = as;
   return (
-    <Tag className='menu-wordmark select-none'>
-      <span className='menu-wordmark-main'>Instagib</span>
-      <span className='menu-wordmark-sub'>
-        <span aria-hidden='true' className='menu-beam' />
-        <span>Arena</span>
-      </span>
+    <Tag className='brand-menu-wordmark select-none'>
+      <BrandLogo priority />
     </Tag>
   );
 }

@@ -1,4 +1,5 @@
 import { memo, useEffect, useRef, useState } from 'react';
+import { BrandLogo } from './BrandLogo';
 
 // Q3-style loading screen: the levelshot full-bleed, the map name huge, the
 // mode line, a checklist of REAL load steps (driven by the caller from engine
@@ -10,7 +11,7 @@ export type LoadStep = { id: string; label: string; done: boolean };
 
 const TIPS: readonly string[] = [
   'The rail always kills. Stay moving — a still target is a free frag.',
-  'Right-click near a wall or floor to boost-jump off it.',
+  'Hold right-click to scope in. Press your boost key (E by default) near a wall or floor to boost-jump.',
   'Dash (Shift) snaps you sideways instantly — break an enemy’s aim.',
   'Jump into a wall mid-air to wall-jump for height and speed.',
   'The railgun recharges for 1.2 s after every shot. Count your enemy’s too.',
@@ -122,20 +123,11 @@ export const LoadingScreen = memo(function LoadingScreen({
         {completed ? `${title} ready` : `Loading ${title}`}
       </span>
 
-      <div className='absolute left-6 top-5 flex items-center gap-2.5 font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-white/55 sm:left-12 sm:top-8'>
-        <svg viewBox='0 0 32 32' width='16' height='16' aria-hidden='true' className='text-cyan-300'>
-          <circle cx='16' cy='16' r='9' fill='none' stroke='currentColor' strokeWidth='2.5' />
-          <line x1='16' y1='3' x2='16' y2='11' stroke='currentColor' strokeWidth='2.5' />
-          <line x1='16' y1='21' x2='16' y2='29' stroke='currentColor' strokeWidth='2.5' />
-          <line x1='3' y1='16' x2='11' y2='16' stroke='currentColor' strokeWidth='2.5' />
-          <line x1='21' y1='16' x2='29' y2='16' stroke='currentColor' strokeWidth='2.5' />
-        </svg>
-        Instagib Arena
-      </div>
+      <BrandLogo className='brand-map-logo' priority />
 
       <div className='absolute inset-x-6 bottom-10 flex flex-col gap-8 sm:inset-x-12 sm:bottom-14 lg:flex-row lg:items-end lg:justify-between'>
         <div className='min-w-0'>
-          <div className='font-mono text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300'>{kicker}</div>
+          <div className='ls-kicker font-mono text-[11px] font-semibold uppercase tracking-[0.24em]'>{kicker}</div>
           <div className='ls-title mt-2 truncate'>{title}</div>
           {sub && <div className='mt-2 font-mono text-[11px] uppercase tracking-[0.22em] text-white/55'>{sub}</div>}
           {tips && (

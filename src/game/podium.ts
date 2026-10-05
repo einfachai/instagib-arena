@@ -6,6 +6,7 @@ import { WornHat } from './hats';
 import { emoteById } from './cosmetics';
 import { CharacterAnimator } from './character-anim';
 import { Character, skinColorFor } from './character/character';
+import { preloadCharacterAssets } from './character/assets';
 import { dyeById } from './dyes';
 import { attachRailgun, disposeRailgun } from './character/gun';
 import { WornGearCtor, wearLook, type GearLike } from '../economy/gear';
@@ -45,6 +46,7 @@ const RISE_DELAY = [0.75, 0.45, 0.15];
 const LOOK_SLOTS = ['hat', 'face', 'back'] as const;
 
 export type PodiumWinner = {
+  agent?: import('./agent').AgentKind;
   place: number; // 1-based
   name: string;
   score: number;
@@ -638,8 +640,7 @@ export class PodiumScene {
     if (this.disposed) return;
     const gen = ++this.gen;
     this.clearChars();
-    await this.fontsReady();
-    await this.built;
+    await Promise.all([this.fontsReady(), this.built, preloadCharacterAssets()]);
     if (this.disposed || gen !== this.gen) return;
     const used = new Set(winners.slice(0, 3).map((w) => Math.max(0, Math.min(2, w.place - 1))));
     this.stages.forEach((st, i) => {
@@ -657,7 +658,7 @@ export class PodiumScene {
       group.position.set(0, slot.h, 0);
       group.rotation.y = Math.PI; // the combatant faces -Z; turn to face the camera (+Z)
 
-      const character = new Character({ colorHex: skinColorFor(w.name) });
+      const character = new Character({ agent: w.agent, colorHex: skinColorFor(w.name) });
       character.wearDye(dyeById(w.looks?.dye?.d), skinColorFor(w.name));
       group.add(character.root);
       const anim = new CharacterAnimator(character, { driveYaw: false, holdGun: false });

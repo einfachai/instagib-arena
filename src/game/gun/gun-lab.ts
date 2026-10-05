@@ -337,6 +337,10 @@ export class GunLab {
     this.frame = () => {
       this.renderer.getSize(size);
       cam.aspect = size.x / size.y;
+      // Keep the full silhouette visible in the narrow in-app review panel.
+      const fit = p.has('dist') ? 1 : Math.max(1, 1.6 / cam.aspect);
+      cam.position.set(-dist * fit * Math.cos(angle), dist * fit * this.num('elev', 0.38), tz - dist * fit * Math.sin(angle));
+      cam.lookAt(0, ty, tz);
       cam.updateProjectionMatrix();
       this.renderer.render(scene, cam);
     };

@@ -1,0 +1,55 @@
+{
+  "description": "Observe Claude Code completion and attention without approval decisions or transcript reads.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/codex-plugin/claude-notify.mjs\" --agent=claude",
+            "timeout": 10,
+            "async": true
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/codex-plugin/claude-notify.mjs\" --agent=claude",
+            "timeout": 10,
+            "async": true
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/codex-plugin/claude-notify.mjs\" --agent=claude",
+            "timeout": 10,
+            "async": true
+          }
+        ],
+        "matcher": "permission_prompt"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/codex-plugin/claude-notify.mjs\" --agent=claude",
+            "timeout": 10,
+            "async": true
+          }
+        ],
+        "matcher": "^AskUserQuestion$"
+      }
+    ]
+  }
+}

@@ -496,10 +496,10 @@ for (const id of list) {
   const surfs = surfaces(map);
   const reach = reachability(surfs);
   const unreachable = surfs.filter((_, k) => reach[k] === 4 && surfs[k].i >= 2);
-  for (const sf of unreachable) warns.push(`surface of box ${sf.i}${map.boxes[sf.i].tag ? ` (${map.boxes[sf.i].tag})` : ''} at y=${sf.top.toFixed(1)} looks unreachable`);
+  for (const sf of unreachable) errs.push(`surface of box ${sf.i}${map.boxes[sf.i].tag ? ` (${map.boxes[sf.i].tag})` : ''} at y=${sf.top.toFixed(1)} looks unreachable`);
   const maxTop = Math.max(0, ...surfs.map((sf) => sf.top));
   const headroom = cap ? cap.min.y - maxTop : 0;
-  if (headroom < 8) warns.push(`only ${headroom.toFixed(1)} m between the highest walkable top (${maxTop.toFixed(1)}) and the cap — a boost there hits the ceiling`);
+  if (headroom < 8) errs.push(`only ${headroom.toFixed(1)} m between the highest walkable top (${maxTop.toFixed(1)}) and the cap — a boost there hits the ceiling`);
   const tiers = new Map<string, number>();
   for (const sf of surfs) {
     if (sf.i === 0) continue;
@@ -511,7 +511,7 @@ for (const id of list) {
 
   // spawns
   const sp = map.spawns;
-  if (sp.length < (duel ? 6 : 10)) warns.push(`${sp.length} spawns (want ≥ ${duel ? 6 : 10} for ${duel ? 'duel' : 'FFA/TDM'})`);
+  if (id !== 'training' && sp.length < (duel ? 8 : 14)) errs.push(`${sp.length} spawns (want ≥ ${duel ? 8 : 14} for ${duel ? 'duel' : 'FFA/TDM'})`);
   sp.forEach((p, k) => {
     const hits = capsuleHits(map, p);
     if (hits.length) errs.push(`spawn ${k} (${p.x}, ${p.y}, ${p.z}) overlaps box ${hits.join(', ')}`);
@@ -561,6 +561,11 @@ for (const id of list) {
     }
   }
 
+  if(id !== 'training') {
+    const openness=seen/Math.max(1,tested);
+    if(openness < .25 || openness > .4) errs.push(`openness ${(100*openness).toFixed(2)}% outside 25–40%`);
+    if(visPairs/Math.max(1,pairs) > .25) errs.push('spawn visibility exceeds 25%');
+  }
   warns.push(...lightChecks(map, theme));
   const lmE = lightmapEstimate(map, theme);
   if (lmE.effTexel > theme.bake.texel * 1.35) warns.push(`lightmap ≈ ${Math.round(lmE.texels / 1000)}k texels at ${theme.bake.texel} m → coarsened to ${lmE.effTexel.toFixed(2)} m (raise bake.maxTexels or texel)`);

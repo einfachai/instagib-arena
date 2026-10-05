@@ -1,4 +1,4 @@
-Self-hosted web fonts for Instagib Arena. All three families are licensed
+Self-hosted web fonts for Agent Deathmatch. All three families are licensed
 under the SIL Open Font License, Version 1.1 (OFL-1.1):
 https://openfontlicense.org/
 

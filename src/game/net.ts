@@ -1,3 +1,7 @@
+import { playerAgent } from '../agent-session';
+import { parseAgent, type AgentKind } from './agent';
+import type { ArenaNotice, CodexEvent, ExitReason, VisitRow, VisitStats } from './arcade';
+import { MovementCueTimeline, copyMovementCue, isMovementCue, type MovementCue } from './movement-cues';
 import type { GameMode } from './constants';
 import type { ProgressionResp } from '../app-types';
 import type { CardPayload, NetDebugStats } from './types';
@@ -8,6 +12,7 @@ import { looksToLegacy } from './look-runtime';
 export type Vec3 = { x: number; y: number; z: number };
 
 export type RemotePlayerSnapshot = {
+  agent?: AgentKind;
   id: string;
   name: string;
   pos: Vec3;
@@ -32,12 +37,18 @@ export type RemotePlayerSnapshot = {
   admin: boolean; // staff badge
   verified: boolean; // verified blue check
   receivedAt: number;
+  cues?: MovementCue[]; // due on the same render timeline as this interpolated pose
 };
 
 // A scoreboard-ready row for every player in the room, built from the meta
 // roster (so killed players hidden from snapshots during their killcam still
 // have a row) merged with their last-known dynamic stats.
+export type SessionEnded = { type: 'session-ended'; stats: VisitStats; rewards?: ProgressionResp; rewardsPending?: boolean; reason: ExitReason; event?: CodexEvent; returnAfterMs: number };
+
 export type RosterEntry = {
+  agent?: AgentKind;
+  visit?: VisitRow;
+  actor?: 'human' | 'bot';
   id: string;
   name: string;
   team: number | null;
@@ -87,6 +98,8 @@ type StatePlayer = {
 // on join/leave/resume/cosmetic-change, not per tick) and merged onto the
 // dynamic snapshot in upsertRemote.
 type PlayerMeta = {
+  agent?: AgentKind;
+  actor?: 'human' | 'bot';
   id: string;
   name: string;
   team: number | null;
@@ -125,6 +138,8 @@ type KillBroadcast = {
   t: number;
 };
 type JoinedMessage = {
+  arcade?: boolean;
+  visitId?: string;
   type: 'joined';
   roomId: string;
   mode?: GameMode;
@@ -201,13 +216,17 @@ type BeamMessage = {
 };
 // The server's authoritative end-of-match reward for an online match (the same
 // shape as the offline POST /api/stats reply — ProgressionResp in app-types).
-type ProgressionMessage = { type: 'progression' } & ProgressionResp;
+type ProgressionMessage = { type: 'progression'; visitId?: string } & ProgressionResp;
 
 type ServerMessage =
+  | SessionEnded
+  | ArenaNotice
+  | { type: 'visit-stats'; players: VisitRow[] }
   | ProgressionMessage
   | WelcomeMessage
   | StateMessage
   | MetaMessage
+  | { type: 'motion'; id: string; t: number; cue: MovementCue }
   | TauntBroadcast
   | KillBroadcast
   | JoinedMessage
@@ -238,8 +257,12 @@ export type KillListener = (ev: KillEvent) => void;
 
 // Room / match lifecycle events the Game subscribes to.
 export type NetEvents = {
+  onSessionEnded?: (result: SessionEnded) => void;
+  onArenaNotice?: (notice: ArenaNotice) => void;
   onKill: KillListener;
   onJoined?: (info: {
+    arcade?: boolean;
+    visitId?: string;
     roomId: string;
     mapId: string;
     spawn: Vec3;
@@ -279,9 +302,9 @@ export type NetEvents = {
 const RECONNECT_DELAY_MS = 1500;
 const PING_INTERVAL_MS = 1000;
 // The lobby socket heartbeats this often so the server's idle-client sweep
-// (STALE_CLIENT_TIMEOUT_MS = 10s) never reaps a player just sitting in the menu —
+// never reaps a player just sitting in the menu —
 // that reap was what made the "online" chip flicker every ~10s as the socket
-// dropped and reconnected. Comfortably under the 10s timeout.
+// dropped and reconnected. Transport pongs also keep background tabs alive.
 const LOBBY_PING_MS = 5000;
 // Keep showing the last "online" status through a brief drop+reconnect so a
 // transient blip doesn't flash the chip to "offline". If we're still down after
@@ -453,6 +476,8 @@ export class NetClient {
   private dbgClockMeanMs = 0;
   private dbgClockDriftMs = 0;
   private snapBuffer: BufferedSnapshot[] = [];
+  private readonly movementTimeline = new MovementCueTimeline();
+  private movementRenderT = 0;
   private disposed = false;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private pingTimer: ReturnType<typeof setInterval> | null = null;
@@ -461,12 +486,18 @@ export class NetClient {
   private resumeToken: string | null = null;
   // Set when the server removed us (AFK kick): no auto-reconnect.
   private noReconnect = false;
+  private arcadeOptions?: { controllerToken?: string; attemptId?: string };
+  readonly visits = new Map<string, VisitRow>();
+  visitId?: string;
+  arcade = false;
+  get localVisit() { return this.clientId ? this.visits.get(this.clientId) : undefined; }
 
   constructor(opts: {
     url: string;
     name: string;
     roomId: string;
     spectate?: boolean;
+    arcade?: { controllerToken?: string; attemptId?: string };
     listener?: NetListener;
     events: NetEvents;
   }) {
@@ -476,11 +507,12 @@ export class NetClient {
     this.spectate = opts.spectate ?? false;
     this.listener = opts.listener ?? (() => {});
     this.events = opts.events;
+    this.arcadeOptions = opts.arcade;
   }
 
   connect() {
     if (this.disposed) return;
-    if (this.ws && this.ws.readyState === WebSocket.OPEN) return;
+    if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) return;
     try {
       this.setStatus('connecting');
       this.ws = new WebSocket(this.url);
@@ -493,7 +525,9 @@ export class NetClient {
       this.scheduleReconnect();
       return;
     }
+    const socket = this.ws;
     this.ws.onopen = () => {
+      if (this.ws !== socket || this.disposed) return;
       this.setStatus('open');
       if (this.spectate) {
         // Read-only observer: ask to watch the room (no slot, no score, no resume).
@@ -501,13 +535,16 @@ export class NetClient {
       } else if (this.resumeToken) {
         // A held resume token means this is a RECONNECT — try to reclaim our slot;
         // the server falls back to a fresh join if the grace window has lapsed.
-        this.send({ type: 'resume', token: this.resumeToken, roomId: this.roomId, name: this.name });
+        this.send({ type: 'resume', token: this.resumeToken, roomId: this.roomId, name: this.name, agent: playerAgent });
+      } else if (this.arcadeOptions) {
+        this.send({ type: 'arena', ...this.arcadeOptions, agent: playerAgent });
       } else {
-        this.send({ type: 'join', name: this.name, roomId: this.roomId });
+        this.send({ type: 'join', name: this.name, roomId: this.roomId, agent: playerAgent });
       }
       this.startPing();
     };
     this.ws.onmessage = (e) => {
+      if (this.ws !== socket || this.disposed) return;
       try {
         if (typeof e.data === 'string') {
           this.handle(JSON.parse(e.data) as ServerMessage);
@@ -520,13 +557,16 @@ export class NetClient {
         // ignore malformed
       }
     };
-    this.ws.onclose = () => {
+    this.ws.onclose = (event) => {
+      if (this.ws !== socket || this.disposed) return;
+      if (!this.noReconnect) console.warn('[instagib-net] connection closed', event.code, event.reason || 'transport interrupted');
       this.ws = null;
       this.clientId = null;
       this.remotes.clear();
       this.metaById.clear();
       this.lastStatsById.clear();
       this.snapBuffer.length = 0;
+      this.movementTimeline.clear();
       this.ageCount = 0;
       this.ageIdx = 0;
       // A reconnect may land on a new host / after a clock step: re-seed the
@@ -538,6 +578,7 @@ export class NetClient {
       this.scheduleReconnect();
     };
     this.ws.onerror = () => {
+      if (this.ws !== socket || this.disposed) return;
       this.setStatus('error');
     };
   }
@@ -573,7 +614,7 @@ export class NetClient {
     if (this.spectate) return; // observers have no position
     // The hottest client→server message (64Hz) — a compact binary frame across
     // the transport seam (the server decodes it back to a `pos` message).
-    this.sendUnreliable(
+    return this.sendUnreliable(
       tick === undefined ? encodePos(x, y, z, yaw, pitch) : encodePosTick(x, y, z, yaw, pitch, tick, flags),
     );
   }
@@ -587,9 +628,13 @@ export class NetClient {
   // channel (WebTransport) with auto-fallback to the WS, while everything that
   // must not be lost or reordered (join/meta/kill/vote/chat…) stays on the WS.
   private sendUnreliable(bytes: Uint8Array<ArrayBuffer>) {
-    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+    // Poses are replaceable. Let control messages and queued data drain rather
+    // than enqueueing seconds of obsolete movement during network congestion.
+    if (this.ws && this.ws.readyState === WebSocket.OPEN && this.ws.bufferedAmount <= 1024) {
       this.ws.send(bytes);
+      return true;
     }
+    return false;
   }
 
   // Decode + dispatch one unreliable server→client frame, whatever pipe it
@@ -598,6 +643,8 @@ export class NetClient {
     const dec = decodeState(toView(data));
     if (dec) this.handle({ type: 'state', t: dec.t, players: dec.players, resumeAt: dec.resumeAt });
   }
+
+  endVisit() { this.send({ type: 'leave' }); }
 
   sendVote(mapId: string) {
     this.send({ type: 'vote', mapId });
@@ -701,6 +748,8 @@ export class NetClient {
   }
 
   // Play our equipped emote for the room (server rate-limits + relays).
+  sendMovementCue(cue: MovementCue): void { this.send({ type: 'motion', cue: copyMovementCue(cue) }); }
+
   sendTaunt(): void {
     this.send({ type: 'taunt' });
   }
@@ -798,6 +847,8 @@ export class NetClient {
     this.dbgClockDriftMs += (Math.abs(this.clockOffset - this.dbgClockMeanMs) - this.dbgClockDriftMs) * 0.05;
     this.dbgExtrapEma += ((this.extrapolating ? 1 : 0) - this.dbgExtrapEma) * 0.05; // last frame's value
     const renderT = this.estimatedServerNow() - this.interpDelayMs;
+    this.movementRenderT = renderT;
+    for (const remote of this.remotes.values()) if (remote.cues) remote.cues.length = 0;
     const buf = this.snapBuffer;
     const now = performance.now();
     const seen = this.scratchSeen;
@@ -806,6 +857,7 @@ export class NetClient {
 
     if (buf.length === 0) {
       this.remotes.clear();
+      this.movementTimeline.consume(renderT, () => {});
       return;
     }
 
@@ -903,6 +955,7 @@ export class NetClient {
     s.invulnMs = b.invulnMs ?? 0;
     s.ping = b.ping ?? 0;
     // Static (meta channel):
+    s.agent = parseAgent(m?.agent) ?? 'codex';
     s.name = m?.name ?? b.id;
     s.team = m?.team ?? null;
     s.hat = m?.hat ?? 'hat.none';
@@ -927,6 +980,10 @@ export class NetClient {
     for (const id of this.remotes.keys()) {
       if (!seen.has(id)) this.remotes.delete(id);
     }
+    this.movementTimeline.consume(this.movementRenderT, (id, cue) => {
+      const remote = this.remotes.get(id);
+      if (remote) (remote.cues ??= []).push(cue);
+    });
   }
 
   private startPing() {
@@ -950,6 +1007,18 @@ export class NetClient {
   }
 
   private handle(msg: ServerMessage) {
+    if (msg.type === 'visit-stats') {
+      this.visits.clear();
+      for (const row of msg.players) this.visits.set(row.id, row);
+      if (this.localVisit) { this.localFrags = this.localVisit.kills; this.localDeaths = this.localVisit.deaths; }
+      return;
+    }
+    if (msg.type === 'arena-notice') { this.events.onArenaNotice?.(msg); return; }
+    if (msg.type === 'session-ended') {
+      if (this.visitId && msg.stats.visitId !== this.visitId) return;
+      this.noReconnect = true; this.visitId = msg.stats.visitId;
+      this.events.onSessionEnded?.(msg); return;
+    }
     if (msg.type === 'welcome') {
       this.clientId = msg.clientId;
       if (msg.resumeToken) this.resumeToken = msg.resumeToken; // for the next reconnect
@@ -1008,8 +1077,8 @@ export class NetClient {
         if (p.id === this.clientId) {
           // Dynamic self-state. Identity (name/admin/verified/team) now arrives
           // on the `meta` channel instead — see the 'meta' handler.
-          this.localFrags = p.frags ?? 0;
-          this.localDeaths = p.deaths ?? 0;
+          this.localFrags = this.localVisit?.kills ?? p.frags ?? 0;
+          this.localDeaths = this.localVisit?.deaths ?? p.deaths ?? 0;
           this.localInvulnMs = p.invulnMs ?? 0;
         } else {
           // Retain each remote's latest score so their scoreboard row survives
@@ -1067,10 +1136,15 @@ export class NetClient {
       for (const id of this.metaById.keys()) {
         if (!seen.has(id)) {
           this.metaById.delete(id);
+          this.movementTimeline.clear(id);
           this.lastStatsById.delete(id);
         }
       }
       this.emit();
+      return;
+    }
+    if (msg.type === 'motion') {
+      if (typeof msg.id === 'string' && msg.id !== this.clientId && isMovementCue(msg.cue)) this.movementTimeline.enqueue(msg.id, msg.t, msg.cue);
       return;
     }
     if (msg.type === 'taunt') {
@@ -1078,6 +1152,7 @@ export class NetClient {
       return;
     }
     if (msg.type === 'kill') {
+      this.movementTimeline.clear(msg.victimId);
       this.events.onKill({
         killerId: msg.killerId,
         killerName: msg.killerName,
@@ -1094,11 +1169,14 @@ export class NetClient {
       return;
     }
     if (msg.type === 'joined') {
+      this.roomId = msg.roomId; this.arcade = msg.arcade === true; this.visitId = msg.visitId;
+      this.movementTimeline.clear();
       this.mode = msg.mode ?? 'ffa';
       this.ranked = msg.ranked === true;
       this.localTeam = msg.team ?? null;
       this.setResume(msg.resumeAt);
       this.events.onJoined?.({
+        arcade: msg.arcade, visitId: msg.visitId,
         roomId: msg.roomId,
         mapId: msg.mapId,
         spawn: msg.spawn,
@@ -1110,6 +1188,7 @@ export class NetClient {
       return;
     }
     if (msg.type === 'progression') {
+      if (this.arcade && msg.visitId && this.visitId && msg.visitId !== this.visitId) return;
       const { type: _type, ...p } = msg;
       void _type;
       if (typeof p.xpGained === 'number' && p.progression) this.events.onProgression?.(p);
@@ -1132,7 +1211,7 @@ export class NetClient {
     }
     if (msg.type === 'join-failed') {
       // Already in this room in another tab: never auto-rejoin into the refusal.
-      if (msg.reason === 'duplicate') this.noReconnect = true;
+      this.noReconnect = true;
       this.events.onJoinFailed?.(msg.reason);
       return;
     }
@@ -1250,6 +1329,7 @@ export class NetClient {
       out.push({
         id,
         name: m.name,
+        agent: m.agent,
         team: m.team,
         hat: m.hat,
         emote: m.emote,
@@ -1258,8 +1338,9 @@ export class NetClient {
         nameColor: m.nameColor,
         admin: m.admin,
         verified: m.verified,
-        frags: s?.frags ?? 0,
-        deaths: s?.deaths ?? 0,
+        actor: m.actor, visit: this.visits.get(id),
+        frags: this.visits.get(id)?.kills ?? s?.frags ?? 0,
+        deaths: this.visits.get(id)?.deaths ?? s?.deaths ?? 0,
         ping: s?.ping ?? 0,
       });
     }

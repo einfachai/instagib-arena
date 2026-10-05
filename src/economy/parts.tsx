@@ -207,7 +207,7 @@ export function Sparkline({
   points,
   width = 280,
   height = 64,
-  color = '#67e8f9',
+  color = '#a6bcff',
   label,
 }: {
   points: { ts: number; price: number }[];

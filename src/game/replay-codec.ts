@@ -1,3 +1,4 @@
+import { copyMovementCue, isMovementCue, type MovementCue } from './movement-cues';
 // ── Replay codec ─────────────────────────────────────────────────────────────
 //
 // A compact, self-contained binary format for a full match replay. It is PURE
@@ -17,6 +18,7 @@ import type { Loadout, Look } from './items/types';
 export type ReplayActorKind = 'local' | 'remote' | 'bot';
 
 export type ReplayActorProfile = {
+  agent?: import('./agent').AgentKind;
   id: string;
   name: string;
   kind: ReplayActorKind;
@@ -34,6 +36,7 @@ export type ReplayPose = {
   yaw: number;
   pitch: number; // look pitch (radians) — drives the first-person replay camera
   visible: boolean;
+  velocity?: Vec3; // playback-only motion hint, derived from adjacent frames
 };
 
 export type ReplayFrame = { t: number; poses: Record<string, ReplayPose> };
@@ -51,6 +54,7 @@ export type ReplayShot = { t: number; origin: Vec3; end: Vec3; killerId: string 
 
 // v3: a taunt that started at `t` (the emote Look — def + unusual effect — so the
 // replay body plays the right clip and aura). Absent in v1/v2 replays.
+export type ReplayMovement = { t: number; actorId: string; cue: MovementCue };
 export type ReplayTaunt = { t: number; actorId: string; look?: Look };
 
 // The full decoded replay. `localId` is the actor whose eyes we ride in playback
@@ -60,6 +64,7 @@ export type ReplayData = {
   version: number;
   hz: number;
   mapId: string;
+  mapRevision?: number;
   durationMs: number;
   localId: string;
   won: boolean;
@@ -68,11 +73,12 @@ export type ReplayData = {
   kills: ReplayKill[];
   shots: ReplayShot[];
   taunts?: ReplayTaunt[]; // v3
+  movement?: ReplayMovement[]; // v4, cosmetic cues only
 };
 
-// v3 appends a taunt list after the shots. v2 adds a per-actor Looks JSON string after `team`. The decoder still reads v1
-// (stored weekly-challenge replays live for 26 weeks); the encoder writes v2.
-export const REPLAY_VERSION = 3;
+// v5 records map revisions and actor agents. v4 appends cosmetic movement cues.
+// v3 adds taunts; v2 adds actor Looks. Formats 1–4 remain readable.
+export const REPLAY_VERSION = 5;
 const MIN_REPLAY_VERSION = 1;
 const MAGIC = 0x49475231; // "IGR1"
 
@@ -184,17 +190,23 @@ export function encodeReplay(data: ReplayData): Uint8Array {
   w.u16(Math.min(0xffff, data.kills.length));
   w.u16(Math.min(0xffff, data.shots.length));
   w.str(data.mapId);
+  if (data.version >= 5) {
+    const revision=data.mapRevision ?? 1;
+    if (!Number.isInteger(revision) || revision<1 || revision>65535) throw new Error('replay: invalid map revision');
+    w.u16(revision);
+  }
 
   // Actor table.
   for (const p of data.profiles) {
     w.str(p.id);
+    if (data.version >= 5) w.u8(p.agent === 'claude' ? 1 : 0);
     w.str(p.name);
     w.u8(KIND_TO_N[p.kind] ?? 1);
     w.str(p.hat);
     w.str(p.unusual);
     w.str(p.nameColor);
     w.i8(p.team == null ? -1 : Math.max(-1, Math.min(127, p.team | 0)));
-    w.str(p.looks && Object.keys(p.looks).length > 0 ? JSON.stringify(p.looks) : '');
+    if (data.version >= 2) w.str(p.looks && Object.keys(p.looks).length > 0 ? JSON.stringify(p.looks) : '');
   }
 
   // Frames: absolute time (ms) + a presence bitmask + each present actor's pose.
@@ -242,15 +254,25 @@ export function encodeReplay(data: ReplayData): Uint8Array {
   }
 
   // Taunts (v3): time, actor, emote Look as JSON ('' = default).
-  const tauntN = Math.min(0xffff, data.taunts?.length ?? 0);
-  w.u16(tauntN);
-  for (let i = 0; i < tauntN; i++) {
-    const tn = data.taunts![i];
-    w.u32(Math.max(0, Math.round(tn.t * 1000)));
-    w.u16(idxOf.get(tn.actorId) ?? NONE);
-    w.str(tn.look ? JSON.stringify(tn.look) : '');
+  if (data.version >= 3) {
+    const tauntN = Math.min(0xffff, data.taunts?.length ?? 0);
+    w.u16(tauntN);
+    for (let i = 0; i < tauntN; i++) {
+      const tn = data.taunts![i];
+      w.u32(Math.max(0, Math.round(tn.t * 1000)));
+      w.u16(idxOf.get(tn.actorId) ?? NONE);
+      w.str(tn.look ? JSON.stringify(tn.look) : '');
+    }
   }
-
+  if (data.version >= 4) {
+    const movement = (data.movement ?? []).slice(0, 0xffff);
+    w.u16(movement.length);
+    for (const event of movement) {
+      w.u32(Math.max(0, Math.round(event.t * 1000)));
+      w.u16(idxOf.get(event.actorId) ?? NONE);
+      w.str(JSON.stringify(copyMovementCue(event.cue)));
+    }
+  }
   return w.bytes();
 }
 
@@ -274,6 +296,8 @@ export function decodeReplay(input: ArrayBuffer | Uint8Array, includeFrames = tr
   const killCount = r.u16();
   const shotCount = r.u16();
   const mapId = r.str();
+  const mapRevision = version>=5?r.u16():1;
+  if (!mapRevision) throw new Error('replay: invalid map revision');
   const bitmaskBytes = Math.ceil(aCount / 8);
   // Validate counts against the actual payload BEFORE allocating arrays.
   if (aCount < 1 || aCount > 16 || hz < 1 || hz > 64 || durationMs > 3_600_000 ||
@@ -286,6 +310,7 @@ export function decodeReplay(input: ArrayBuffer | Uint8Array, includeFrames = tr
   for (let i = 0; i < aCount; i++) {
     const id = r.str();
     if (!id || profiles.some((p) => p.id === id)) throw new Error('replay: invalid actor');
+    const agent = version >= 5 && r.u8() === 1 ? 'claude' : 'codex';
     const name = r.str();
     const kind = N_TO_KIND[r.u8()] ?? 'remote';
     const hat = r.str();
@@ -304,7 +329,7 @@ export function decodeReplay(input: ArrayBuffer | Uint8Array, includeFrames = tr
         }
       }
     }
-    profiles.push({ id, name, kind, hat, unusual, nameColor, team: teamRaw < 0 ? null : teamRaw, looks });
+    profiles.push({ id, agent, name, kind, hat, unusual, nameColor, team: teamRaw < 0 ? null : teamRaw, looks });
   }
   const idName = (idx: number) => (idx === NONE ? '' : profiles[idx]?.name ?? '');
   const idAt = (idx: number) => (idx === NONE ? '' : profiles[idx]?.id ?? '');
@@ -378,9 +403,25 @@ export function decodeReplay(input: ArrayBuffer | Uint8Array, includeFrames = tr
     }
   }
 
+  const movement: ReplayMovement[] = [];
+  if (version >= 4) {
+    const n = r.u16();
+    if (n * 8 > r.remaining) throw new Error('replay: invalid movement count');
+    let previousTime = -1;
+    for (let i = 0; i < n; i++) {
+      const t = r.u32() / 1000, ai = r.u16();
+      const raw = r.str();
+      if (raw.length > 256 || ai >= profiles.length || t < previousTime || t * 1000 > durationMs + 3000) throw new Error('replay: invalid movement cue');
+      const cue: unknown = JSON.parse(raw);
+      if (!isMovementCue(cue)) throw new Error('replay: invalid movement cue');
+      movement.push({ t, actorId: profiles[ai].id, cue: copyMovementCue(cue) });
+      previousTime = t;
+    }
+  }
+
   const localId = localIdx === NONE ? '' : profiles[localIdx]?.id ?? '';
   if (r.remaining !== 0) throw new Error('replay: trailing data');
-  return { version, hz, mapId, durationMs, localId, won, profiles, frames, kills, shots, taunts };
+  return { version, hz, mapId, mapRevision, durationMs, localId, won, profiles, frames, kills, shots, taunts, movement };
 }
 
 // Cheap server-side summary used to sanity-check a submitted score against the

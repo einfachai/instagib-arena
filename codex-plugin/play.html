@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Agent Deathmatch</title>
+  <style>
+    :root { color-scheme:dark; font-family:system-ui,sans-serif; background:#080b14; color:#e8ecf5; }
+    * { box-sizing:border-box; }
+    body { min-height:100vh; margin:0; display:grid; place-items:center; padding:32px; }
+    main { width:min(100%,440px); text-align:center; }
+    .logo { width:min(320px, 55vh, 100%); height:auto; display:block; margin:0 auto; }
+    h1 { font-size:clamp(32px,6vw,48px); letter-spacing:-.05em; margin:20px 0 8px; }
+    .tagline { color:#7bdff2; font-size:13px; letter-spacing:.15em; text-transform:uppercase; }
+    #status { line-height:1.6; color:#a5afc3; min-height:52px; margin:28px 0 20px; }
+    .play { display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:12px 28px; border-radius:8px; background:#7bdff2; color:#080b14; font-weight:700; text-decoration:none; }
+    .play:hover { background:#a3eafa; }
+    .play:focus-visible { outline:2px solid #fff; outline-offset:5px; }
+    .address { display:block; margin-top:24px; color:#737f96; font-size:12px; user-select:all; }
+  </style>
+</head>
+<body>
+  <main>
+    <img class="logo" src="__ARENA_LOGO__" alt="Agent Deathmatch" width="1254" height="1254">
+
+    <div class="tagline">Play while __ARENA_AGENT_NAME__ works.</div>
+    <p id="status" role="status" aria-live="polite">Open the live game in a Codex browser tab.</p>
+    <a class="play" id="play" href="__ARENA_PLAY_URL__">Open Arena</a>
+    <code class="address">__ARENA_PLAY_URL__</code>
+  </main>
+  <script>
+    (() => {
+      let playUrl = '__ARENA_PLAY_URL__';
+      const status = document.getElementById('status');
+      const play = document.getElementById('play');
+      const embedded = window.parent !== window;
+      const pending = new Map();
+      let nextId = 0;
+      let hostOrigin = '*';
+      let opening = false;
+      let connection;
+
+      function send(message) {
+        window.parent.postMessage({ jsonrpc:'2.0', ...message }, hostOrigin);
+      }
+
+      function request(method, params) {
+        const id = `agent-deathmatch-${++nextId}`;
+        return new Promise((resolve, reject) => {
+          const timer = setTimeout(() => {
+            pending.delete(id);
+            reject(new Error('The browser did not respond.'));
+          }, 10000);
+          pending.set(id, { resolve, reject, timer });
+          send({ id, method, params });
+        });
+      }
+
+      window.addEventListener('message', event => {
+        if (event.source !== window.parent || event.data?.jsonrpc !== '2.0') return;
+        if (hostOrigin !== '*' && event.origin !== hostOrigin) return;
+        const message = event.data;
+        if (message.method === 'ui/resource-teardown' && message.id !== undefined) {
+          send({ id:message.id, result:{} });
+          return;
+        }
+        const item = pending.get(message.id);
+        if (!item) return;
+        if (hostOrigin === '*' && event.origin !== 'null') hostOrigin = event.origin;
+        clearTimeout(item.timer);
+        pending.delete(message.id);
+        if (message.error) item.reject(new Error(message.error.message || 'The browser could not open the arena.'));
+        else item.resolve(message.result);
+      });
+
+      function connect() {
+        if (!connection) {
+          connection = request('ui/initialize', {
+            appInfo:{ name:'Agent Deathmatch', version:'0.5.0' },
+            appCapabilities:{},
+            protocolVersion:'2026-01-26'
+          }).then(() => {
+            send({ method:'ui/notifications/initialized', params:{} });
+          }).catch(error => {
+            connection = undefined;
+            throw error;
+          });
+        }
+        return connection;
+      }
+
+      async function openGame() {
+        if (opening) return;
+        opening = true;
+        status.textContent = 'Opening your arena…';
+        try {
+          await connect();
+          const result = await request('ui/message', {
+            role:'user', content:{ type:'text', text:'Open Agent Deathmatch using its plugin tool, then open the returned live URL in the Codex in-app browser with open_in_codex. Keep it in this app.' }
+          });
+          if (result?.isError) throw new Error('Codex could not receive the launch request.');
+          status.textContent = 'Launch requested in Codex. The game opens in its browser tab.';
+        } catch (error) {
+          status.textContent = `${error.message} Use Open Arena to try again.`;
+        } finally {
+          opening = false;
+        }
+      }
+
+      play.addEventListener('click', event => {
+        if (!embedded) return;
+        event.preventDefault();
+        void openGame();
+      });
+
+      status.textContent = embedded ? 'Open the live game in a Codex browser tab.' : 'Your arena is ready.';
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+{
+  "assets": {
+    "version": 2,
+    "name": "R-01",
+    "source": "User supplied Railgun R-01 Technical Design Sheet.png",
+    "duration": 1.2,
+    "clip": "shot_cycle",
+    "forward": "-Z",
+    "up": "+Y",
+    "lods": {
+      "high": {
+        "triangles": 7444,
+        "runtimeMeshes": 3,
+        "baseDrawCalls": 4,
+        "bytes": 710920
+      },
+      "low": {
+        "triangles": 1880,
+        "runtimeMeshes": 3,
+        "baseDrawCalls": 4,
+        "bytes": 165488
+      }
+    },
+    "anchors": {
+      "muzzle": [
+        0,
+        0.037,
+        -0.917
+      ],
+      "grip": [
+        0,
+        -0.12,
+        0.128
+      ],
+      "support": [
+        0,
+        -0.056,
+        -0.28
+      ],
+      "tracker": [
+        -0.061,
+        -0.041,
+        -0.246
+      ]
+    },
+    "atlas": {
+      "width": 2048,
+      "height": 2048,
+      "maps": [
+        "detail.png",
+        "normal.png",
+        "roughness.png"
+      ],
+      "authoring": [
+        "height.png"
+      ],
+      "note": "2048px atlas retained for close-view fidelity after user quality review."
+    }
+  },
+  "validation": {
+    "railgunTests": 7,
+    "characterTests": 7,
+    "typecheck": "passed",
+    "lint": {
+      "errors": 0,
+      "warnings": 15
+    },
+    "productionBuild": "passed"
+  },
+  "sha256": {
+    "low.glb": "494ca2665bc337a031fea9dd6f817207e6a6e4c6ffb2cb99f040ac33f54b17fc",
+    "high.glb": "fd6a4db9ef4fe311bcc000b8e4ccad955394742380528a5456f101b48d9727ef",
+    "manifest.json": "e6f10bbca1e8d66c59480cab0c23bc4a1248c3d09a383729736d5b3ce6079fd6",
+    "normal.png": "2c41c8c2a3878bdb5deb86e728c2addee7a899dd2aebcbc40115169dfb9ef1df",
+    "height.png": "5580e7ae1beb698547be37532531fa61c028d8fd7a90c29e6300a33458d0ad3a",
+    "roughness.png": "107a1f1bf9037c958fee702fce338d692fdc2877ae7b035f756b8f86c4f64168",
+    "detail.png": "0f1493684f791dd8dc0e81ff4263c90451144849473fd31634b4e1a79bc4b470"
+  }
+}

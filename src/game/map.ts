@@ -1,6 +1,8 @@
+import { buildScenery } from './world/scenery';
+import { hydrateMapMesh, releaseMapMesh, warmNextMap } from './world/assets';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
-import { applyWorldAtmosphere, type WorldAtmosphere } from './renderer';
+import { applyWorldAtmosphere, getSceneRenderer, type WorldAtmosphere } from './renderer';
 import { getHazardTexture, getThemeTextures, type SurfaceKind, type SurfaceTextures } from './textures';
 import type { AABB } from './types';
 import { buildDressing } from './world/dressing';
@@ -9,7 +11,7 @@ import { applyMapShading, createMapShading, type MapShading } from './world/map-
 import { defaultSlot, FACE_NORMAL, themeForMapId, type SlotParams, type WorldTheme } from './world/themes';
 
 import { MAPS, type ArenaMap, type MapBox } from './arena-map-data';
-export { LOUNGE, CAUSEWAY, REACTOR, CONTAINERYARD, DERRICK, TRAINING, NUKETOWN, MAPS, DEFAULT_MAP, mapById, type ArenaMap } from './arena-map-data';
+export { CAUSEWAY, REACTOR, CONTAINERYARD, DERRICK, TRAINING, MAPS, DEFAULT_MAP, mapById, replayMap, type ArenaMap } from './arena-map-data';
 export { movePlayer, rayAabb, rayAabbNormal, raySphere, type CollisionResult } from './collision';
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -315,6 +317,7 @@ function lightmappedMaterial(
     aoMap: t.orm,
     aoMapIntensity: p.ao,
     metalness: p.metalness,
+    metalnessMap: t.orm,
     lightMap: lm.texture,
     lightMapIntensity: lm.scale,
     vertexColors: true,
@@ -348,14 +351,15 @@ export function setMapBuildQuality(low: boolean): void {
   lowBuild = low;
 }
 
-export function buildMapMesh(map: ArenaMap): THREE.Group {
+export function buildMapMesh(map: ArenaMap, options: {lowSpec?: boolean} = {}): THREE.Group {
+  const buildLow = options.lowSpec ?? lowBuild;
   const group = new THREE.Group();
   group.name = 'map';
   group.userData.mapRoot = true;
   const id = mapIdOf(map);
   const theme = themeForMapId(id);
   const tex = getThemeTextures(theme.id, theme.textures);
-  const world = bakeWorld(map, id ?? `anon:${map.name}`, theme);
+  const world = bakeWorld(map, `${id ?? map.name}@${map.revision ?? 1}`, theme);
   const { lm, slots, tints, perimeter, drawn } = world;
   const rboxes = world.boxes;
 
@@ -381,12 +385,14 @@ export function buildMapMesh(map: ArenaMap): THREE.Group {
     else buckets.set(key, [f]);
   }
   const materials = new Map<SurfaceKind, THREE.MeshStandardMaterial>();
+  const assetMaterials = new Map<THREE.MeshStandardMaterial, { slot: SurfaceKind; fallback: SurfaceTextures }>();
   for (const [key, faces] of buckets) {
     const [slot, tag] = key.split('|') as [SurfaceKind, string | undefined];
     let mat = materials.get(slot);
     if (!mat) {
       mat = lightmappedMaterial(tex[slot], theme.slots[slot], lm, shading);
       materials.set(slot, mat);
+      assetMaterials.set(mat, { slot, fallback: tex[slot] });
     }
     const mesh = new THREE.Mesh(facesGeometry(faces, lm, tex[slot].tile, tints), mat);
     mesh.name = `map:${slot}`;
@@ -429,12 +435,13 @@ export function buildMapMesh(map: ArenaMap): THREE.Group {
   // Architectural dressing + light fixtures + floor paint.
   const dressTex = tex[theme.dress.slot];
   const dress = buildDressing({
-    boxes: rboxes, bounds: map.bounds, drawn, slots, perimeter, lm, theme, tile: dressTex.tile, low: lowBuild,
+    boxes: rboxes, bounds: map.bounds, drawn, slots, perimeter, lm, theme, tile: dressTex.tile, low: buildLow,
   });
   if (dress.metal) {
     const p = theme.slots[theme.dress.slot];
     const mat = lightmappedMaterial(dressTex, p, lm, shading);
     mat.roughness = 0.85;
+    assetMaterials.set(mat, { slot: theme.dress.slot, fallback: dressTex });
     const mesh = new THREE.Mesh(dress.metal, mat);
     mesh.name = 'map:dress';
     mesh.userData.map = true;
@@ -500,6 +507,20 @@ export function buildMapMesh(map: ArenaMap): THREE.Group {
     group.add(mesh);
   }
 
+  if(id) {
+    const scenery=buildScenery(map,id,buildLow);
+    scenery.traverse(object=>{
+      const mesh=object as THREE.Mesh;
+      const slot=mesh.userData.assetSlot as SurfaceKind|undefined;
+      if(!slot || !(mesh.material instanceof THREE.MeshStandardMaterial))return;
+      const fallback=tex[slot],material=mesh.material;
+      material.map=fallback.map;material.normalMap=fallback.normalMap;
+      material.aoMap=material.roughnessMap=material.metalnessMap=fallback.orm;
+      material.metalness=1;
+      assetMaterials.set(material,{slot,fallback});
+    });
+    group.add(scenery);
+  }
   const atmosphere = atmosphereFor(theme);
   group.userData.theme = theme.id;
   group.userData.atmosphere = atmosphere;
@@ -507,7 +528,16 @@ export function buildMapMesh(map: ArenaMap): THREE.Group {
   group.addEventListener('added', () => {
     let root: THREE.Object3D = group;
     while (root.parent) root = root.parent;
-    if ((root as THREE.Scene).isScene) applyWorldAtmosphere(root as THREE.Scene, atmosphere);
+    if ((root as THREE.Scene).isScene) {
+      const scene = root as THREE.Scene;
+      applyWorldAtmosphere(scene, atmosphere);
+      const renderer = getSceneRenderer(scene);
+      if (renderer && theme.assets && id) {
+        hydrateMapMesh(group, renderer, { id, revision: map.revision ?? 1, quality: buildLow ? '1k' : '2k', surfaces: theme.assets }, assetMaterials, low => warmNextMap(renderer,id,themeForMapId,low));
+      }
+    }
   });
+  group.addEventListener('removed', () => releaseMapMesh(group));
+  for (const material of assetMaterials.keys()) material.addEventListener('dispose', () => releaseMapMesh(group));
   return group;
 }

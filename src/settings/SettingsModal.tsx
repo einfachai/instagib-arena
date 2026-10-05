@@ -46,7 +46,7 @@ const TABS: ReadonlyArray<{ id: SettingsTab; label: string; blurb: string; icon:
   { id: 'controls', label: 'Controls', blurb: 'Mouse, field of view and key bindings.', icon: <IconControls /> },
   { id: 'crosshair', label: 'Crosshair', blurb: 'Shape, color and outline, with a live preview.', icon: <IconCrosshair /> },
   { id: 'video', label: 'Video', blurb: 'Frame rate, quality, post-processing and the weapon viewmodel.', icon: <IconVideo /> },
-  { id: 'audio', label: 'Audio', blurb: 'Volumes, UI sounds and the announcer.', icon: <IconAudio /> },
+  { id: 'audio', label: 'Audio', blurb: 'Music, volumes, UI sounds and the announcer.', icon: <IconAudio /> },
   { id: 'accessibility', label: 'Accessibility', blurb: 'Reduce motion, hide chat and make enemies easier to see.', icon: <IconAccess /> },
   { id: 'profile', label: 'Profile', blurb: 'Your name, server and settings backup.', icon: <IconProfile /> },
 ];
@@ -60,7 +60,7 @@ const TAB_KEYS: Record<SettingsTab, ReadonlyArray<keyof Settings>> = {
     'shadows', 'antialias', 'vignette', 'hideViewmodel', 'viewmodelMotion', 'viewmodelOffset', 'worldColor',
     'worldBrightness',
   ],
-  audio: ['volume', 'sfxVolume', 'uiSounds', 'announcerEnabled', 'announcerVolume', 'announcerPack', 'captions'],
+  audio: ['volume', 'sfxVolume', 'musicEnabled', 'musicVolume', 'uiSounds', 'announcerEnabled', 'announcerVolume', 'announcerPack', 'captions'],
   accessibility: ['reducedEffects', 'hideChat', 'enemyBright', 'enemyColor', 'enemyOutline', 'enemyOutlineColor', 'enemyOutlineWidth'],
   profile: [],
 };
@@ -187,7 +187,7 @@ export function SettingsModal({
         row(
           'zoomfov',
           'zoom fov ads',
-          <SliderRow label='Zoom FOV' hint='Your view while holding Zoom.' value={settings.zoomFov} min={MIN_ZOOM_FOV} max={MAX_ZOOM_FOV} step={1} def={D.zoomFov} format={deg} onChange={(v) => set({ zoomFov: v })} />,
+          <SliderRow label='Zoom FOV' hint='Your scope view while holding right mouse or the alternate scope key.' value={settings.zoomFov} min={MIN_ZOOM_FOV} max={MAX_ZOOM_FOV} step={1} def={D.zoomFov} format={deg} onChange={(v) => set({ zoomFov: v })} />,
         ),
         row(
           'zoomsens',
@@ -213,7 +213,7 @@ export function SettingsModal({
       rows: [
         row(
           'keys',
-          'keybind bind key rebind move forward back strafe left right jump dash zoom scoreboard chat taunt inspect weapon',
+          'keybind bind key rebind move forward back strafe left right jump dash boost scope zoom scoreboard chat taunt inspect weapon',
           <KeybindGrid keybinds={settings.keybinds} onChange={(b) => set({ keybinds: b })} />,
         ),
       ],
@@ -364,7 +364,7 @@ export function SettingsModal({
       id: 'viewmodel',
       tab: 'video',
       title: 'Weapon viewmodel',
-      note: 'The railgun sits low and to the side so it never blocks your aim. Bind “Zoom (hold)” under Controls to narrow your FOV.',
+      note: 'The railgun sits low and to the side so it never blocks your aim. Hold right mouse to look through the scope. Adjust Zoom FOV under Controls.',
       rows: [
         row('hidevm', 'hide viewmodel weapon gun', <ToggleRow label='Hide viewmodel' value={settings.hideViewmodel} def={D.hideViewmodel} onChange={(v) => set({ hideViewmodel: v })} />),
         ...(settings.hideViewmodel
@@ -415,6 +415,15 @@ export function SettingsModal({
     },
 
     /* ── Audio ── */
+    {
+      id: 'music',
+      tab: 'audio',
+      title: 'Music',
+      rows: [
+        row('music-on', 'music background song', <ToggleRow label='Music' hint='Loop background music during gameplay.' value={settings.musicEnabled} def={D.musicEnabled} onChange={(v) => set({ musicEnabled: v })} />),
+        row('music-volume', 'music background volume', <SliderRow label='Music volume' value={settings.musicVolume} min={0} max={1} step={0.01} def={D.musicVolume} format={pct} onChange={(v) => set({ musicVolume: v })} />),
+      ],
+    },
     {
       id: 'volume',
       tab: 'audio',

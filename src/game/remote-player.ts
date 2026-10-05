@@ -1,4 +1,7 @@
+import type { AgentKind } from './agent';
+import type { MovementCue } from './movement-cues';
 import * as THREE from 'three';
+import type { GroundImpactListener } from './character/gibs';
 import { applyHighlight, type BotModel } from './bots';
 import { CharacterAnimator, type CharacterAnimInput } from './character-anim';
 import { Character, skinColorFor } from './character/character';
@@ -107,6 +110,15 @@ const DEFAULT_NAME_COLOR = '#c7e0ff';
 
 export class RemotePlayer {
   // Reused animator input (no per-frame allocation) — see animInput().
+  private readonly pendingCues: MovementCue[] = [];
+  private resetTimeline = false;
+  queueMovementCue(cue: MovementCue): void { this.pendingCues.push(cue); }
+  resetAnimationTimeline(): void {
+    this.pendingCues.length = 0; this.endTaunt(); this.anim?.respawn(this.group.position);
+    this.weaponGroup?.setCharge(1);
+    this.resetTimeline = true; this.deadTimer = 0; this.deadHidden = false;
+    this.setPlateHidden(false); this.applyVisibility();
+  }
   private readonly animIn: CharacterAnimInput = { dt: 0, yaw: 0, pitch: 0, pos: new THREE.Vector3() };
   private animInput(dt: number, yaw: number, pitch: number): CharacterAnimInput {
     const ai = this.animIn;
@@ -114,6 +126,7 @@ export class RemotePlayer {
     ai.yaw = yaw;
     ai.pitch = pitch;
     ai.pos = this.group.position;
+    ai.cues = this.pendingCues;
     return ai;
   }
   id: string;
@@ -180,7 +193,7 @@ export class RemotePlayer {
   private facing = 0;
   private pitch = 0; // view pitch (radians, + up) — drives the spine aim layer
 
-  constructor(id: string, name: string, scene: THREE.Scene, model: BotModel | null) {
+  constructor(id: string, name: string, scene: THREE.Scene, model: BotModel | null, readonly agent: AgentKind = 'codex') {
     this.id = id;
     this.name = name;
     this.group = new THREE.Group();
@@ -228,11 +241,17 @@ export class RemotePlayer {
   replayFinisher: KillEffectStyle | null = null;
 
   // `style` = the killer's finisher (how this body breaks apart).
-  markDead(style?: KillEffectStyle) {
+  markDead(style?: KillEffectStyle, deathPosition?: { x: number; y: number; z: number }) {
+    // A duplicate notification must not restart/hide an existing burst.
+    if (this.deadTimer > 0 && this.anim?.isDying()) return;
+    this.pendingCues.length = 0;
+    // A respawn snapshot can arrive before the kill notification. Anchor the
+    // corpse to the authoritative hit location, not that newer spawn position.
+    if (deathPosition) this.group.position.copy(deathPosition);
     this.deadTimer = DEAD_HIDE_DURATION_SEC;
     this.shieldMesh.visible = false;
     const p = this.group.position;
-    if (this.anim?.die(probeGibFloor(p.x, p.y, p.z) ?? undefined, style)) {
+    if (this.anim?.die(probeGibFloor(p.x, p.y, p.z), style)) {
       // Instagib: the body bursts into gibs where it stood (the killer's kill
       // effect plays on top from Game); it hides once the chunks are gone.
       this.deadHidden = false;
@@ -308,18 +327,25 @@ export class RemotePlayer {
   set onFootfall(fn: FootfallListener | null) {
     if (this.anim) this.anim.onFootfall = fn;
   }
+  private deathGroundImpact: GroundImpactListener | null = null;
+  set onDeathGroundImpact(listener: GroundImpactListener | null) {
+    this.deathGroundImpact = listener;
+    if (this.anim) this.anim.onDeathGroundImpact = listener;
+  }
 
   // Returns true on the single frame this player un-hides (respawns), so the
   // Game can play their spawn-in effect at the new position.
   apply(snapshot: RemotePlayerSnapshot, dt: number): boolean {
+    this.animIn.velocity = undefined;
     let justRespawned = false;
-    if (this.deadTimer > 0) {
+    if (this.deadTimer > 0 || this.anim?.isDying()) {
       this.deadTimer -= dt;
       if (this.deadTimer <= 0) {
         // Snap to the latest network position (which is already the new
         // spawn the server picked), reset the pose and un-hide.
         this.group.position.set(snapshot.pos.x, snapshot.pos.y, snapshot.pos.z);
         this.anim?.respawn(this.group.position);
+        this.weaponGroup?.setCharge(1);
         this.deadHidden = false;
         this.setPlateHidden(false);
         this.applyVisibility();
@@ -340,6 +366,7 @@ export class RemotePlayer {
     // is slewed (see net.ts) so renderT advances smoothly frame to frame. The
     // animator measures ground speed / jumps from this position each frame.
     this.group.position.set(snapshot.pos.x, snapshot.pos.y, snapshot.pos.z);
+    if (this.resetTimeline) { this.anim?.resetMotion(this.group.position); this.resetTimeline = false; }
 
     this.facing = snapshot.yaw; // already angle-interpolated in NetClient.interpolate()
     this.pitch = snapshot.pitch;
@@ -393,6 +420,7 @@ export class RemotePlayer {
     }
     this.spawnEffectId = cos.spawnEffect; // remembered for the spawn-in burst
 
+    for (const cue of snapshot.cues ?? []) this.queueMovementCue(cue);
     this.drive(dt);
     return justRespawned;
   }
@@ -403,15 +431,17 @@ export class RemotePlayer {
   // (via a single apply()), so we don't touch them here. dt is the replay frame.
   // (Recorded poses carry visibility, not kill events, so a replayed death is a
   // hide, not a collapse.)
-  snap(pose: { x: number; y: number; z: number; yaw: number; pitch?: number; visible: boolean }, dt: number) {
+  snap(pose: { x: number; y: number; z: number; yaw: number; pitch?: number; visible: boolean; velocity?: { x: number; y: number; z: number } }, dt: number) {
     this.deadTimer = 0;
     const wasHidden = this.deadHidden;
     const anim = this.anim;
     if (!pose.visible) {
+      this.pendingCues.length = 0;
       // Visible → hidden while playing forward is a death: gib in place (the
       // group stays where they died), then hide once the chunks are gone.
       if (!wasHidden && anim && !anim.isDying() && dt > 0 && dt < 0.25) {
-        anim.die(undefined, this.replayFinisher ?? undefined);
+        const p = this.group.position;
+        anim.die(probeGibFloor(p.x, p.y, p.z), this.replayFinisher ?? undefined);
         this.replayFinisher = null;
         this.setPlateHidden(true);
       }
@@ -427,8 +457,11 @@ export class RemotePlayer {
       return;
     }
     this.group.position.set(pose.x, pose.y, pose.z);
+    if (this.resetTimeline) { anim?.resetMotion(this.group.position); this.resetTimeline = false; }
+    this.animIn.velocity = pose.velocity;
     if (wasHidden || anim?.isDying()) {
       anim?.respawn(this.group.position); // reappear standing, no stale pose
+      this.weaponGroup?.setCharge(1);
       this.setPlateHidden(false);
     }
     this.deadHidden = false;
@@ -445,6 +478,7 @@ export class RemotePlayer {
   // have already positioned the group + set `facing`/`pitch`.
   private drive(dt: number) {
     this.anim?.update(this.animInput(dt, this.facing + MODEL_YAW_OFFSET, this.pitch));
+    this.pendingCues.length = 0;
     this.gear?.update(dt);
     this.eyes?.update?.(dt);
     if (this.tauntLeft > 0) this.tickTaunt(dt);
@@ -462,6 +496,16 @@ export class RemotePlayer {
     }
     this.deadHidden = true;
     this.applyVisibility();
+  }
+
+  // The server deliberately omits dead players from movement snapshots during
+  // their killcam. Keep updating their corpse without inventing a live pose or
+  // respawning it at the death location. False means it can now be removed.
+  advanceDeathWithoutSnapshot(dt: number): boolean {
+    if (this.deadTimer <= 0 && !this.anim?.isDying()) return false;
+    this.deadTimer = Math.max(0, this.deadTimer - dt);
+    if (!this.deadHidden) this.driveCorpse(dt);
+    return this.deadTimer > 0 || !!(this.anim?.isDying() && !this.anim.deathDone());
   }
 
   // The equipped spawn-effect cosmetic id (for the Game to resolve + play).
@@ -540,6 +584,7 @@ export class RemotePlayer {
   }
 
   dispose(scene: THREE.Scene) {
+    this.onDeathGroundImpact = null;
     this.gear?.dispose();
     this.clearTaunt();
     this.eyes?.dispose();
@@ -562,7 +607,7 @@ export class RemotePlayer {
   private installModel(_model: BotModel) {
     // The code-built combatant (see character/): one skinned mesh, a clean
     // rig, sockets for the hat (helmet crown) and the railgun (right hand).
-    const ch = new Character({ colorHex: skinColorFor(this.name) });
+    const ch = new Character({ agent: this.agent, colorHex: skinColorFor(this.name) });
     this.group.add(ch.root);
     this.character = ch;
     this.modelRoot = ch.root;
@@ -573,6 +618,7 @@ export class RemotePlayer {
     // Gait, aim, gun hold, jumps/landings and gibs all live in the animator —
     // the same implementation bots use.
     this.anim = new CharacterAnimator(ch, { driveYaw: true, holdGun: true });
+    this.anim.onDeathGroundImpact = this.deathGroundImpact;
     this.resolveLook();
     this.syncEyes();
   }
@@ -702,6 +748,13 @@ export class RemotePlayer {
   // glow refills over the recharge.
   notifyFire(railColor?: number) {
     this.weaponGroup?.notifyFire(railColor);
+    this.anim?.notifyFire();
+  }
+
+  // Replay presentation samples the recorded shot clock, including paused and
+  // backward-seek frames; live remotes keep notifyFire's automatic cycle.
+  setWeaponCharge(charge: number) {
+    this.weaponGroup?.setCharge(charge);
   }
 
   private disposeWeaponGroup() {

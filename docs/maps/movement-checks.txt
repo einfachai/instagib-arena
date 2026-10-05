@@ -1,0 +1,11 @@
+Hardware browser, real keyboard input through scripts/shot.mjs --movement-check.
+No bots; each map starts on its surface-photo route. Diagnostics observed every
+100 ms retain the peak, so host scheduling delays do not miss a short jump.
+
+causeway      jump +1.68 m   floor boost +6.51 m   finite, inside bounds
+reactor       jump +1.68 m   floor boost +6.54 m   finite, inside bounds
+containeryard jump +1.65 m   floor boost +6.51 m   finite, inside bounds
+derrick       jump +1.68 m   floor boost +6.54 m   finite, inside bounds
+
+All checks passed. Browser GPU: ANGLE Metal Renderer: Apple M5.
+Training collision, target, gate, spawn, and course timing data have no diff.

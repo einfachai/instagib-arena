@@ -1,3 +1,8 @@
+import { agentLabel } from './agent-session';
+import { beginArena, endArena, integrationState, pairBrowser } from './codex-integration';
+import { VisitResults } from './ui/VisitResults';
+import { BrandLogo } from './ui/BrandLogo';
+import type { SessionEnded } from './game/net';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { memo } from 'react';
 import {
@@ -36,7 +41,7 @@ import { CareerRoad } from './menu/CareerRoad';
 import { LastMatchBanner } from './menu/LastMatch';
 import { fetchChallenges, useMedia, useRefetchAtReset } from './menu/menu-hooks';
 import { freshCatchUp, gainFrom, type ChallengeLists, type MenuProfile } from './menu/road-data';
-import { MenuItem, MenuLink, MenuPlayButton, MenuWordmark, SocialDock, type DockTabId } from './ui/menu-parts';
+import { MenuLink, MenuPlayButton, MenuWordmark, SocialDock, type DockTabId } from './ui/menu-parts';
 import { LoadingScreen, type LoadStep } from './ui/LoadingScreen';
 import { useLevelshot } from './ui/levelshot';
 import { NameBadges } from './ui/badges';
@@ -67,13 +72,8 @@ import {
   AIR_JUMPS,
   DASH_COOLDOWN,
   DEFAULT_GAME_MODE,
-  mergeKeybinds,
-  DEFAULT_VIEWMODEL_OFFSET,
   HIT_MARKER_DURATION_SEC,
   HIT_MARKER_KILL_DURATION_SEC,
-  M_YAW_DEG,
-  MAX_SENSITIVITY,
-  MIN_SENSITIVITY,
   RAIL_COOLDOWN,
   TOAST_FADE_SEC,
   WEEKLY_CHALLENGE_MAP,
@@ -113,7 +113,8 @@ import { PlayerCard } from './ui/player-card';
 import { buildCardPayload } from './ui/player-card-data';
 import { SettingsModal, type SettingsTab } from './settings/SettingsModal';
 import { keyLabel } from './settings/keys';
-import { DEFAULT_CROSSHAIR, DEFAULT_SETTINGS, clampOutlineWidth, decodeCrosshair, encodeCrosshair, sanitizeHex } from './settings/codec';
+import { loadSettings, saveSettings, SETTINGS_KEY } from './settings/storage';
+import { DEFAULT_SETTINGS, clampOutlineWidth, decodeCrosshair, encodeCrosshair, sanitizeHex } from './settings/codec';
 
 // (The reduced-effects toggle defaults to the OS "reduce motion" preference —
 // prefersReducedMotion() is shared with the deck chrome in src/deck-core.ts.)
@@ -130,7 +131,7 @@ export type MatchConfig =
     }
   // pendingMap: the map is a placeholder until the server confirms the join
   // (invite links) — the loading screen waits for the real one.
-  | { mode: 'multiplayer'; mapId: string; serverUrl: string; roomId: string; pendingMap?: boolean }
+  | { mode: 'multiplayer'; mapId: string; serverUrl: string; roomId: string; pendingMap?: boolean; arcade?: { controllerToken?: string; attemptId?: string } }
   // Watch a live match read-only (first-person POV). mapId is a placeholder until
   // the server confirms which room/map we're spectating (Game adopts it then).
   | { mode: 'spectator'; mapId: string; serverUrl: string; roomId: string };
@@ -143,55 +144,6 @@ function defaultServerUrl(): string {
   if (typeof window === 'undefined') return 'ws://localhost:8787/ws/instagib';
   const proto = window.location.protocol === 'https:' ? 'wss' : 'ws';
   return `${proto}://${window.location.host}/ws/instagib`;
-}
-
-const SETTINGS_KEY = 'instagib-settings-v2';
-
-function loadSettings(): Settings {
-  if (typeof window === 'undefined') return DEFAULT_SETTINGS;
-  try {
-    const raw = window.localStorage.getItem(SETTINGS_KEY);
-    if (!raw) return DEFAULT_SETTINGS;
-    const parsed = JSON.parse(raw) as Partial<Settings>;
-    const merged: Settings = {
-      ...DEFAULT_SETTINGS,
-      ...parsed,
-      // Nested objects need an explicit merge so newly-added fields survive.
-      crosshair: { ...DEFAULT_CROSSHAIR, ...(parsed.crosshair ?? {}) },
-      keybinds: mergeKeybinds(parsed.keybinds),
-      viewmodelOffset: { ...DEFAULT_VIEWMODEL_OFFSET, ...(parsed.viewmodelOffset ?? {}) },
-    };
-    // Migrate legacy sensitivity: the old model stored radians/pixel (~0.0022).
-    // Anything below the new minimum is a legacy value → convert to the
-    // Source-style sens number so people keep roughly the same feel.
-    if (typeof parsed.sensitivity === 'number' && parsed.sensitivity < MIN_SENSITIVITY) {
-      merged.sensitivity = Math.min(
-        MAX_SENSITIVITY,
-        parsed.sensitivity / (M_YAW_DEG * (Math.PI / 180)),
-      );
-    }
-    return merged;
-  } catch {
-    return DEFAULT_SETTINGS;
-  }
-}
-
-// Auto-generated placeholder name (see the mount effect). Matches the shape we
-// create so we can avoid persisting it.
-const AUTO_NAME_RE = /^Player-[0-9A-Z]{4}$/;
-
-function saveSettings(s: Settings) {
-  if (typeof window === 'undefined') return;
-  try {
-    // Don't persist the auto-generated name (#21): if we did, every tab on this
-    // machine would load the same "Player-XXXX", making the scoreboard/killfeed
-    // ambiguous when testing with two tabs. Each tab regenerates its own until
-    // the user types a real one (which is then persisted normally).
-    const toSave = AUTO_NAME_RE.test(s.playerName) ? { ...s, playerName: '' } : s;
-    window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(toSave));
-  } catch {
-    // ignore
-  }
 }
 
 // Optional-chained setters tolerate stale Game instances surviving a Fast
@@ -213,6 +165,8 @@ function applySettingsToGame(game: Game, s: Settings) {
   game.setViewmodelMotion?.(s.viewmodelMotion);
   game.setMasterVolume?.(s.volume);
   game.setSfxVolume?.(s.sfxVolume);
+  game.setMusicVolume?.(s.musicVolume);
+  game.setMusicEnabled?.(s.musicEnabled);
   game.setAnnouncerVolume?.(s.announcerVolume);
   game.setAnnouncerEnabled?.(s.announcerEnabled);
   game.setAnnouncerPack?.(s.announcerPack);
@@ -251,7 +205,7 @@ function applyMatchConfig(game: Game, config: MatchConfig) {
     game.setMultiplayer({ enabled: true, url: config.serverUrl, roomId: config.roomId, spectate: true });
   } else if (config.mode === 'multiplayer') {
     game.setBotsEnabled(false);
-    game.setMultiplayer({ enabled: true, url: config.serverUrl, roomId: config.roomId });
+    game.setMultiplayer({ enabled: true, url: config.serverUrl, roomId: config.roomId, arcade: config.arcade });
   } else {
     game.setMultiplayer({ enabled: false, url: '' });
     game.setTraining(config.training ?? false);
@@ -325,6 +279,7 @@ export default function InstagibClient() {
       setSettingsRaw((prev) => withLegacyFromLooks(typeof u === 'function' ? u(prev) : u)),
     [],
   );
+  useEffect(() => { void pairBrowser().catch(() => {}); }, []);
   const [view, setView] = useState<'lobby' | 'playing'>('lobby');
   const [config, setConfig] = useState<MatchConfig | null>(null);
   const [lastResult, setLastResult] = useState<MatchResult | null>(null);
@@ -335,9 +290,7 @@ export default function InstagibClient() {
   const [playId, setPlayId] = useState(0);
   // First-run onboarding (pick a name + a controls primer), shown once.
   const [showOnboarding, setShowOnboarding] = useState(false);
-  // A ?join= invite arriving on the FIRST run is held here until onboarding is
-  // done, so a first-time invitee still sees the controls primer before locking.
-  const pendingJoinRef = useRef<MatchConfig | null>(null);
+
 
   // Menu-side 3D (Locker / Career Road previews, thumbnails, the menu hero)
   // honours Reduce effects + Low spec too — the Game only sets these while a
@@ -362,26 +315,11 @@ export default function InstagibClient() {
       typeof window !== 'undefined' && !window.localStorage.getItem('instagib-onboarded');
     if (firstRun) setShowOnboarding(true);
 
-    // Invite link: ?join=ROOMID drops straight into that room. The map is
-    // unknown until the server confirms the join (Game adopts it then), so we
-    // pass a placeholder map; clear the param so a refresh doesn't re-join.
+    // Old invitation URLs now open the menu. Every visit starts with Play.
     if (typeof window !== 'undefined') {
-      const code = new URLSearchParams(window.location.search).get('join');
-      if (code && /^[A-Z0-9]{3,10}$/i.test(code)) {
-        const url = new URL(window.location.href);
-        url.searchParams.delete('join');
-        window.history.replaceState({}, '', url.toString());
-        const joinCfg: MatchConfig = {
-          mode: 'multiplayer',
-          mapId: randomMapId(),
-          serverUrl: loaded.serverUrl || defaultServerUrl(),
-          roomId: code.toUpperCase(),
-          pendingMap: true,
-        };
-        // On a first-run invite, hold the join until onboarding finishes so the
-        // newcomer isn't dropped straight into pointer-lock with no primer.
-        if (firstRun) pendingJoinRef.current = joinCfg;
-        else startMatch(joinCfg);
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('join')) {
+        url.searchParams.delete('join'); window.history.replaceState({}, '', url.toString());
       }
     }
   }, []);
@@ -437,19 +375,15 @@ export default function InstagibClient() {
   );
 
   const playAgain = useCallback(() => {
-    if (config) startMatch(config);
-  }, [config, startMatch]);
+    if (config?.mode === 'multiplayer' && config.arcade) {
+      void beginArena(settings.codexExitPolicy).then(arcade => startMatch({ ...config, roomId: '', pendingMap: true, arcade }));
+    } else if (config) startMatch(config);
+  }, [config, startMatch, settings.codexExitPolicy]);
 
   const finishOnboarding = useCallback(() => {
     if (typeof window !== 'undefined') window.localStorage.setItem('instagib-onboarded', '1');
     setShowOnboarding(false);
-    // A held invite-join now proceeds (the player saw the primer first).
-    if (pendingJoinRef.current) {
-      const cfg = pendingJoinRef.current;
-      pendingJoinRef.current = null;
-      startMatch(cfg);
-    }
-  }, [startMatch]);
+  }, []);
 
   if (view === 'playing' && config) {
     if (config.mode === 'spectator') {
@@ -533,6 +467,7 @@ function GameView({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameRef = useRef<Game | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [visitSession, setVisitSession] = useState<SessionEnded | null>(null);
   const [endResult, setEndResult] = useState<MatchResult | null>(null);
   // Weapon inspect: while the first-person gun look-over plays, the item card shows.
   const [inspect, setInspect] = useState<{ kills: number | null } | null>(null);
@@ -598,6 +533,7 @@ function GameView({
     // results overlay. Offline navigates from the overlay buttons; online shows
     // the results podium, then continues to the server-driven map vote.
     const game = new Game(canvas, listener, (result) => {
+      if (config.mode === 'multiplayer' && config.arcade) return;
       setEndResult(result);
       if (isChallenge) {
         // Weekly challenge: submit the speedrun (win time, or kills on a loss) to
@@ -633,7 +569,10 @@ function GameView({
     window.addEventListener('keydown', onDebugKey);
     game.setInspectListener((active, kills) => setInspect(active ? { kills } : null));
     game.setNetEventListener((ev: NetMatchEvent) => {
-      if (ev.type === 'join-failed') {
+      if (ev.type === 'session-ended') {
+        setVisitSession(ev.session); setEndProgression(ev.session.rewards ?? null);
+        if (document.fullscreenElement) void document.exitFullscreen().catch(() => {});
+      } else if (ev.type === 'join-failed') {
         setJoinDuplicate(ev.reason === 'duplicate');
         setJoinError(
           ev.reason === 'full'
@@ -648,7 +587,7 @@ function GameView({
         setRankedResult(ev.result);
       } else if (ev.type === 'progression') {
         // A partial (mid-match leave) push never opens the results screen.
-        if (!ev.progression.partial) setEndProgression(ev.progression);
+        if (!ev.progression.partial || (config.mode === 'multiplayer' && config.arcade)) setEndProgression(ev.progression);
       }
     });
     applySettingsToGame(game, settings);
@@ -680,6 +619,27 @@ function GameView({
       gameRef.current = null;
     };
   }, []);
+
+  // The paired control channel also delivers results during a socket drop.
+  useEffect(() => {
+    if (config.mode !== 'multiplayer' || !config.arcade?.controllerToken) return;
+    let active = true;
+    let scanning = false;
+    const update = async () => {
+      if (scanning) return;
+      scanning = true;
+      try {
+        const state = await integrationState();
+        if (active && state?.active?.attemptId === config.arcade?.attemptId && state.active.result) {
+          setJoinError(null);
+          gameRef.current?.finishVisit(state.active.result);
+        }
+      } catch { /* WebSocket play and manual leave remain available. */ }
+      finally { scanning = false; }
+    };
+    void update(); const timer = setInterval(() => void update(), 1000);
+    return () => { active = false; clearInterval(timer); };
+  }, [config]);
 
   const voteForMap = useCallback((mapId: string) => {
     gameRef.current?.voteForMap(mapId);
@@ -735,6 +695,13 @@ function GameView({
   const leave = useCallback(() => {
     exitFullscreen();
     const game = gameRef.current;
+    if (config.mode === 'multiplayer' && config.arcade) {
+      game?.endVisit();
+      if (config.arcade.controllerToken && config.arcade.attemptId) {
+        void endArena(config.arcade.attemptId).then(reply => { if (reply?.session) game?.finishVisit(reply.session); else onExit(null); }).catch(() => { if (hudStore.getState().netStatus !== 'open') onExit(null); });
+      } else if (hudStore.getState().netStatus !== 'open') onExit(null);
+      return;
+    }
     const r = game?.getStats() ?? null;
     // A weekly-challenge run only counts when it FINISHES (match-end); leaving
     // mid-run abandons it. Other matches submit the partial run to career stats.
@@ -744,7 +711,7 @@ function GameView({
     // Leaving from the post-match vote still carries this match's rewards (or
     // the in-flight offline reply, which lands after the lobby is up).
     onExit(r, endProgression, statsPending.current);
-  }, [onExit, offlineMatch, isChallenge, reportsOwnStats, endProgression]);
+  }, [onExit, offlineMatch, isChallenge, reportsOwnStats, endProgression, config, hudStore]);
 
   // Online + alone in the room: release the cursor so the waiting overlay's
   // buttons (copy invite / leave) are clickable, and so the player isn't stuck
@@ -752,7 +719,7 @@ function GameView({
   const waiting =
     config.mode === 'multiplayer' &&
     hud.netStatus === 'open' &&
-    hud.netPeers === 0 &&
+    hud.netPeers === 0 && !config.arcade &&
     !hud.vote &&
     !hud.matchOver &&
     !joinError;
@@ -852,6 +819,7 @@ function GameView({
   const [latestNext, setLatestNext] = useState<string | null>(null);
   if (nextMap && nextMap.name !== latestNext) setLatestNext(nextMap.name);
   const currentMapName = latestNext ?? joinedMap ?? (loadMapId ? mapNameById(loadMapId) : '');
+  if (config.mode === 'multiplayer' && config.arcade) flavor.arcade = true;
   const infoLine = modeLine(flavor);
   const infoLimit = fragLimitFor(flavor);
   const hudInfo = useMemo<HudMatchInfo>(
@@ -860,6 +828,9 @@ function GameView({
   );
   const showInter = online && loadGone && nextMap !== null && nextMap.id !== interDoneId;
   const interShot = useLevelshot(showInter && nextMap ? mapIdByName(nextMap.name) : null, settings.lowSpec);
+  useEffect(() => {
+    gameRef.current?.setArenaReady(loadGone && !showInter && !settingsOpen && !joinError && !disconnected && !onlineResults && !rankedResult && !visitSession);
+  }, [loadGone, showInter, settingsOpen, joinError, disconnected, onlineResults, rankedResult, visitSession]);
   // Warm the levelshots of the ballot while the vote runs, so the interstitial
   // opens on a finished image.
   const voteKey = hud.vote ? hud.vote.options.join(',') : '';
@@ -914,13 +885,17 @@ function GameView({
           onCancel={() => gameRef.current?.closeChat()}
         />
       )}
+      {visitSession && <VisitResults session={visitSession} rewards={endProgression} reducedEffects={settings.reducedEffects} onMenu={() => {
+        const s = visitSession.stats;
+        onExit({ visit: s, won: false, kills: s.kills, deaths: s.deaths, bestStreak: s.bestStreak, headshots: s.headshots, shotsFired: s.shots, shotsHit: s.hits }, endProgression);
+      }} />}
       {hud.pom && (
         <PlayOfTheMatchOverlay pom={hud.pom} settings={settings} />
       )}
       {hud.vote && !onlineResults && !hud.pom && (
         <MapVoteOverlay vote={hud.vote} onVote={voteForMap} reducedEffects={settings.reducedEffects} />
       )}
-      {onlineResults && !hud.pom && (
+      {onlineResults && !visitSession && !(config.mode === 'multiplayer' && config.arcade) && !hud.pom && (
         <OnlineMatchResults
           won={endResult?.won ?? false}
           scores={podiumScores}
@@ -936,7 +911,7 @@ function GameView({
           onContinue={() => setOnlineResults(false)}
         />
       )}
-      {joinError && (
+      {joinError && !visitSession && (
         <JoinErrorOverlay
           message={joinError}
           onLeave={() => onExit(null)}
@@ -958,10 +933,10 @@ function GameView({
           onLeave={leave}
         />
       )}
-      {disconnected && !waiting && (
+      {disconnected && !waiting && !visitSession && (
         <DisconnectedOverlay error={hud.netStatus === 'error'} onLeave={leave} />
       )}
-      {!hud.locked && !hud.matchOver && !hud.vote && !onlineResults && !joinError && !waiting && !hud.pom && !rankedResult && (
+      {!visitSession && !hud.locked && !hud.matchOver && !hud.vote && !onlineResults && !joinError && !waiting && !hud.pom && !rankedResult && (
         <ClickToPlay
           onPlay={requestPlay}
           onOpenSettings={() => setSettingsOpen(true)}
@@ -998,7 +973,7 @@ function GameView({
           </div>
         </div>
       )}
-      {!rankedResult && hud.matchOver && !hud.pom && (
+      {!visitSession && !(config.mode === 'multiplayer' && config.arcade) && !rankedResult && hud.matchOver && !hud.pom && (
         <MatchOverOverlay
           won={hud.matchOver.won}
           scores={hud.scores}
@@ -1469,7 +1444,7 @@ function PlayOfTheMatchOverlay({
               ) : null}
               <div
                 className='mt-1 text-lg font-bold uppercase tracking-[0.25em] drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]'
-                style={{ color: pom.kit?.cardAccent ?? '#67e8f9' }}
+                style={{ color: pom.kit?.cardAccent ?? '#a6bcff' }}
               >
                 {pom.label}
                 {pom.subLabel ? <span className='ml-3 text-white/60'>· {pom.subLabel}</span> : null}
@@ -1484,8 +1459,8 @@ function PlayOfTheMatchOverlay({
                         key={`${i}-${lit ? 1 : 0}`}
                         className='h-2.5 w-6 origin-bottom rounded-[1px]'
                         style={{
-                          background: lit ? (pom.kit?.cardAccent ?? '#67e8f9') : 'rgba(255,255,255,0.18)',
-                          boxShadow: lit ? `0 0 8px ${pom.kit?.cardAccent ?? '#67e8f9'}99` : undefined,
+                          background: lit ? (pom.kit?.cardAccent ?? '#a6bcff') : 'rgba(255,255,255,0.18)',
+                          boxShadow: lit ? `0 0 8px ${pom.kit?.cardAccent ?? '#a6bcff'}99` : undefined,
                           animation: lit && !reduced ? 'pomTick 260ms cubic-bezier(0.2,0.8,0.2,1) both' : undefined,
                         }}
                       />
@@ -1666,11 +1641,11 @@ const HudLayout = memo(function HudLayout({
   const dead = useHudSlice((s) => s.killcam !== null);
   return (
     <>
-      {!dead && <HudBoostRing />}
+      {!dead && <div className='hud-hip-aim'><HudBoostRing /></div>}
       <HudKillFlash />
       <HudDamageVignette />
-      {!dead && <Crosshair cfg={settings.crosshair} />}
-      {!dead && <HudReloadBar />}
+      {!dead && <div className='hud-hip-aim'><Crosshair cfg={settings.crosshair} /></div>}
+      {!dead && <div className='hud-hip-aim'><HudReloadBar /></div>}
       {!dead && <HudHitMarker />}
       <HudKillfeed />
       <HudToasts />
@@ -2093,7 +2068,7 @@ const NetDebugOverlay = memo(function NetDebugOverlay({ s }: { s: NonNullable<Hu
 
 // Ratz "Boost Range Indicator": a ring around the crosshair that's a faint
 // dashed hint when no surface is in range, and a bright glowing cyan ring the
-// moment a boostable surface is under your aim (right-click to launch off it).
+// moment a boostable surface is under your aim (press the boost key to launch off it).
 const BoostRing = memo(function BoostRing({ active }: { active: boolean }) {
   return (
     <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2'>
@@ -2103,7 +2078,7 @@ const BoostRing = memo(function BoostRing({ active }: { active: boolean }) {
           cy='26'
           r='21'
           fill='none'
-          stroke={active ? '#67e8f9' : 'rgba(255,255,255,0.16)'}
+          stroke={active ? '#a6bcff' : 'rgba(255,255,255,0.16)'}
           strokeWidth={active ? 2 : 1.25}
           strokeDasharray={active ? undefined : '2 6'}
           style={{
@@ -2621,7 +2596,7 @@ const MiniLeaderboard = memo(function MiniLeaderboard({ scores }: { scores: Play
     <div
       key={s.id}
       className={`hud-panel flex items-center gap-2 px-2.5 py-[3px] ${
-        s.isLocal ? '!border-cyan-300/40 !bg-cyan-400/15 shadow-[inset_3px_0_0_#67e8f9]' : ''
+        s.isLocal ? '!border-cyan-300/40 !bg-cyan-400/15 shadow-[inset_3px_0_0_#a6bcff]' : ''
       }`}
     >
       <span className='w-4 shrink-0 text-right tabular-nums text-white/40'>{rank}</span>
@@ -2814,7 +2789,7 @@ function HudRailPip() {
       text={text}
       total={total}
       elapsedMs={elapsedMs}
-      accent='#67e8f9'
+      accent='#a6bcff'
     />
   );
 }
@@ -2978,14 +2953,15 @@ function ClickToPlay({
   // Build the controls hint from the actual bindings so it stays correct after a
   // rebind (#26f). Move = the 4 movement keys; the rest follow their bindings.
   const moveKeys = [kb.forward, kb.left, kb.back, kb.right].map(keyLabel).join('');
-  const controls = `${moveKeys} move · ${keyLabel(kb.jump)} jump · ${keyLabel(kb.dash)} dash · RMB boost · LMB fire · ${keyLabel(kb.scoreboard)} scores · Esc menu`;
+  const controls = `${moveKeys} move · ${keyLabel(kb.jump)} jump · ${keyLabel(kb.dash)} dash · ${keyLabel(kb.boost)} boost · RMB scope · LMB fire · ${keyLabel(kb.scoreboard)} scores · Esc menu`;
   // The pause menu: a dimmed sheet over the live arena with the deck's big
   // display type. Clicking anywhere (the canvas underneath) re-locks the
   // pointer; the buttons are the explicit paths. Menu toasts (e.g. from the
   // in-match Settings sheet) rail here — never over live gameplay.
   return (
-    <div className='absolute inset-0 flex flex-col items-center justify-center bg-black/70 text-white pointer-events-auto'>
+    <div className='brand-pause absolute inset-0 flex flex-col items-center justify-center bg-black/70 text-white pointer-events-auto'>
       <div className='relative flex flex-col items-center px-6 text-center'>
+        <BrandLogo className='brand-pause-logo' />
         <div className='font-mono text-[11px] font-semibold uppercase tracking-[0.3em] text-cyan-300'>
           {info.mapName ? `${info.mapName} · ` : ''}
           {info.modeLine}
@@ -3029,12 +3005,7 @@ function Stat({ label, value }: { label: string; value: string | number }) {
 
 /* ───────────────────────── Lobby ───────────────────────── */
 
-const QUICK_MAP_POOL = ['causeway', 'reactor', 'lounge'];
 // Maps offered for online matches (no bots online → human-friendly pool).
-
-function randomMapId(): string {
-  return QUICK_MAP_POOL[Math.floor(Math.random() * QUICK_MAP_POOL.length)];
-}
 
 function savedPlayerName(): string | undefined {
   if (typeof window === 'undefined') return undefined;
@@ -3417,33 +3388,35 @@ function Lobby({
   const dockCompact = dockOpen && dockEmpty && !dockExpanded;
   const lobbyCount = online ? rooms.length : 0;
   const onlineCount = presence?.online ?? 0;
-  const offline = lobbyStatus === 'closed' || lobbyStatus === 'error';
 
-  const playNow = () => {
-    if (playDisabled) return;
-    // Server unreachable: Play still plays — offline vs bots.
-    if (offline) {
-      setSoloOpen(true);
-      return;
-    }
-    if (searching || !online) return; // double-fire guard
+  const [integrationLabel, setIntegrationLabel] = useState(`${agentLabel} integration unpaired`);
+  useEffect(() => {
+    let active = true;
+    const update = async () => {
+      try {
+        const state = await integrationState();
+        if (!active) return;
+        const providers = state?.integration?.providers;
+        setIntegrationLabel(!state ? `${agentLabel} integration unpaired` : Object.values(providers ?? {}).some(v => v !== 'healthy') ? `${agentLabel} integration degraded · Play remains available` : `${agentLabel} integration connected`);
+      } catch { if (active) setIntegrationLabel(`${agentLabel} integration degraded · Play remains available`); }
+    };
+    void update(); const timer = setInterval(() => void update(), 10_000);
+    return () => { active = false; clearInterval(timer); };
+  }, []);
+  const playNow = async () => {
+    if (playDisabled || searching) return;
     setSearching(true);
-    // "Play" = mode-agnostic super-queue: join whatever's live so a small
-    // population concentrates instead of splitting 3 ways. Create Match picks
-    // a specific mode.
-    lobbyRef.current?.quickMatch('any');
-    window.setTimeout(() => setSearching(false), 6000);
+    try {
+      const arcade = await beginArena(settings.codexExitPolicy === 'attention' ? 'attention' : 'completion');
+      onStart({ mode: 'multiplayer', mapId: 'causeway', serverUrl, roomId: '', pendingMap: true, arcade });
+    } catch (error) {
+      toast(error instanceof Error ? error.message : 'Unable to enter the arena.', { tone: 'warn', sound: 'uiError' });
+    } finally { setSearching(false); }
   };
-  const playSub = searching
-    ? 'Finding a live arena…'
-    : offline
-      ? 'Server offline · play vs bots'
-      : !online
-        ? 'Linking to server…'
-        : 'Quick match · any mode';
+  const playSub = searching ? 'Finding a live arena…' : 'Continuous FFA · bots when you play alone';
 
   return (
-    <div className={`menu-root fixed inset-0 z-50 overflow-hidden text-white ${settings.reducedEffects ? 'menu-reduced' : ''}`}>
+    <div className={`menu-root deathmatch-lobby fixed inset-0 z-50 overflow-hidden text-white ${settings.reducedEffects ? 'menu-reduced' : ''}`}>
       <MenuBackdropView
         active={!modalOpen}
         still={settings.lowSpec || settings.reducedEffects || LIGHT_DEVICE}
@@ -3459,7 +3432,7 @@ function Lobby({
         Skip to content
       </a>
       <MenuToasts />
-      <div className='relative flex h-full w-full flex-col px-5 pb-4 pt-4 sm:px-10 sm:pt-5 lg:px-14'>
+      <div className='dm-lobby-shell relative flex h-full w-full flex-col px-5 pb-4 pt-4 sm:px-10 sm:pt-5 lg:px-14'>
         {/* ── Top bar: who you are (left) · account + server (right) ─── */}
         <header className='relative z-20 flex shrink-0 flex-wrap items-start justify-between gap-3'>
           <div className='menu-in-top w-full sm:w-auto sm:min-w-[19rem] sm:max-w-[29rem] sm:flex-1' style={{ ['--d' as string]: 0 }}>
@@ -3509,13 +3482,13 @@ function Lobby({
 
         <main id='lobby-main' tabIndex={-1} className='relative flex min-h-0 flex-1 gap-6 outline-none'>
           {/* ── Left: identity + ways to play ─────────────────────────── */}
-          <section className='deck-scroll flex min-h-0 w-full max-w-[31rem] shrink-0 flex-col overflow-y-auto'>
+          <section className='dm-lobby-launch deck-scroll flex min-h-0 w-full max-w-[31rem] shrink-0 flex-col overflow-y-auto'>
             <div className='my-auto flex flex-col py-4'>
               <div className='menu-in' style={{ ['--d' as string]: 0 }}>
                 <MenuWordmark />
               </div>
               <p className='menu-tagline menu-in' style={{ ['--d' as string]: 1 }}>
-                One railgun. One shot. One kill.
+                Your next frag is waiting.
               </p>
 
               {touchOnly && (
@@ -3528,55 +3501,22 @@ function Lobby({
               <div className='menu-in mt-8' style={{ ['--d' as string]: 2 }}>
                 <MenuPlayButton
                   onClick={playNow}
-                  disabled={playDisabled || searching || (!online && !offline)}
+                  disabled={playDisabled || searching}
                   busy={searching}
                   sub={playSub}
                 />
               </div>
 
-              <nav aria-label='Ways to play' className='mt-4 flex flex-col'>
-                <MenuItem
-                  onClick={() => setCreateOnlineOpen(true)}
-                  disabled={!online || playDisabled}
-                  accent='cyan'
-                  sub='Host FFA, duel or TDM'
-                  delay={3}
-                >
-                  Create match
-                </MenuItem>
-                <MenuItem
-                  onClick={() => setRankedOpen(true)}
-                  disabled={!online || playDisabled}
-                  accent='fuchsia'
-                  sub='1v1 on the Elo ladder'
-                  delay={4}
-                >
-                  Ranked duel
-                </MenuItem>
-                <MenuItem onClick={() => setSoloOpen(true)} disabled={playDisabled} accent='emerald' sub='Offline, your rules' delay={5}>
-                  Solo vs bots
-                </MenuItem>
-                <MenuItem
-                  onClick={() =>
-                    onStart({
-                      mode: 'local',
-                      mapId: 'training',
-                      botCount: 0, // targets, not a firefight — practice aim + movement safely
-                      difficulty: settings.difficulty,
-                      training: true,
-                    })
-                  }
-                  disabled={playDisabled}
-                  accent='amber'
-                  sub='Aim challenges, movement course'
-                  delay={6}
-                >
-                  Training range
-                </MenuItem>
-                <MenuItem onClick={() => setWeeklyOpen(true)} disabled={playDisabled} accent='amber' sub='8-player speedrun' delay={7}>
-                  Weekly challenge
-                </MenuItem>
-              </nav>
+              <div className='dm-lobby-handoff mt-5 text-sm text-white/70'>
+                <label className='block' htmlFor='codex-exit-policy'>Return to work when</label>
+                <select id='codex-exit-policy' className='mt-2 w-full rounded border border-white/20 bg-slate-900 p-2 text-white'
+                  value={settings.codexExitPolicy === 'attention' ? 'attention' : 'completion'}
+                  onChange={e => onChangeSettings({ ...settings, codexExitPolicy: e.target.value === 'attention' ? 'attention' : 'completion' })}>
+                  <option value='completion'>A {agentLabel} task completes</option>
+                  <option value='attention'>{agentLabel} completes or needs attention</option>
+                </select>
+                <p className='mt-2 text-xs text-white/50'>{integrationLabel}</p>
+              </div>
 
               {/* Meta surfaces: quiet links, visually subordinate to playing. */}
               <div
@@ -3591,7 +3531,7 @@ function Lobby({
                 <MenuLink onClick={() => openSettingsAt('controls')}>Settings</MenuLink>
               </div>
 
-              {lastResult && (
+              {lastResult && !lastResult.visit && (
                 <div className='menu-in' style={{ ['--d' as string]: 9 }}>
                   <LastMatchBanner result={lastResult} gain={lastGain} />
                 </div>
@@ -3688,7 +3628,7 @@ function Lobby({
                     rooms={rooms}
                     online={online}
                     status={lobbyStatus}
-                    onJoin={(r) => startOnline(r.id, r.mapId)}
+                    onJoin={() => void playNow()}
                     onSpectate={(r) => startSpectate(r.id, r.mapId)}
                     onRefresh={() => lobbyRef.current?.refresh()}
                   />
@@ -3710,6 +3650,7 @@ function Lobby({
 
         {/* ── Footer: what you're looking at, whisper-quiet ─────────────── */}
         <footer className='flex shrink-0 items-center justify-between gap-4 pt-3 font-sans text-[12px] text-white/45'>
+          <a href='/' className='dm-lobby-home'>← Back to home</a>
           <span className='truncate'>
             {arenaName && (
               <>

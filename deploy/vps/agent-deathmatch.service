@@ -1,0 +1,26 @@
+[Unit]
+Description=Agent Deathmatch game server
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=agent-deathmatch
+Group=agent-deathmatch
+WorkingDirectory=/opt/agent-deathmatch/current
+EnvironmentFile=/etc/agent-deathmatch.env
+ExecStart=/opt/node24/bin/node --import tsx server/index.ts
+Restart=always
+RestartSec=3
+TimeoutStopSec=30
+StateDirectory=agent-deathmatch
+StateDirectoryMode=0700
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+SyslogIdentifier=agent-deathmatch
+
+[Install]
+WantedBy=multi-user.target

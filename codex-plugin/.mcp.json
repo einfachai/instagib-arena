@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "agent_deathmatch": {
+      "command": "node",
+      "cwd": ".",
+      "args": [
+        "server.mjs",
+        "--plugin-version=0.5.0",
+        "--agent=codex"
+      ],
+      "env": {
+        "AGENT_DEATHMATCH_ORIGIN": "https://agent-deathmatch.hi-fa2.workers.dev",
+        "AGENT_DEATHMATCH_AGENT": "codex"
+      },
+      "startup_timeout_sec": 15,
+      "tool_timeout_sec": 60
+    }
+  }
+}

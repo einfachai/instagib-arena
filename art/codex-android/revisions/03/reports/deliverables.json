@@ -1,0 +1,15 @@
+{
+  "revision": 3,
+  "blend_sha256": "392490193ea35db6290dd8634e77bbdc2fd19e90488a8b4a25608d8a9f5094a4",
+  "blend_bytes": 33564029,
+  "review_stills": 18,
+  "turntable_frames": 48,
+  "turntable_sha256": "148b8b613c1ff8debe4a9a1074d91f59278fefea84363e9150541b0b58711da3",
+  "all_renders_newer_than_model": true,
+  "renderers": {
+    "hero.png": "Cycles",
+    "window.png": "Cycles",
+    "other_shaded_views": "Eevee",
+    "pose_checks": "Workbench"
+  }
+}

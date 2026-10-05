@@ -76,27 +76,6 @@ export const MAP_AUDIO: Record<string, MapAudio> = {
       { k: 'tone', type: 'sine', f: [3150], level: 0.0015 },
     ],
   },
-  // Giant-scale lounge (Ratz homage): warm, close room tone and a fridge hum.
-  lounge: {
-    room: { seconds: 1.0, predelay: 0.012, damp: 0.8, wet: 0.24 },
-    surface: { thump: 80, body: 700, click: 1900, grit: 0.3, ring: 420, ringQ: 5, ringAmt: 0.05 },
-    bed: [
-      { k: 'noise', color: 'brown', type: 'lowpass', f: 260, level: 0.1 },
-      { k: 'noise', color: 'pink', type: 'lowpass', f: 1500, level: 0.03, gust: { rate: 0.05, depth: 0.3 } },
-      { k: 'tone', type: 'sine', f: [100, 200], amps: [1, 0.3], level: 0.004 },
-    ],
-  },
-  // Dusk suburb: an evening breeze, crickets, and distant traffic rumble.
-  nuketown: {
-    room: { seconds: 0.75, predelay: 0.025, damp: 0.55, wet: 0.16 },
-    surface: { thump: 85, body: 1400, click: 4200, grit: 0.7, ring: 0, ringQ: 1, ringAmt: 0 },
-    bed: [
-      { k: 'noise', color: 'pink', type: 'bandpass', f: 650, q: 0.7, level: 0.08, gust: { rate: 0.08, depth: 0.7 }, sweep: { rate: 0.05, depth: 250 } },
-      { k: 'chirp', f: 4400, pulse: 28, group: 1.35, level: 0.01 },
-      { k: 'chirp', f: 4950, pulse: 24, group: 0.95, level: 0.0065 },
-      { k: 'noise', color: 'brown', type: 'lowpass', f: 140, level: 0.06 },
-    ],
-  },
   // Night port: a distant ship engine drone, water lapping, sodium-lamp buzz.
   containeryard: {
     room: { seconds: 1.25, predelay: 0.02, damp: 0.4, wet: 0.26 },

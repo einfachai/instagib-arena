@@ -15,7 +15,9 @@ export default defineConfig({
   server: {
     port: 5173,
     // Agent worktrees live under .claude/worktrees; don't let their edits reload the dev tab.
-    watch: { ignored: ['**/.claude/**', '**/dist/**'] },
+    // Asset bakes write many GLBs in sequence. Refresh after a completed bake
+    // instead of repeatedly interrupting a running game or character lab.
+    watch: { ignored: ['**/.claude/**', '**/dist/**', '**/art/ybot/reports/baseline/**', '**/public/models/codex-ybot/**', '**/public/models/railgun-r01/**', '**/art/**/reports/**', '**/art/**/renders/**', '**/art/**/*.blend*'] },
     proxy: {
       '/api': { target: `http://localhost:${SERVER_PORT}`, changeOrigin: true },
       '/ws': { target: `ws://localhost:${SERVER_PORT}`, ws: true },

@@ -6,43 +6,20 @@ import { SheenOverlay, festiveKit } from './gun/gun-extras';
 import { TrackedCounter } from './gun/tracker';
 import { flashTexture } from './fx-pool';
 import { localRail, nowMs } from './fx/rail-state';
-import { BARREL_Y, COIL_COUNT, MUZZLE_Z, TRACKER_MOUNT, railgunGeometry, type GunLod } from './gun/gun-geometry';
+import { COIL_COUNT, TRACKER_MOUNT, type GunLod } from './gun/gun-geometry';
 import { GunMaterial, STOCK_FINISH, gunFx, type GunUniforms } from './gun/gun-material';
 import { fxFlags } from './fx/fx-settings';
 import './gun/custom/load';
 import { customGun } from './gun/custom/registry';
 import { makeTicker } from './gun/custom/ticker';
+import { buildR01 } from './gun/r01';
+import { RAIL_COOLDOWN } from './constants';
 import type { CustomGunInstance } from './gun/custom/types';
 
-// ─────────────────────────────────────────────────────────────────────────
-// Procedural railgun (no external asset — the art pipeline is all procedural).
-// A chunky Q3-style rail: heavy receiver with heat-sink fins and a charge
-// window in each flank, rear capacitor, skeletal stock, and a long accelerator
-// — a glowing energy core between four conductor rails, ringed by four bold
-// coils, ending in a pronged emitter. Geometry: gun/gun-geometry.ts (built once
-// per LOD, shared). Surface + finish patterns: gun/gun-material.ts (one
-// material, one draw call for the whole gun).
-//
-// The coils ARE the ammo readout (first-person viewmodel): lit when ready; on
-// a shot they flash white-hot, drop dark, and relight one by one from the back
-// (receiver) toward the muzzle over the recharge, with a glint when the rail
-// is ready. The core,
-// the capacitor and the flank charge windows follow the same charge. See
-// CoilDriver below.
-//
-// MODEL-SPACE CONVENTION (stable — third-person sockets depend on it):
-//   • origin   = the grip / trigger point (the right hand's palm sits just
-//                below and behind it, around (0, -0.12, 0.09));
-//   • forward  = -Z (the barrel points down -Z, the camera's forward);
-//   • up       = +Y; the gun is symmetric about X = 0;
-//   • scale    = 1 unit ≈ 1 m at scale 1: ~1.36 long (butt +0.45 → prong tips
-//                -0.92), muzzle marker at (0, 0.03, -0.9). Callers scale the
-//                group (first person 0.8; the combatant hand socket ~0.6, see
-//                character/gun.ts).
-//
-// Resources: the geometry is shared (userData.shared) — never dispose it; the
-// material + flare material are per gun: free them with `model.dispose()`.
-// ─────────────────────────────────────────────────────────────────────────
+// Standard guns use the Blender-authored R-01; custom cosmetics retain their
+// registry models. Both expose the same charge-driven presentation contract.
+// Model axes remain +Y up / -Z forward, with per-instance animation/materials
+// and shared cached geometry/textures.
 
 // Coil emissive levels (linear, on the band's crown). REST sits just over the
 // bloom threshold (1.5, knee to 2.5): a charged gun carries a restrained glow
@@ -68,6 +45,7 @@ export type RailgunLod = GunLod;
 export type RailgunModel = {
   group: THREE.Group;
   muzzle: THREE.Object3D; // barrel-tip marker (beam origin)
+  sight?: THREE.Object3D; // rear optical centre, local +Y up / -Z forward
   // The gun's material. Its emissive (accent-hot × emissiveIntensity) lights
   // the status strips + emitter ring: the Game pops the intensity on fire /
   // kill and eases it back to 0.8.
@@ -131,6 +109,7 @@ class CoilDriver {
   charge = 1;
   private shots = -1;
   private fireMs = -1e9;
+  private chargeMs = -1e9;
   private readyMs = -1e9;
   private prevCharge = 1;
   // Sampled every update: 1 at the shot fading to 0 over ~0.25 s (custom guns).
@@ -141,6 +120,13 @@ class CoilDriver {
 
   fire(now: number) {
     this.fireMs = now;
+    this.chargeMs = -1e9;
+    this.charge = 0;
+  }
+
+  setCharge(charge: number, now: number) {
+    this.charge = Number.isFinite(charge) ? Math.max(0, Math.min(1, charge)) : 1;
+    this.chargeMs = now;
   }
 
   // `live` = follow the local rail (first-person viewmodel); otherwise the
@@ -152,7 +138,8 @@ class CoilDriver {
 
   // Charge + shot state only (no uniform writes).
   sample(now: number, live: boolean) {
-    if (this.external && now - this.externalMs > EXTERNAL_LAPSE_MS) this.external = false;
+    if (this.external && now - this.externalMs > EXTERNAL_LAPSE_MS && now - this.fireMs >= RAIL_COOLDOWN * 1000) this.external = false;
+    if (this.external && this.chargeMs < this.fireMs) this.charge = Math.min(1, Math.max(0, (now - this.fireMs) / (RAIL_COOLDOWN * 1000)));
     if (!this.external) {
       if (live) {
         this.charge = localRail.charge;
@@ -229,86 +216,17 @@ export function buildRailgun(finish?: RailgunFinish, opts: BuildRailgunOptions =
   // High-tier finishes swap in a custom model (gun/custom registry); an unknown
   // key falls back to the standard gun.
   const custom = customGun(f.model);
-  if (custom) return buildCustomRailgun(custom, f, lod);
-  const group = new THREE.Group();
-  group.name = 'railgun';
-
-  const material = new GunMaterial(f, { lod });
-  const mesh = new THREE.Mesh(railgunGeometry(lod), material);
-  mesh.name = 'railgun-body';
-  group.add(mesh);
-
-  const muzzle = new THREE.Object3D();
-  muzzle.position.set(0, BARREL_Y, MUZZLE_Z);
-  group.add(muzzle);
-
-  const muzzleFlash = makeMuzzleFlash(f);
-  muzzle.add(muzzleFlash);
-
-  // ── Coil drive ─────────────────────────────────────────────────────────────
-  // Every frame the gun renders (onBeforeRender): a viewmodel (parented to a
-  // camera) registers its muzzle for the local beam and follows the shared
-  // local-rail charge unless driven explicitly; anything else shows a full
-  // charge (locker) or its explicit drive.
-  const driver = new CoilDriver(material.gun);
-  driver.update(nowMs(), false);
-  mesh.frustumCulled = lod === 'low'; // the hook must run even when off-frame
-  mesh.onBeforeRender = () => {
-    const parent = group.parent as (THREE.Object3D & { isCamera?: boolean }) | null;
-    const isViewmodel = !!parent?.isCamera;
-    const now = nowMs();
-    if (isViewmodel) {
-      localRail.muzzle = muzzle;
-      localRail.muzzleSeenMs = now;
-    }
-    driver.update(now, isViewmodel);
-  };
-
-  const extras = buildExtras(group, [mesh], lod, f.accentHot, () => new TrackedCounter({ material, ownsMaterial: false, hook: true }));
-  const model: RailgunModel = {
-    group,
-    muzzle,
-    glow: material,
-    ...extras.api,
-    muzzleFlash,
-    modelKey: null,
-    setCharge(charge: number) {
-      driver.external = true;
-      driver.externalMs = nowMs();
-      driver.charge = Number.isFinite(charge) ? charge : 1;
-    },
-    notifyFire() {
-      driver.external = true;
-      driver.externalMs = nowMs();
-      driver.fire(nowMs());
-    },
-    setFinish(next?: RailgunFinish) {
-      const nf = next ?? STOCK_FINISH;
-      material.setFinish(nf);
-      extras.setAccent(nf.accentHot);
-      muzzleFlash.material.color.copy(flareColor(nf.accentHot));
-    },
-    setLowSpec(low: boolean) {
-      if (lod === 'high') material.setHighDetail(!low);
-      extras.setLowSpec(low);
-    },
-    dispose() {
-      extras.dispose();
-      material.dispose();
-      muzzleFlash.material.dispose();
-    },
-  };
-  return model;
+  return buildCustomRailgun(custom ?? buildR01, custom ? f : { ...f, model: undefined }, lod);
 }
 
-// The quality overlays shared by the standard and custom builds. The Tracked
-// counter is built on first use (most guns never show one).
+
 function buildExtras(
   group: THREE.Group,
   sources: THREE.Mesh[],
   lod: RailgunLod,
   accentHot: number,
   makeCounter: () => TrackedCounter,
+  r01 = false,
 ) {
   const sheen = new SheenOverlay(group, sources, lod === 'high' ? 1 : 0.75);
   let counter: TrackedCounter | null = null;
@@ -328,7 +246,7 @@ function buildExtras(
       },
       setFestive(on: boolean) {
         if (on && !festive) {
-          festive = festiveKit();
+          festive = festiveKit(r01);
           group.add(festive);
         } else if (!on && festive) {
           festive.removeFromParent();
@@ -416,13 +334,12 @@ function buildCustomRailgun(build: CustomGunBuild, f: RailgunFinish, lod: Railgu
     counterMat ??= new GunMaterial(curFinish, { lod: 'high' });
     counterMat.setHighDetail(!lowSpec);
     return new TrackedCounter({ material: counterMat, ownsMaterial: true, mount: inst.trackerMount ?? TRACKER_MOUNT, hook: !inst.trackerMount });
-  });
+  }, inst.group.name === 'r01');
   let counterMat: GunMaterial | null = null;
   let curFinish = f;
   let lowSpec = false;
   let last = nowMs();
-  group.add(
-    makeTicker(() => {
+  const ticker = makeTicker(() => {
       const parent = group.parent as (THREE.Object3D & { isCamera?: boolean }) | null;
       const isViewmodel = !!parent?.isCamera;
       const now = nowMs();
@@ -440,11 +357,13 @@ function buildCustomRailgun(build: CustomGunBuild, f: RailgunFinish, lod: Railgu
         reduced: gunFx.reduced,
         lowSpec: lowSpec || fxFlags.low,
       });
-    }),
-  );
+    });
+  ticker.renderOrder = -100;
+  group.add(ticker);
   return {
     group,
     muzzle,
+    sight: inst.sight,
     glow,
     muzzleFlash,
     ...extras.api,
@@ -452,7 +371,7 @@ function buildCustomRailgun(build: CustomGunBuild, f: RailgunFinish, lod: Railgu
     setCharge(charge: number) {
       driver.external = true;
       driver.externalMs = nowMs();
-      driver.charge = Number.isFinite(charge) ? charge : 1;
+      driver.setCharge(charge, driver.externalMs);
     },
     notifyFire() {
       driver.external = true;

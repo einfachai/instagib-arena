@@ -1,3 +1,4 @@
+import { setMapMeshAssetQuality, whenMapAssetsReady } from '../game/world/assets';
 // Live 3D menu backdrop: a slow cinematic orbit through a real arena, cycling
 // maps with a crossfade. Also renders "levelshots" (one still frame per map)
 // for the Q3-style loading screen.
@@ -20,7 +21,7 @@ import type { AABB, Vec3 } from '../game/types';
 import { MenuHero, type HeroFrame, type HeroLoadout } from './menu-hero';
 
 // The rotation (the practice range is the one bright, empty room — skip it).
-export const BACKDROP_MAPS: readonly string[] = ['reactor', 'causeway', 'lounge', 'nuketown', 'containeryard', 'derrick'];
+export const BACKDROP_MAPS: readonly string[] = ['reactor', 'causeway', 'containeryard', 'derrick'];
 
 // The menu runs a calmer bloom than a match: the backdrop is mostly neon trims
 // and glossy floors, and at full strength they glared behind the menu.
@@ -259,7 +260,7 @@ class Stage {
 
   constructor(
     readonly canvas: HTMLCanvasElement,
-    opts: { shadows: boolean; bloom: boolean },
+    private opts: { shadows: boolean; bloom: boolean; lowSpec?: boolean },
   ) {
     this.renderer = createRenderer(canvas);
     this.scene = createScene(this.renderer);
@@ -296,13 +297,20 @@ class Stage {
       this.mapMesh = null;
     }
     const map = mapById(id);
-    const mesh = buildMapMesh(map);
+    const mesh = buildMapMesh(map,{lowSpec:!!this.opts.lowSpec});
     applyMapShadowFlags(mesh, map);
     this.scene.add(mesh);
     this.mapMesh = mesh;
+    setMapMeshAssetQuality(mesh, !!this.opts.lowSpec);
     this.map = map;
     this.mapId = id;
   }
+
+  async ready() {
+    let mesh: THREE.Group|null;
+    do {mesh=this.mapMesh;if(mesh)await whenMapAssetsReady(mesh);} while(mesh!==this.mapMesh);
+  }
+  get lowSpec() { return !!this.opts.lowSpec; }
 
   render() {
     this.postFx.render();
@@ -327,13 +335,14 @@ class Stage {
 /* ── Levelshots ─────────────────────────────────────────────────────────── */
 
 const levelshots = new Map<string, string>();
+const shotKey=(id:string,low=false)=>`${id}@${MAPS.find(m=>m.id===id)?.map.revision ?? 1}:${low?'1k':'2k'}`;
 // The arena the last backdrop showed, so landing → menu (a remount) carries on
 // in the same place instead of cutting to a random map.
 let lastMapId: string | null = null;
 const pendingShots = new Map<string, Promise<string | null>>();
 
-export function cachedLevelshot(mapId: string): string | null {
-  return levelshots.get(mapId) ?? null;
+export function cachedLevelshot(mapId: string, lowSpec = false): string | null {
+  return levelshots.get(shotKey(mapId,lowSpec)) ?? null;
 }
 
 // Last resort when no orbit is clean: the spawn, raised, looking across.
@@ -384,13 +393,15 @@ function captureLevelshot(stage: Stage): string | null {
 // resolves instantly. On a miss it spins up a short-lived offscreen renderer,
 // renders one frame, reads it back and frees the context.
 export function renderLevelshot(mapId: string, opts: { lowSpec?: boolean } = {}): Promise<string | null> {
-  const hit = levelshots.get(mapId);
+  if(!MAPS.some(m=>m.id===mapId)) return Promise.resolve(null);
+  const key=shotKey(mapId,opts.lowSpec);
+  const hit = levelshots.get(key);
   if (hit) return Promise.resolve(hit);
-  const pending = pendingShots.get(mapId);
+  const pending = pendingShots.get(key);
   if (pending) return pending;
   const job = new Promise<string | null>((resolve) => {
     // Let the loading screen paint before we block on shader compilation.
-    window.setTimeout(() => {
+    window.setTimeout(async () => {
       let stage: Stage | null = null;
       try {
         const canvas = document.createElement('canvas');
@@ -398,21 +409,22 @@ export function renderLevelshot(mapId: string, opts: { lowSpec?: boolean } = {})
         const h = Math.round((w * 9) / 16);
         canvas.width = w;
         canvas.height = h;
-        stage = new Stage(canvas, { shadows: !opts.lowSpec, bloom: true });
+        stage = new Stage(canvas, { shadows: !opts.lowSpec, bloom: true, lowSpec: opts.lowSpec });
         stage.setSize(w, h, 1);
         stage.loadMap(mapId);
+        await stage.ready();
         const url = captureLevelshot(stage);
-        if (url) levelshots.set(mapId, url);
+        if (url) levelshots.set(key, url);
         resolve(url);
       } catch {
         resolve(null);
       } finally {
         stage?.dispose();
-        pendingShots.delete(mapId);
+        pendingShots.delete(key);
       }
     }, 60);
   });
-  pendingShots.set(mapId, job);
+  pendingShots.set(key, job);
   return job;
 }
 
@@ -463,7 +475,7 @@ export class MenuBackdrop {
     this.scale = opts.scale ?? (opts.lowSpec ? 0.55 : 0.75);
     this.onMap = opts.onMap;
     this.shift = opts.shift ?? 0.26;
-    this.stage = new Stage(canvas, { shadows: !opts.lowSpec, bloom: true });
+    this.stage = new Stage(canvas, { shadows: !opts.lowSpec, bloom: true, lowSpec: opts.lowSpec });
     this.stage.postFx.setBloomScale(MENU_BLOOM);
     this.stage.postFx.setBloomThreshold(MENU_BLOOM_THRESHOLD);
     const want = opts.startMap ?? lastMapId;
@@ -634,11 +646,17 @@ export class MenuBackdrop {
     if (!map) return;
     this.shot = planShot(map, this.rand) ?? spawnShot(map);
     this.shotT = 0;
+    void this.stage.ready().then(() => {
+      if(this.stage.mapId===id) this.redrawIfIdle();
+    });
     // Pre-fill the loading screen's levelshot for this map while we're here
     // (landscape canvases only — a portrait phone frame would crop badly).
-    if (!levelshots.has(id) && this.stage.camera.aspect >= 1.3) {
-      const url = captureLevelshot(this.stage);
-      if (url) levelshots.set(id, url);
+    if (!levelshots.has(shotKey(id,this.stage.lowSpec)) && this.stage.camera.aspect >= 1.3) {
+      void this.stage.ready().then(() => {
+        if(this.stage.mapId!==id) return;
+        const url = captureLevelshot(this.stage);
+        if (url) levelshots.set(shotKey(id,this.stage.lowSpec), url);
+      });
     }
     this.onMap?.(id, map.name);
   }

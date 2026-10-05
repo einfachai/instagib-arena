@@ -1,0 +1,318 @@
+{
+  "provider": "Adobe Mixamo",
+  "format": "FBX Binary",
+  "fps": 60,
+  "keyframeReduction": "none",
+  "skin": "T-pose once; Without Skin for clips",
+  "clips": [
+    {
+      "id": "walk.forward",
+      "file": "rifle-pack/walk forward.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "walk.forward-right",
+      "file": "rifle-pack/walk forward right.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "walk.right",
+      "file": "rifle-pack/walk right.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "walk.backward-right",
+      "file": "rifle-pack/walk backward right.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "walk.backward",
+      "file": "rifle-pack/walk backward.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "walk.backward-left",
+      "file": "rifle-pack/walk backward left.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "walk.left",
+      "file": "rifle-pack/walk left.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "walk.forward-left",
+      "file": "rifle-pack/walk forward left.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "run.forward",
+      "file": "rifle-pack/run forward.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "run.forward-right",
+      "file": "rifle-pack/run forward right.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "run.right",
+      "file": "rifle-pack/run right.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "run.backward-right",
+      "file": "rifle-pack/run backward right.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "run.backward",
+      "file": "rifle-pack/run backward.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "run.backward-left",
+      "file": "rifle-pack/run backward left.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "run.left",
+      "file": "rifle-pack/run left.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "run.forward-left",
+      "file": "rifle-pack/run forward left.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "sprint.forward",
+      "file": "rifle-pack/sprint forward.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "sprint.forward-right",
+      "file": "rifle-pack/sprint forward right.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "sprint.right",
+      "file": "rifle-pack/sprint right.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "sprint.backward-right",
+      "file": "rifle-pack/sprint backward right.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "sprint.backward",
+      "file": "rifle-pack/sprint backward.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "sprint.backward-left",
+      "file": "rifle-pack/sprint backward left.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "sprint.left",
+      "file": "rifle-pack/sprint left.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "sprint.forward-left",
+      "file": "rifle-pack/sprint forward left.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "idle.armed",
+      "file": "rifle-pack/idle aiming.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "turn.left",
+      "file": "rifle-pack/turn 90 left.fbx",
+      "movement": true,
+      "loop": false
+    },
+    {
+      "id": "turn.right",
+      "file": "rifle-pack/turn 90 right.fbx",
+      "movement": true,
+      "loop": false
+    },
+    {
+      "id": "jump.up",
+      "file": "rifle-pack/jump up.fbx",
+      "movement": true,
+      "loop": false
+    },
+    {
+      "id": "jump.loop",
+      "file": "rifle-pack/jump loop.fbx",
+      "movement": true,
+      "loop": true
+    },
+    {
+      "id": "jump.down",
+      "file": "rifle-pack/jump down.fbx",
+      "movement": true,
+      "loop": false
+    },
+    {
+      "id": "idle.relaxed",
+      "file": "Breathing Idle.fbx",
+      "movement": false,
+      "loop": true
+    },
+    {
+      "id": "dash.forward",
+      "file": "Standing Dodge Forward.fbx",
+      "movement": true,
+      "loop": false,
+      "segment": [
+        0.12,
+        0.5
+      ]
+    },
+    {
+      "id": "dash.backward",
+      "file": "Standing Dodge Backward.fbx",
+      "movement": true,
+      "loop": false,
+      "segment": [
+        0.12,
+        0.5
+      ]
+    },
+    {
+      "id": "dash.left",
+      "file": "Standing Dodge Left.fbx",
+      "movement": true,
+      "loop": false,
+      "segment": [
+        0.12,
+        0.5
+      ]
+    },
+    {
+      "id": "dash.right",
+      "file": "Standing Dodge Right.fbx",
+      "movement": true,
+      "loop": false,
+      "segment": [
+        0.12,
+        0.5
+      ]
+    },
+    {
+      "id": "run.start",
+      "file": "Rifle Start Run.fbx",
+      "movement": true,
+      "loop": false
+    },
+    {
+      "id": "run.stop",
+      "file": "Rifle Run To Stop.fbx",
+      "movement": true,
+      "loop": false
+    },
+    {
+      "id": "walk.stop",
+      "file": "Rifle Walk To Stop.fbx",
+      "movement": true,
+      "loop": false
+    },
+    {
+      "id": "jump.rifle",
+      "file": "Rifle Jump.fbx",
+      "movement": true,
+      "loop": false
+    },
+    {
+      "id": "land",
+      "file": "Falling To Landing.fbx",
+      "movement": true,
+      "loop": false
+    },
+    {
+      "id": "wall.left",
+      "file": "Wall Run.fbx",
+      "movement": true,
+      "loop": false,
+      "segment": [
+        0.55,
+        1
+      ]
+    },
+    {
+      "id": "wall.right",
+      "file": "Wall Run.fbx",
+      "movement": true,
+      "loop": false,
+      "segment": [
+        0.55,
+        1
+      ],
+      "mirror": true
+    },
+    {
+      "id": "jump.double",
+      "file": "Rifle Jump.fbx",
+      "movement": true,
+      "loop": false,
+      "segment": [
+        0.3,
+        0.65
+      ],
+      "treatment": "Airborne tuck and extension, adapted for double jump"
+    },
+    {
+      "id": "jump.boost",
+      "file": "rifle-pack/jump up.fbx",
+      "movement": true,
+      "loop": false,
+      "segment": [
+        0.12,
+        0.85
+      ],
+      "treatment": "Launch impulse and recovery, adapted for boost"
+    },
+    {
+      "id": "emote.placeholder",
+      "file": "Victory.fbx",
+      "movement": false,
+      "loop": true,
+      "treatment": "Shared placeholder for all 23 existing inventory slots"
+    }
+  ],
+  "providerPackFps": 30,
+  "runtimeFps": 60,
+  "notes": "The locomotion pack ignores the 60 FPS selection and supplies 30 FPS motion; all clips are sampled offline at 60 FPS. Individual exports use 60 FPS and no keyframe reduction."
+}

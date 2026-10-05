@@ -9,7 +9,7 @@
 // period is derived deterministically from (player_id, period) — no scheduler.
 
 export type ChallengePeriod = 'daily' | 'weekly';
-export type ChallengeMetric = 'kills' | 'headshots' | 'wins' | 'streak' | 'games';
+export type ChallengeMetric = 'kills' | 'headshots' | 'wins' | 'playtime' | 'streak' | 'games';
 // How a match's metric folds into progress: 'add' accumulates across matches,
 // 'max' keeps the best single match (e.g. a kill-streak).
 export type ChallengeTrack = 'add' | 'max';
@@ -27,15 +27,15 @@ export type ChallengeDef = {
 
 export const DAILY_CHALLENGES: readonly ChallengeDef[] = [
   { id: 'daily:headshots', period: 'daily', metric: 'headshots', track: 'add', goal: 10, title: 'Land 10 headshots',      rewardXp: 90,  rewardCredits: 45 },
-  { id: 'daily:wins',      period: 'daily', metric: 'wins',      track: 'add', goal: 2,  title: 'Win 2 matches',          rewardXp: 110, rewardCredits: 60 },
+  { id: 'daily:human-playtime', period: 'daily', metric: 'playtime', track: 'add', goal: 600, title: 'Play 10 minutes with humans',          rewardXp: 110, rewardCredits: 60 },
   { id: 'daily:kills',     period: 'daily', metric: 'kills',     track: 'add', goal: 30, title: 'Frag 30 enemies',        rewardXp: 90,  rewardCredits: 45 },
   { id: 'daily:streak',    period: 'daily', metric: 'streak',    track: 'max', goal: 6,  title: 'Reach a 6 kill-streak',  rewardXp: 100, rewardCredits: 50 },
-  { id: 'daily:games',     period: 'daily', metric: 'games',     track: 'add', goal: 3,  title: 'Play 3 matches',         rewardXp: 70,  rewardCredits: 40 },
+  { id: 'daily:games',     period: 'daily', metric: 'games',     track: 'add', goal: 3,  title: 'Play 3 arena visits',     rewardXp: 70,  rewardCredits: 40 },
 ];
 
 export const WEEKLY_CHALLENGES: readonly ChallengeDef[] = [
   { id: 'weekly:headshots', period: 'weekly', metric: 'headshots', track: 'add', goal: 50,  title: 'Land 50 headshots',  rewardXp: 320, rewardCredits: 220 },
-  { id: 'weekly:wins',      period: 'weekly', metric: 'wins',      track: 'add', goal: 10,  title: 'Win 10 matches',     rewardXp: 420, rewardCredits: 300 },
+  { id: 'weekly:human-playtime', period: 'weekly', metric: 'playtime', track: 'add', goal: 3600, title: 'Play 60 minutes with humans',     rewardXp: 420, rewardCredits: 300 },
   { id: 'weekly:kills',     period: 'weekly', metric: 'kills',     track: 'add', goal: 200, title: 'Frag 200 enemies',   rewardXp: 320, rewardCredits: 240 },
 ];
 

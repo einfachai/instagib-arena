@@ -1,0 +1,46 @@
+
+══ causeway — Causeway (FFA/TDM) ══
+footprint 96×72 m, cap at 30 m, 87 boxes, highest walkable 18.0 m
+surfaces (m² of tops): mid 3–7: 1537 · low 0.5–3: 452 · high 7–12: 378 · apex 12+: 82
+reach (m² of raised tops): walk 0 · jump 2189 · double-jump 38 · boost 222 · UNREACHABLE 0
+spawns 16: min pair 12.9 m, mean nearest 15.3 m, spawn→spawn sightlines 25/120 (21%)
+openness 25% of random eye pairs see each other (longest 88 m)
+lightmap ≈ 149k texels → texel 0.55 m · 122 lights
+plan → design/shots/maps/causeway-plan.png
+
+══ reactor — Reactor (FFA/TDM) ══
+footprint 96×72 m, cap at 30 m, 77 boxes, highest walkable 18.0 m
+surfaces (m² of tops): mid 3–7: 3606 · high 7–12: 188 · low 0.5–3: 74 · apex 12+: 586
+reach (m² of raised tops): walk 0 · jump 3868 · double-jump 0 · boost 586 · UNREACHABLE 0
+spawns 16: min pair 11.6 m, mean nearest 15.6 m, spawn→spawn sightlines 20/120 (17%)
+openness 26% of random eye pairs see each other (longest 100 m)
+lightmap ≈ 173k texels → texel 0.57 m · 108 lights
+plan → design/shots/maps/reactor-plan.png
+
+══ containeryard — Spaceport (duel) ══
+footprint 68×58 m, cap at 26 m, 51 boxes, highest walkable 15.0 m
+surfaces (m² of tops): mid 3–7: 695 · high 7–12: 484 · low 0.5–3: 35 · apex 12+: 49
+reach (m² of raised tops): walk 0 · jump 542 · double-jump 672 · boost 49 · UNREACHABLE 0
+spawns 10: min pair 10.4 m, mean nearest 14.3 m, spawn→spawn sightlines 6/45 (13%)
+openness 26% of random eye pairs see each other (longest 63 m)
+lightmap ≈ 91k texels → texel 0.55 m · 106 lights
+plan → design/shots/maps/containeryard-plan.png
+
+══ derrick — Extraction (duel) ══
+footprint 68×58 m, cap at 26 m, 73 boxes, highest walkable 15.0 m
+surfaces (m² of tops): high 7–12: 665 · low 0.5–3: 46 · mid 3–7: 563 · apex 12+: 49
+reach (m² of raised tops): walk 0 · jump 1090 · double-jump 184 · boost 49 · UNREACHABLE 0
+spawns 8: min pair 8.5 m, mean nearest 16.3 m, spawn→spawn sightlines 4/28 (14%)
+openness 25% of random eye pairs see each other (longest 64 m)
+lightmap ≈ 94k texels → texel 0.55 m · 76 lights
+plan → design/shots/maps/derrick-plan.png
+
+══ training — Training Range (FFA/TDM) ══
+footprint 120×84 m, cap at 34 m, 51 boxes, highest walkable 24.5 m
+surfaces (m² of tops): apex 12+: 629 · low 0.5–3: 699 · mid 3–7: 139 · high 7–12: 178
+reach (m² of raised tops): walk 0 · jump 624 · double-jump 147 · boost 874 · UNREACHABLE 0
+spawns 10: min pair 11.7 m, mean nearest 16.8 m, spawn→spawn sightlines 32/45 (71%)
+openness 46% of random eye pairs see each other (longest 123 m)
+lightmap ≈ 205k texels → texel 0.56 m · 54 lights
+training: 24 anchors 9–55 m, 6 strafe lanes, 9 gates (straight-line route ≈ 244 m, par 34 s), 13 gauntlet targets
+plan → design/shots/maps/training-plan.png

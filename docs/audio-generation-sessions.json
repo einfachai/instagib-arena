@@ -1,0 +1,2343 @@
+{
+  "flow_id": "BqtTzkB2pZXfG9quZbsY",
+  "nodes": [
+    {
+      "key": "headshot",
+      "node_id": "HfG4UxyoQu6OGSIbgo8t"
+    },
+    {
+      "key": "first-blood",
+      "node_id": "TJY0WIhIubyPrUy40h4I"
+    },
+    {
+      "key": "double-kill",
+      "node_id": "iBnzp0fi20CpNIwwS6x0"
+    },
+    {
+      "key": "triple-kill",
+      "node_id": "jSE3CdMBg7vPCBMSdZba"
+    },
+    {
+      "key": "quad-kill",
+      "node_id": "VT9f0TxrluuUmmgMPzdG"
+    },
+    {
+      "key": "penta-kill",
+      "node_id": "fA4W8gvpORE1jE21Zg8f"
+    },
+    {
+      "key": "killing-spree",
+      "node_id": "T7Nux8CMSzrgmMzm5V0f"
+    },
+    {
+      "key": "rampage",
+      "node_id": "xNuKrdimWEsUED3BQ47a"
+    },
+    {
+      "key": "dominating",
+      "node_id": "urzZPw0G4fCPQeeppw0g"
+    },
+    {
+      "key": "unstoppable",
+      "node_id": "zxCM8G4b3Xka2AaQnT6b"
+    },
+    {
+      "key": "godlike",
+      "node_id": "AJDz4tdXrQzGgXcm3IFT"
+    },
+    {
+      "key": "humiliation",
+      "node_id": "HW8jrXx5FJ7XSGPgUJoC"
+    },
+    {
+      "key": "comeback",
+      "node_id": "tma7IOOwm90nBE3oHDQV"
+    },
+    {
+      "key": "match-point",
+      "node_id": "YExTWYdX3CUWHEPy0wvQ"
+    },
+    {
+      "key": "victory",
+      "node_id": "qubxKOKycADzEUyaxrZo"
+    },
+    {
+      "key": "defeat",
+      "node_id": "X7wo7sEW48qtmxEaduZW"
+    },
+    {
+      "key": "spawn",
+      "node_id": "Ayy0vlq6Louimfpmzk8l"
+    },
+    {
+      "key": "rail-fire",
+      "node_id": "NVn6BhvA5RMpaOTIE0Cc"
+    },
+    {
+      "key": "rail-charge",
+      "node_id": "KTGamrqhyjSVuOP8OAug"
+    },
+    {
+      "key": "reload-ready",
+      "node_id": "66kFEAkHyfQKRGyQcEit"
+    },
+    {
+      "key": "hit",
+      "node_id": "cvhoce8nUEcRNTCt7tlR"
+    },
+    {
+      "key": "hit-headshot",
+      "node_id": "1yGxwqnm4ScdLqx8kkgA"
+    },
+    {
+      "key": "kill",
+      "node_id": "tX4FcGCbQctSMmVUGpi6"
+    },
+    {
+      "key": "kill-headshot",
+      "node_id": "zZxC3RfzUkrPts0JAGkW"
+    },
+    {
+      "key": "death",
+      "node_id": "xlTZi6ZBu2MmtYAejAPt"
+    },
+    {
+      "key": "wall-impact",
+      "node_id": "i6eVxPvIDF4yp8wc3Sig"
+    },
+    {
+      "key": "step-default",
+      "node_id": "NRmkb8gndHGDIgWGxGF3"
+    },
+    {
+      "key": "step-causeway",
+      "node_id": "Kr40l0WdQGSzDIRz6S7N"
+    },
+    {
+      "key": "step-reactor",
+      "node_id": "dEqGdSBXjjlGtOK5qOdi"
+    },
+    {
+      "key": "step-lounge",
+      "node_id": "bpprtdcxkwkDxHoe0GWf"
+    },
+    {
+      "key": "step-nuketown",
+      "node_id": "l81RYXTDUDMtxPX5WL6e"
+    },
+    {
+      "key": "step-containeryard",
+      "node_id": "oMKfOpu8znhii2ktAZ5Z"
+    },
+    {
+      "key": "step-derrick",
+      "node_id": "5nfIUAS8uf6F19Xuz7B4"
+    },
+    {
+      "key": "step-training",
+      "node_id": "pG5ux3gD19hB41KoXvdB"
+    },
+    {
+      "key": "jump",
+      "node_id": "EokGapIMzPOhfNRfd6h8"
+    },
+    {
+      "key": "airjump",
+      "node_id": "oRLHLxvLGuibGByWslRz"
+    },
+    {
+      "key": "walljump",
+      "node_id": "iZv1NMun39KZ3yuL8tsx"
+    },
+    {
+      "key": "land",
+      "node_id": "VPrQOMF625ZaaK14UR72"
+    },
+    {
+      "key": "land-heavy",
+      "node_id": "ujPO7VKQnVAJsnJ3dyqj"
+    },
+    {
+      "key": "dash",
+      "node_id": "0Bedy6QNQuFswO2Tfg81"
+    },
+    {
+      "key": "boost",
+      "node_id": "ZNkjtg0gY7DWqRSX7pKS"
+    },
+    {
+      "key": "finisher-nova",
+      "node_id": "neVFmo2lWk73QUItTpQN"
+    },
+    {
+      "key": "finisher-starburst",
+      "node_id": "PnYG8qMRTZjUKYTTjrgq"
+    },
+    {
+      "key": "finisher-voxel",
+      "node_id": "CDVjubGlj6FhpGnptlUa"
+    },
+    {
+      "key": "finisher-ember",
+      "node_id": "bhvm9J9xfp1ecEbB5zpa"
+    },
+    {
+      "key": "finisher-gibstorm",
+      "node_id": "TnvxGY8W2HqiBRvVk1Ay"
+    },
+    {
+      "key": "finisher-singularity",
+      "node_id": "FWNzY622TZI48AHRwjIG"
+    },
+    {
+      "key": "finisher-prism",
+      "node_id": "iQM2SBcIs2mYx4Mf8lG4"
+    },
+    {
+      "key": "finisher-derez",
+      "node_id": "nE0F8EGJxXMpCFb8ZSJ6"
+    },
+    {
+      "key": "finisher-shatter",
+      "node_id": "8CBlY9H86H6jrtUakQU3"
+    },
+    {
+      "key": "finisher-confetti",
+      "node_id": "7UrqJ0AfXzdRbZhfO5D5"
+    },
+    {
+      "key": "finisher-overload",
+      "node_id": "2DEgjlnH0XugsLjVol2F"
+    },
+    {
+      "key": "finisher-vaporize",
+      "node_id": "HRKz6ZWq0njPz09VTXd7"
+    },
+    {
+      "key": "medal-special",
+      "node_id": "bBt2IZkuum5gMMzWsmhi"
+    },
+    {
+      "key": "medal-multi-2",
+      "node_id": "DUfMXdg59wgllPmuFpP1"
+    },
+    {
+      "key": "medal-multi-3",
+      "node_id": "UBuEm1crK9MMl8IvPBvr"
+    },
+    {
+      "key": "medal-multi-4",
+      "node_id": "Fixk8bJ6shaZZUXuX0Wl"
+    },
+    {
+      "key": "medal-multi-5",
+      "node_id": "afAnFBcNM3gQM00aeGTQ"
+    },
+    {
+      "key": "medal-streak-1",
+      "node_id": "CvdcYu0JPHTRGJX7g61L"
+    },
+    {
+      "key": "medal-streak-2",
+      "node_id": "TbMtklZjatVzx9wlr4dq"
+    },
+    {
+      "key": "medal-streak-3",
+      "node_id": "oJNH8hWNY6RvPC5nxeph"
+    },
+    {
+      "key": "medal-streak-4",
+      "node_id": "fEzutbursWypQPuRezrX"
+    },
+    {
+      "key": "medal-streak-5",
+      "node_id": "r104svQ3DIk3jgBG8awc"
+    },
+    {
+      "key": "ambience-default",
+      "node_id": "wJaSJIUKIC7mf99b6zt9"
+    },
+    {
+      "key": "ambience-causeway",
+      "node_id": "2HGqVOjSxoITCQpxvJZr"
+    },
+    {
+      "key": "ambience-reactor",
+      "node_id": "3KqtN7e3DokKnE80NznW"
+    },
+    {
+      "key": "ambience-lounge",
+      "node_id": "i9xT0D1POWbRmfGFwfzV"
+    },
+    {
+      "key": "ambience-nuketown",
+      "node_id": "miukZxWUD1jF80zFpFyL"
+    },
+    {
+      "key": "ambience-containeryard",
+      "node_id": "eMgpRBckK58GGTbzh93Y"
+    },
+    {
+      "key": "ambience-derrick",
+      "node_id": "MrQZ3W0P7LB1kP0ngHR5"
+    },
+    {
+      "key": "ambience-training",
+      "node_id": "De7L3VyzVkUb2kpx18rR"
+    },
+    {
+      "key": "ui-uiHover",
+      "node_id": "LXIrMNVL4wj54NYWVyex"
+    },
+    {
+      "key": "ui-uiClick",
+      "node_id": "Nt0Kc0NZZRETUSB088bZ"
+    },
+    {
+      "key": "ui-uiConfirm",
+      "node_id": "NGSn5mcALarBx7cCe93r"
+    },
+    {
+      "key": "ui-uiBack",
+      "node_id": "4uzH2pf2mNF9VURHiocn"
+    },
+    {
+      "key": "ui-uiError",
+      "node_id": "exFALfjEQWL072s94gzz"
+    },
+    {
+      "key": "ui-uiToggleOn",
+      "node_id": "EX7Efj4EmXnpACZB5qK9"
+    },
+    {
+      "key": "ui-uiToggleOff",
+      "node_id": "xLW2eijeC1rzwh1SfNcn"
+    },
+    {
+      "key": "ui-tabSwitch",
+      "node_id": "2GdVzistflQezoc02MIq"
+    },
+    {
+      "key": "ui-modalOpen",
+      "node_id": "LOqYrdeiiBTkz9jtwfHw"
+    },
+    {
+      "key": "ui-modalClose",
+      "node_id": "5G61vargzEaXyovH7Fea"
+    },
+    {
+      "key": "ui-equip",
+      "node_id": "26CghQZrOVM1sRi4SmBq"
+    },
+    {
+      "key": "ui-purchase",
+      "node_id": "ywmPDSCuKlehwbDn1oF2"
+    },
+    {
+      "key": "ui-caseTick",
+      "node_id": "rrYCyAJLOnfEZ7srtFpE"
+    },
+    {
+      "key": "ui-caseReveal",
+      "node_id": "j7ZyMYHokI1FZwKU0Hu3"
+    },
+    {
+      "key": "ui-xpTick",
+      "node_id": "4Blqx2ZkPP2pDwwJG2tL"
+    },
+    {
+      "key": "ui-levelUp",
+      "node_id": "MYUNOS7hsahs7jFuetyR"
+    },
+    {
+      "key": "ui-unlockCommon",
+      "node_id": "NodHRaXcxWVeP45uyoae"
+    },
+    {
+      "key": "ui-unlockRare",
+      "node_id": "DzX7cYOrp5BoEPZQ2wyJ"
+    },
+    {
+      "key": "ui-unlockEpic",
+      "node_id": "QPkjzVxlheIiR8K4Vpzt"
+    },
+    {
+      "key": "ui-unlockLegendary",
+      "node_id": "unlGYrsQQeDJBa1c2gEc"
+    },
+    {
+      "key": "ui-countdownTick",
+      "node_id": "AwEx8moXNRYHGtru6ei3"
+    },
+    {
+      "key": "ui-countdownFinal",
+      "node_id": "TFe5x9s90JRH6uaBetrn"
+    },
+    {
+      "key": "ui-stamp",
+      "node_id": "fbL62vlNTJRhiNBXP6Dm"
+    },
+    {
+      "key": "ui-stampVictory",
+      "node_id": "t32lVxEEJTHFYBKuUvhx"
+    },
+    {
+      "key": "ui-stampDefeat",
+      "node_id": "e2Y6SH5TysitFPBPNPNr"
+    }
+  ],
+  "successful_sessions": [
+    {
+      "node_id": "HfG4UxyoQu6OGSIbgo8t",
+      "session_id": "kgvYnwivqCcJ7b0BOG5t"
+    },
+    {
+      "node_id": "HfG4UxyoQu6OGSIbgo8t",
+      "session_id": "kDYAnKWUOJudLXTZXTj1"
+    },
+    {
+      "node_id": "HfG4UxyoQu6OGSIbgo8t",
+      "session_id": "wQpwZBZBzBzDUvdMZEnp"
+    },
+    {
+      "node_id": "HfG4UxyoQu6OGSIbgo8t",
+      "session_id": "VotOIDDHswzHSZbtbTpk"
+    },
+    {
+      "node_id": "TJY0WIhIubyPrUy40h4I",
+      "session_id": "2zvnmswFysspl2DS8ZZh"
+    },
+    {
+      "node_id": "iBnzp0fi20CpNIwwS6x0",
+      "session_id": "yCeq5gsf6FcidRtubr3H"
+    },
+    {
+      "node_id": "jSE3CdMBg7vPCBMSdZba",
+      "session_id": "GhdIDvZrtJqY6fpzJrca"
+    },
+    {
+      "node_id": "VT9f0TxrluuUmmgMPzdG",
+      "session_id": "O7K7QGQHqmzgA9qgiYOl"
+    },
+    {
+      "node_id": "fA4W8gvpORE1jE21Zg8f",
+      "session_id": "iSASOoLLcOhg7GRP4fDp"
+    },
+    {
+      "node_id": "T7Nux8CMSzrgmMzm5V0f",
+      "session_id": "DTYsPxqDvOkuVQXaWG4S"
+    },
+    {
+      "node_id": "xNuKrdimWEsUED3BQ47a",
+      "session_id": "X11Xj0S71bW4xBbGbARH"
+    },
+    {
+      "node_id": "urzZPw0G4fCPQeeppw0g",
+      "session_id": "qy8ChG28y5Hx105k1UNb"
+    },
+    {
+      "node_id": "zxCM8G4b3Xka2AaQnT6b",
+      "session_id": "5bu4UiJ60H5rvTLe82D8"
+    },
+    {
+      "node_id": "AJDz4tdXrQzGgXcm3IFT",
+      "session_id": "gV4AtZOPOANLZDF1Muvx"
+    },
+    {
+      "node_id": "HW8jrXx5FJ7XSGPgUJoC",
+      "session_id": "JPjfxz2UqhY3on3eWT4u"
+    },
+    {
+      "node_id": "tma7IOOwm90nBE3oHDQV",
+      "session_id": "aaLLmYB7liquHDXgEZpL"
+    },
+    {
+      "node_id": "YExTWYdX3CUWHEPy0wvQ",
+      "session_id": "3wfejWaI4yyAK6Pi7xaG"
+    },
+    {
+      "node_id": "YExTWYdX3CUWHEPy0wvQ",
+      "session_id": "UbWSIOzDdVgSeTjk3ADZ"
+    },
+    {
+      "node_id": "YExTWYdX3CUWHEPy0wvQ",
+      "session_id": "mxxCaQUkWEqUtEDEMFso"
+    },
+    {
+      "node_id": "qubxKOKycADzEUyaxrZo",
+      "session_id": "tVvVl6yYkRP7fkCux40E"
+    },
+    {
+      "node_id": "qubxKOKycADzEUyaxrZo",
+      "session_id": "ZU88ZUA9DgW6DcXEn8qp"
+    },
+    {
+      "node_id": "qubxKOKycADzEUyaxrZo",
+      "session_id": "eJj5TqTSmanMLBMq7hQ6"
+    },
+    {
+      "node_id": "X7wo7sEW48qtmxEaduZW",
+      "session_id": "FSVBXICUWLEmbggwzlaw"
+    },
+    {
+      "node_id": "X7wo7sEW48qtmxEaduZW",
+      "session_id": "6AVmWfBwdhsBSZ9AMjiJ"
+    },
+    {
+      "node_id": "X7wo7sEW48qtmxEaduZW",
+      "session_id": "gzvKbRFkgFHPO2jzRrBK"
+    },
+    {
+      "node_id": "Ayy0vlq6Louimfpmzk8l",
+      "session_id": "4ahqJUG7DGgNN6tyhALN"
+    },
+    {
+      "node_id": "Ayy0vlq6Louimfpmzk8l",
+      "session_id": "hyJY35QTNAaeQhJxtPLf"
+    },
+    {
+      "node_id": "Ayy0vlq6Louimfpmzk8l",
+      "session_id": "IAsjFIzYB3uJv5Vo5Bqr"
+    },
+    {
+      "node_id": "NVn6BhvA5RMpaOTIE0Cc",
+      "session_id": "oXW7ooVEKbb8bVvbP0YX"
+    },
+    {
+      "node_id": "NVn6BhvA5RMpaOTIE0Cc",
+      "session_id": "uTYrOIq7ARY3ytmHihgu"
+    },
+    {
+      "node_id": "NVn6BhvA5RMpaOTIE0Cc",
+      "session_id": "ZDdmBiixSEbdQqGyGj4t"
+    },
+    {
+      "node_id": "KTGamrqhyjSVuOP8OAug",
+      "session_id": "wiNlCICHtr8XNXNxWWMw"
+    },
+    {
+      "node_id": "KTGamrqhyjSVuOP8OAug",
+      "session_id": "ff23lOtXxkzZIWApMDIg"
+    },
+    {
+      "node_id": "KTGamrqhyjSVuOP8OAug",
+      "session_id": "sdhFqNfpIgCLsyyX4eIO"
+    },
+    {
+      "node_id": "66kFEAkHyfQKRGyQcEit",
+      "session_id": "6oQoXLKufvosqDExCJl9"
+    },
+    {
+      "node_id": "66kFEAkHyfQKRGyQcEit",
+      "session_id": "gIgRrycZv3vCFm2n9KPl"
+    },
+    {
+      "node_id": "66kFEAkHyfQKRGyQcEit",
+      "session_id": "g0r8CTCiPK10NaV3jJ6U"
+    },
+    {
+      "node_id": "cvhoce8nUEcRNTCt7tlR",
+      "session_id": "kx4e9ZiBXiTQLlauallT"
+    },
+    {
+      "node_id": "cvhoce8nUEcRNTCt7tlR",
+      "session_id": "x48NfgHZNFt7gGKflDPz"
+    },
+    {
+      "node_id": "cvhoce8nUEcRNTCt7tlR",
+      "session_id": "YoUuQfgyZrDuwCp4bHIC"
+    },
+    {
+      "node_id": "1yGxwqnm4ScdLqx8kkgA",
+      "session_id": "bkLPpF8PkvsJLAqSPern"
+    },
+    {
+      "node_id": "1yGxwqnm4ScdLqx8kkgA",
+      "session_id": "SAZFuYrJ4U9aRLLXmogX"
+    },
+    {
+      "node_id": "1yGxwqnm4ScdLqx8kkgA",
+      "session_id": "8v4VBsnpu337f8KqgqXZ"
+    },
+    {
+      "node_id": "tX4FcGCbQctSMmVUGpi6",
+      "session_id": "AqeVY6dncav9m9onyrSU"
+    },
+    {
+      "node_id": "tX4FcGCbQctSMmVUGpi6",
+      "session_id": "AmS5iKtVXsjcHU7jT6SL"
+    },
+    {
+      "node_id": "tX4FcGCbQctSMmVUGpi6",
+      "session_id": "uAvFAAzXCea7jKEQq2z9"
+    },
+    {
+      "node_id": "zZxC3RfzUkrPts0JAGkW",
+      "session_id": "BAl6hIODTaElvOGBlRLg"
+    },
+    {
+      "node_id": "zZxC3RfzUkrPts0JAGkW",
+      "session_id": "nQIvG3EjSGc92KQp9wpV"
+    },
+    {
+      "node_id": "zZxC3RfzUkrPts0JAGkW",
+      "session_id": "qZe1iCmtv4nakCT915vp"
+    },
+    {
+      "node_id": "xlTZi6ZBu2MmtYAejAPt",
+      "session_id": "YM7F1UaS2fOUv6V9fzMN"
+    },
+    {
+      "node_id": "xlTZi6ZBu2MmtYAejAPt",
+      "session_id": "JVUFwc2qRTNzUsDNUR4M"
+    },
+    {
+      "node_id": "xlTZi6ZBu2MmtYAejAPt",
+      "session_id": "MMTRNJiYyKfm1O8deh10"
+    },
+    {
+      "node_id": "i6eVxPvIDF4yp8wc3Sig",
+      "session_id": "xl14y7vb8vuLdOZdNvc8"
+    },
+    {
+      "node_id": "NRmkb8gndHGDIgWGxGF3",
+      "session_id": "Wc7WpHSDZzGjoa9MTp7V"
+    },
+    {
+      "node_id": "Kr40l0WdQGSzDIRz6S7N",
+      "session_id": "s65MHultbdzS9LJ5Zw2d"
+    },
+    {
+      "node_id": "dEqGdSBXjjlGtOK5qOdi",
+      "session_id": "7FkQypIanUdoiHMr5daD"
+    },
+    {
+      "node_id": "bpprtdcxkwkDxHoe0GWf",
+      "session_id": "LPgLrrChoXmhlrC1h03D"
+    },
+    {
+      "node_id": "l81RYXTDUDMtxPX5WL6e",
+      "session_id": "sLhhHToHw4cppAfY7x6y"
+    },
+    {
+      "node_id": "oMKfOpu8znhii2ktAZ5Z",
+      "session_id": "uLlzj0ZEkWn47MIrvAxd"
+    },
+    {
+      "node_id": "5nfIUAS8uf6F19Xuz7B4",
+      "session_id": "19Xv1i8fCl4pf12UpuEK"
+    },
+    {
+      "node_id": "pG5ux3gD19hB41KoXvdB",
+      "session_id": "kEmA1Dq8WRaC2vaSpXsx"
+    },
+    {
+      "node_id": "EokGapIMzPOhfNRfd6h8",
+      "session_id": "VGlAY2uFLHbRRX1q33B7"
+    },
+    {
+      "node_id": "oRLHLxvLGuibGByWslRz",
+      "session_id": "PUJ8tj843OENlxska5Mf"
+    },
+    {
+      "node_id": "iZv1NMun39KZ3yuL8tsx",
+      "session_id": "rXYJJXYe8jVXIRZmq6Oa"
+    },
+    {
+      "node_id": "VPrQOMF625ZaaK14UR72",
+      "session_id": "bma1rX6JA45Xllg8XPnk"
+    },
+    {
+      "node_id": "ujPO7VKQnVAJsnJ3dyqj",
+      "session_id": "4DLNVI1vm8rrJPU8UqBW"
+    },
+    {
+      "node_id": "0Bedy6QNQuFswO2Tfg81",
+      "session_id": "619eWCUPXYBcgWnqCmP3"
+    },
+    {
+      "node_id": "ZNkjtg0gY7DWqRSX7pKS",
+      "session_id": "9bbkdvsMklH1F47mXwmQ"
+    },
+    {
+      "node_id": "neVFmo2lWk73QUItTpQN",
+      "session_id": "OKSdq4sX45TMxXXdxVEx"
+    },
+    {
+      "node_id": "PnYG8qMRTZjUKYTTjrgq",
+      "session_id": "cbqKvAERKY00ZfYrHvYp"
+    },
+    {
+      "node_id": "CDVjubGlj6FhpGnptlUa",
+      "session_id": "PG8GeAM7CtkVzUgo01HB"
+    },
+    {
+      "node_id": "bhvm9J9xfp1ecEbB5zpa",
+      "session_id": "yBN9Fd4vcrQukQYGgUNT"
+    },
+    {
+      "node_id": "TnvxGY8W2HqiBRvVk1Ay",
+      "session_id": "6hNO8nSJpF3UGWiDhQle"
+    },
+    {
+      "node_id": "FWNzY622TZI48AHRwjIG",
+      "session_id": "h4gcWO9uTLHtpvzg65Ch"
+    },
+    {
+      "node_id": "iQM2SBcIs2mYx4Mf8lG4",
+      "session_id": "nr3AaSKbVch8eKGiyDRu"
+    },
+    {
+      "node_id": "nE0F8EGJxXMpCFb8ZSJ6",
+      "session_id": "eIdvzLdisA6TXn5ej8Ol"
+    },
+    {
+      "node_id": "8CBlY9H86H6jrtUakQU3",
+      "session_id": "6TjMgEGggWrKyPbrESDD"
+    },
+    {
+      "node_id": "7UrqJ0AfXzdRbZhfO5D5",
+      "session_id": "RNKtIyWwlMeRFXooi55N"
+    },
+    {
+      "node_id": "2DEgjlnH0XugsLjVol2F",
+      "session_id": "auCp6GJ9qAkjPmHDrwUR"
+    },
+    {
+      "node_id": "HRKz6ZWq0njPz09VTXd7",
+      "session_id": "4UCuBzNcSMAqRirSBh5d"
+    },
+    {
+      "node_id": "bBt2IZkuum5gMMzWsmhi",
+      "session_id": "AMYeT2Eu0WMdiFLBQK3u"
+    },
+    {
+      "node_id": "DUfMXdg59wgllPmuFpP1",
+      "session_id": "vRxyMsTdZV03bIf7Xuz5"
+    },
+    {
+      "node_id": "UBuEm1crK9MMl8IvPBvr",
+      "session_id": "DipTWxvoDkYCaVvbcDFv"
+    },
+    {
+      "node_id": "Fixk8bJ6shaZZUXuX0Wl",
+      "session_id": "lsWP1p2M7lbYePUqUYWU"
+    },
+    {
+      "node_id": "afAnFBcNM3gQM00aeGTQ",
+      "session_id": "R6oZt5WFx6HpR4vOcpc0"
+    },
+    {
+      "node_id": "CvdcYu0JPHTRGJX7g61L",
+      "session_id": "xnr1Ovo0TA4NRp20MNRy"
+    },
+    {
+      "node_id": "TbMtklZjatVzx9wlr4dq",
+      "session_id": "FnnLiNwgdRRZhg9nX2kC"
+    },
+    {
+      "node_id": "oJNH8hWNY6RvPC5nxeph",
+      "session_id": "gBk5iQJNR1dikoPX2tZF"
+    },
+    {
+      "node_id": "fEzutbursWypQPuRezrX",
+      "session_id": "LnJ8daEZj7E4mQCXUFVM"
+    },
+    {
+      "node_id": "r104svQ3DIk3jgBG8awc",
+      "session_id": "E9QxTbsl35TENbMzwAqa"
+    },
+    {
+      "node_id": "wJaSJIUKIC7mf99b6zt9",
+      "session_id": "dPwdAcZIHGld0qvZDn7w"
+    },
+    {
+      "node_id": "2HGqVOjSxoITCQpxvJZr",
+      "session_id": "HaxS6Antk4a8fMIWoqAd"
+    },
+    {
+      "node_id": "3KqtN7e3DokKnE80NznW",
+      "session_id": "5QdrGOD6sFW4pEw7iYqn"
+    },
+    {
+      "node_id": "i9xT0D1POWbRmfGFwfzV",
+      "session_id": "kL3OVuqQvCdBVO9WPSf5"
+    },
+    {
+      "node_id": "miukZxWUD1jF80zFpFyL",
+      "session_id": "7vOt9fU4rL8YZmVNHC3M"
+    },
+    {
+      "node_id": "eMgpRBckK58GGTbzh93Y",
+      "session_id": "HvjjzgnL07yzlE9ghqNb"
+    },
+    {
+      "node_id": "MrQZ3W0P7LB1kP0ngHR5",
+      "session_id": "iD61MrhLDdZ7jN1prqhl"
+    },
+    {
+      "node_id": "De7L3VyzVkUb2kpx18rR",
+      "session_id": "DNXMHWHP5n3eAJ3cGZ3H"
+    },
+    {
+      "node_id": "LXIrMNVL4wj54NYWVyex",
+      "session_id": "LYVpsFYC4fswIWiasciy"
+    },
+    {
+      "node_id": "Nt0Kc0NZZRETUSB088bZ",
+      "session_id": "uskyibi1mEp4ObXFFH5P"
+    },
+    {
+      "node_id": "NGSn5mcALarBx7cCe93r",
+      "session_id": "E53u7qy6XzFL6M2ktbAy"
+    },
+    {
+      "node_id": "4uzH2pf2mNF9VURHiocn",
+      "session_id": "pIjHcTY3EZJnhcHh0AsS"
+    },
+    {
+      "node_id": "exFALfjEQWL072s94gzz",
+      "session_id": "dQasDhIdQHeP1DI4epp8"
+    },
+    {
+      "node_id": "EX7Efj4EmXnpACZB5qK9",
+      "session_id": "czHLcO8hcqyxncXnxDdf"
+    },
+    {
+      "node_id": "xLW2eijeC1rzwh1SfNcn",
+      "session_id": "2viKbDaXsAs5Np7zm5ie"
+    },
+    {
+      "node_id": "2GdVzistflQezoc02MIq",
+      "session_id": "0wkwLW2caqv58yAhjBdP"
+    },
+    {
+      "node_id": "LOqYrdeiiBTkz9jtwfHw",
+      "session_id": "lCmgtH3WqCZbqwtdTBYu"
+    },
+    {
+      "node_id": "5G61vargzEaXyovH7Fea",
+      "session_id": "W8wmMHnLOlpTStY0PTWy"
+    },
+    {
+      "node_id": "26CghQZrOVM1sRi4SmBq",
+      "session_id": "2mSU7ufdeAja73XHHW74"
+    },
+    {
+      "node_id": "ywmPDSCuKlehwbDn1oF2",
+      "session_id": "cgQTgkV1ch0V3ES87lsJ"
+    },
+    {
+      "node_id": "rrYCyAJLOnfEZ7srtFpE",
+      "session_id": "yxMGaP7zsZghp8LY9c2v"
+    },
+    {
+      "node_id": "j7ZyMYHokI1FZwKU0Hu3",
+      "session_id": "IT3LdyQEp8e81O2wfYvV"
+    },
+    {
+      "node_id": "4Blqx2ZkPP2pDwwJG2tL",
+      "session_id": "MSipkUotPqMy1RX27A54"
+    },
+    {
+      "node_id": "4Blqx2ZkPP2pDwwJG2tL",
+      "session_id": "w0XPlmvTedyqu2eULrTO"
+    },
+    {
+      "node_id": "MYUNOS7hsahs7jFuetyR",
+      "session_id": "ltLuWDLIZw36446m1aY6"
+    },
+    {
+      "node_id": "NodHRaXcxWVeP45uyoae",
+      "session_id": "lEoh2Wpuks9dnhbKm1Fg"
+    },
+    {
+      "node_id": "DzX7cYOrp5BoEPZQ2wyJ",
+      "session_id": "zoPHYGePbG7fjaTgHWFQ"
+    },
+    {
+      "node_id": "QPkjzVxlheIiR8K4Vpzt",
+      "session_id": "C1Xj3ZAMbB3f4ZMLrFsi"
+    },
+    {
+      "node_id": "unlGYrsQQeDJBa1c2gEc",
+      "session_id": "6Ep2VMtqUEq3WDQkXbtF"
+    },
+    {
+      "node_id": "AwEx8moXNRYHGtru6ei3",
+      "session_id": "6yOjMJ2PiibuYgPisPGm"
+    },
+    {
+      "node_id": "TFe5x9s90JRH6uaBetrn",
+      "session_id": "c5KiX5hPw0SFiL5nNU2F"
+    },
+    {
+      "node_id": "fbL62vlNTJRhiNBXP6Dm",
+      "session_id": "Meu4z9N3d0exfjaaQKUV"
+    },
+    {
+      "node_id": "t32lVxEEJTHFYBKuUvhx",
+      "session_id": "AD6FW85k4R21OzqBxzYQ"
+    },
+    {
+      "node_id": "e2Y6SH5TysitFPBPNPNr",
+      "session_id": "UoBq3rVX3JFaT8NTXmNS"
+    }
+  ],
+  "announcer_revisions": [
+    {
+      "announcer": {
+        "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+        "name": "Victor - Deep, Malevolent and Ancient",
+        "model_id": "eleven_v3",
+        "display_name": "Victor",
+        "flow_id": "uCosbkXovVcW6Su7mlNW",
+        "asset_directory": "/sounds/elevenlabs-v1/announcer/victor"
+      },
+      "flow": {
+        "flow_id": "uCosbkXovVcW6Su7mlNW",
+        "name": "Agent Deathmatch \u2014 Victor Announcer",
+        "url": "https://elevenlabs.io/app/flows/uCosbkXovVcW6Su7mlNW"
+      },
+      "nodes": [
+        {
+          "key": "headshot",
+          "node_id": "xgl0IVI6BxZ7q1jzEI7G"
+        },
+        {
+          "key": "codex-entered",
+          "node_id": "5GXY3KmFLdBnKLctrQvf"
+        },
+        {
+          "key": "codex-alone",
+          "node_id": "Uo78aJdPZAgKzDWTNTAS"
+        },
+        {
+          "key": "codex-complete",
+          "node_id": "6ZtTKOKwzL8Ln36hNNgh"
+        },
+        {
+          "key": "codex-attention",
+          "node_id": "VDQ4T4jHMZ1ML3Hlv0ys"
+        },
+        {
+          "key": "first-blood",
+          "node_id": "MCmZKrV8uJm082TaqLu8"
+        },
+        {
+          "key": "double-kill",
+          "node_id": "ZtTS32DWboWZPiF5izSP"
+        },
+        {
+          "key": "triple-kill",
+          "node_id": "krhlamXOkBNYutRkhG68"
+        },
+        {
+          "key": "quad-kill",
+          "node_id": "NzRBzuJVdmZUHcQFhhfr"
+        },
+        {
+          "key": "penta-kill",
+          "node_id": "Ru3WqtnX5Q37BXXIhsFj"
+        },
+        {
+          "key": "killing-spree",
+          "node_id": "YTQv2OCCcAMTY7JPhJwS"
+        },
+        {
+          "key": "rampage",
+          "node_id": "7Y5M3mZIJupLNPFGxyaB"
+        },
+        {
+          "key": "dominating",
+          "node_id": "AobTc76jqtbFvyzplm3m"
+        },
+        {
+          "key": "unstoppable",
+          "node_id": "rgmpcK5kx6UHFaZiH7DA"
+        },
+        {
+          "key": "godlike",
+          "node_id": "1T01XG0UIx2qj0iX7VQw"
+        },
+        {
+          "key": "humiliation",
+          "node_id": "CLPpcQMpvHslsddTAOLA"
+        },
+        {
+          "key": "comeback",
+          "node_id": "xQrF8GnBj15Bu58UKqvi"
+        },
+        {
+          "key": "match-point",
+          "node_id": "SP0H4osVraZjC6aYy8KC"
+        },
+        {
+          "key": "victory",
+          "node_id": "doXaBTAsbktacV3sxTku"
+        },
+        {
+          "key": "defeat",
+          "node_id": "hN3F0CfLoJ6scwlRUk2R"
+        },
+        {
+          "key": "spawn",
+          "node_id": "cqZCVIdzp06KMm5wRoDE"
+        },
+        {
+          "key": "unstoppable",
+          "node_id": "WK5YtDaCeiwzjWNq7War"
+        }
+      ],
+      "successful_sessions": [
+        {
+          "key": "headshot",
+          "node_id": "xgl0IVI6BxZ7q1jzEI7G",
+          "session_id": "qSF2czMkFfXILAje7rUj"
+        },
+        {
+          "key": "headshot",
+          "node_id": "xgl0IVI6BxZ7q1jzEI7G",
+          "session_id": "DHFuUmC3zKQMN4Ptgebz"
+        },
+        {
+          "key": "headshot",
+          "node_id": "xgl0IVI6BxZ7q1jzEI7G",
+          "session_id": "jR4d2yRoDpZEnLt0z4uO"
+        },
+        {
+          "key": "headshot",
+          "node_id": "xgl0IVI6BxZ7q1jzEI7G",
+          "session_id": "ERSdOBwk0jhrJtpg1co4"
+        },
+        {
+          "key": "codex-entered",
+          "node_id": "5GXY3KmFLdBnKLctrQvf",
+          "session_id": "DjmGvnDwO4MJ2MXVqz8N"
+        },
+        {
+          "key": "codex-entered",
+          "node_id": "5GXY3KmFLdBnKLctrQvf",
+          "session_id": "7iJNGgIkrgE3p6uxJ70L"
+        },
+        {
+          "key": "codex-entered",
+          "node_id": "5GXY3KmFLdBnKLctrQvf",
+          "session_id": "B2N0MHdBAqQe9ZlLfF0u"
+        },
+        {
+          "key": "codex-entered",
+          "node_id": "5GXY3KmFLdBnKLctrQvf",
+          "session_id": "MflVg3WH8jXi7tLHBvqs"
+        },
+        {
+          "key": "codex-alone",
+          "node_id": "Uo78aJdPZAgKzDWTNTAS",
+          "session_id": "sk4lNRjqGEoPalEAZXGO"
+        },
+        {
+          "key": "codex-alone",
+          "node_id": "Uo78aJdPZAgKzDWTNTAS",
+          "session_id": "Ax2B2j6SeQfgWAdLEEvN"
+        },
+        {
+          "key": "codex-alone",
+          "node_id": "Uo78aJdPZAgKzDWTNTAS",
+          "session_id": "cypchGfibGirPmD6tkHJ"
+        },
+        {
+          "key": "codex-alone",
+          "node_id": "Uo78aJdPZAgKzDWTNTAS",
+          "session_id": "FntiUtGRpfErkKR1Uv24"
+        },
+        {
+          "key": "codex-complete",
+          "node_id": "6ZtTKOKwzL8Ln36hNNgh",
+          "session_id": "2p9pZ1aaD4KWsim0pqeQ"
+        },
+        {
+          "key": "codex-complete",
+          "node_id": "6ZtTKOKwzL8Ln36hNNgh",
+          "session_id": "0QxXiVYEuIlZJQbvbqx0"
+        },
+        {
+          "key": "codex-complete",
+          "node_id": "6ZtTKOKwzL8Ln36hNNgh",
+          "session_id": "9lmWmEOSNaK4q37mtLJT"
+        },
+        {
+          "key": "codex-complete",
+          "node_id": "6ZtTKOKwzL8Ln36hNNgh",
+          "session_id": "Qm0RLEWmmvIzLlJCvg1e"
+        },
+        {
+          "key": "codex-attention",
+          "node_id": "VDQ4T4jHMZ1ML3Hlv0ys",
+          "session_id": "MwhXzBRRFKNE5fco9T4Z"
+        },
+        {
+          "key": "codex-attention",
+          "node_id": "VDQ4T4jHMZ1ML3Hlv0ys",
+          "session_id": "F7rKAhMxkuhFnMrqGY98"
+        },
+        {
+          "key": "codex-attention",
+          "node_id": "VDQ4T4jHMZ1ML3Hlv0ys",
+          "session_id": "5CHEoWb81WtuBMJ8kYcw"
+        },
+        {
+          "key": "codex-attention",
+          "node_id": "VDQ4T4jHMZ1ML3Hlv0ys",
+          "session_id": "ZKZ6ICXTYznYQMh7JmhS"
+        },
+        {
+          "key": "first-blood",
+          "node_id": "MCmZKrV8uJm082TaqLu8",
+          "session_id": "gKmlK5R12eGseu1Kye19"
+        },
+        {
+          "key": "first-blood",
+          "node_id": "MCmZKrV8uJm082TaqLu8",
+          "session_id": "IE1Ll8rijEzGWQC9nOnh"
+        },
+        {
+          "key": "first-blood",
+          "node_id": "MCmZKrV8uJm082TaqLu8",
+          "session_id": "7glJ6WW8BT80bDuUrgzM"
+        },
+        {
+          "key": "first-blood",
+          "node_id": "MCmZKrV8uJm082TaqLu8",
+          "session_id": "2bAKnyGyQARCwSUca5RH"
+        },
+        {
+          "key": "double-kill",
+          "node_id": "ZtTS32DWboWZPiF5izSP",
+          "session_id": "acgCNMlhqTADcT6VXzl9"
+        },
+        {
+          "key": "double-kill",
+          "node_id": "ZtTS32DWboWZPiF5izSP",
+          "session_id": "IkS1vf2pds3EPyavyf0k"
+        },
+        {
+          "key": "double-kill",
+          "node_id": "ZtTS32DWboWZPiF5izSP",
+          "session_id": "yyhS14DMrIbAXaxH8miy"
+        },
+        {
+          "key": "double-kill",
+          "node_id": "ZtTS32DWboWZPiF5izSP",
+          "session_id": "0gHZerjKDBBoq3ynEbVv"
+        },
+        {
+          "key": "triple-kill",
+          "node_id": "krhlamXOkBNYutRkhG68",
+          "session_id": "AQBSrNwZpGbGckZEpoII"
+        },
+        {
+          "key": "triple-kill",
+          "node_id": "krhlamXOkBNYutRkhG68",
+          "session_id": "84fG7ut8pZtXilJpRnEA"
+        },
+        {
+          "key": "triple-kill",
+          "node_id": "krhlamXOkBNYutRkhG68",
+          "session_id": "eRYTsJf2kXSqd9R04QzB"
+        },
+        {
+          "key": "triple-kill",
+          "node_id": "krhlamXOkBNYutRkhG68",
+          "session_id": "sBq2skagDvO8Ym43rMmD"
+        },
+        {
+          "key": "quad-kill",
+          "node_id": "NzRBzuJVdmZUHcQFhhfr",
+          "session_id": "qI5dZpISGqFGvtNcgyId"
+        },
+        {
+          "key": "quad-kill",
+          "node_id": "NzRBzuJVdmZUHcQFhhfr",
+          "session_id": "jqpA8Gnzda83ddxyfStK"
+        },
+        {
+          "key": "quad-kill",
+          "node_id": "NzRBzuJVdmZUHcQFhhfr",
+          "session_id": "7Do949FE0vfVTH51Xyvd"
+        },
+        {
+          "key": "quad-kill",
+          "node_id": "NzRBzuJVdmZUHcQFhhfr",
+          "session_id": "DiDLZHIU7u3nz0G2ot9b"
+        },
+        {
+          "key": "penta-kill",
+          "node_id": "Ru3WqtnX5Q37BXXIhsFj",
+          "session_id": "Yvz0uyLAMReRz4cMH63K"
+        },
+        {
+          "key": "penta-kill",
+          "node_id": "Ru3WqtnX5Q37BXXIhsFj",
+          "session_id": "Iz8MeBW0lXnfBLJ0pdHr"
+        },
+        {
+          "key": "penta-kill",
+          "node_id": "Ru3WqtnX5Q37BXXIhsFj",
+          "session_id": "W3rDE0En1OOopevtNV0I"
+        },
+        {
+          "key": "penta-kill",
+          "node_id": "Ru3WqtnX5Q37BXXIhsFj",
+          "session_id": "wzAWEMdCQQlWI2Aycm6o"
+        },
+        {
+          "key": "killing-spree",
+          "node_id": "YTQv2OCCcAMTY7JPhJwS",
+          "session_id": "hrfD5lFIcnQu05260vRO"
+        },
+        {
+          "key": "killing-spree",
+          "node_id": "YTQv2OCCcAMTY7JPhJwS",
+          "session_id": "Hrhsrdx0oAsZVBUK5DXL"
+        },
+        {
+          "key": "killing-spree",
+          "node_id": "YTQv2OCCcAMTY7JPhJwS",
+          "session_id": "VpKzfDKmcSUlerMSXXGw"
+        },
+        {
+          "key": "killing-spree",
+          "node_id": "YTQv2OCCcAMTY7JPhJwS",
+          "session_id": "blkYUvmCXBiVEnn3YjH1"
+        },
+        {
+          "key": "rampage",
+          "node_id": "7Y5M3mZIJupLNPFGxyaB",
+          "session_id": "GZOU8gr3oq4zwG2nFYI5"
+        },
+        {
+          "key": "rampage",
+          "node_id": "7Y5M3mZIJupLNPFGxyaB",
+          "session_id": "jjYtcliM52ke6byk9jcE"
+        },
+        {
+          "key": "rampage",
+          "node_id": "7Y5M3mZIJupLNPFGxyaB",
+          "session_id": "JZ24Gv2kgj9eS2lLgbfp"
+        },
+        {
+          "key": "rampage",
+          "node_id": "7Y5M3mZIJupLNPFGxyaB",
+          "session_id": "TnzwgaYvKmj8sblVhyAx"
+        },
+        {
+          "key": "dominating",
+          "node_id": "AobTc76jqtbFvyzplm3m",
+          "session_id": "A0Qgp3SYaSNZvnZ7X7Sa"
+        },
+        {
+          "key": "dominating",
+          "node_id": "AobTc76jqtbFvyzplm3m",
+          "session_id": "hBQBXJkgNMAUj6dn2EHd"
+        },
+        {
+          "key": "dominating",
+          "node_id": "AobTc76jqtbFvyzplm3m",
+          "session_id": "HUqTUMfyWFtXATDnAwXO"
+        },
+        {
+          "key": "dominating",
+          "node_id": "AobTc76jqtbFvyzplm3m",
+          "session_id": "7VhL9lphaODtIg3jsj53"
+        },
+        {
+          "key": "unstoppable",
+          "node_id": "rgmpcK5kx6UHFaZiH7DA",
+          "session_id": "zSgfLgNYQ5Rz8Fh8vs0w"
+        },
+        {
+          "key": "unstoppable",
+          "node_id": "rgmpcK5kx6UHFaZiH7DA",
+          "session_id": "GJplccsFiVOBKGx5xdPC"
+        },
+        {
+          "key": "unstoppable",
+          "node_id": "rgmpcK5kx6UHFaZiH7DA",
+          "session_id": "MbE0ysUCxe9xTFLGKMTH"
+        },
+        {
+          "key": "unstoppable",
+          "node_id": "rgmpcK5kx6UHFaZiH7DA",
+          "session_id": "zYjOwA3Ia8NAlUXUiW0A"
+        },
+        {
+          "key": "godlike",
+          "node_id": "1T01XG0UIx2qj0iX7VQw",
+          "session_id": "DXmdzralEzVqkRpPr6pA"
+        },
+        {
+          "key": "godlike",
+          "node_id": "1T01XG0UIx2qj0iX7VQw",
+          "session_id": "t3ahF2fTcFPvTP0c0jvf"
+        },
+        {
+          "key": "godlike",
+          "node_id": "1T01XG0UIx2qj0iX7VQw",
+          "session_id": "m3VtFcVAjEQW4Hzqyeqx"
+        },
+        {
+          "key": "godlike",
+          "node_id": "1T01XG0UIx2qj0iX7VQw",
+          "session_id": "zzpm37lZzKIwopejVVAu"
+        },
+        {
+          "key": "humiliation",
+          "node_id": "CLPpcQMpvHslsddTAOLA",
+          "session_id": "cilpLAlZXm9rd6R2Ba2Y"
+        },
+        {
+          "key": "humiliation",
+          "node_id": "CLPpcQMpvHslsddTAOLA",
+          "session_id": "DRHajssr95PL3UYDVE2r"
+        },
+        {
+          "key": "humiliation",
+          "node_id": "CLPpcQMpvHslsddTAOLA",
+          "session_id": "K2ZQr1SHKQOUXs15Aq54"
+        },
+        {
+          "key": "humiliation",
+          "node_id": "CLPpcQMpvHslsddTAOLA",
+          "session_id": "Qy7Wki90MR9oZlZbBSnm"
+        },
+        {
+          "key": "comeback",
+          "node_id": "xQrF8GnBj15Bu58UKqvi",
+          "session_id": "1XfgWKBjkFxfqurJU2ow"
+        },
+        {
+          "key": "comeback",
+          "node_id": "xQrF8GnBj15Bu58UKqvi",
+          "session_id": "Y1cj63bNeaDGgeqxA3p9"
+        },
+        {
+          "key": "comeback",
+          "node_id": "xQrF8GnBj15Bu58UKqvi",
+          "session_id": "owg2owXg5RiaVafo3FV2"
+        },
+        {
+          "key": "comeback",
+          "node_id": "xQrF8GnBj15Bu58UKqvi",
+          "session_id": "dKNDbHSHCMjTMia2I0m2"
+        },
+        {
+          "key": "match-point",
+          "node_id": "SP0H4osVraZjC6aYy8KC",
+          "session_id": "lpfSZTUUAzKtuDsA2xGP"
+        },
+        {
+          "key": "match-point",
+          "node_id": "SP0H4osVraZjC6aYy8KC",
+          "session_id": "I5qskIzVJj6WQKtdd6Ij"
+        },
+        {
+          "key": "match-point",
+          "node_id": "SP0H4osVraZjC6aYy8KC",
+          "session_id": "7oJNUoBkqsgCQCK21kDL"
+        },
+        {
+          "key": "match-point",
+          "node_id": "SP0H4osVraZjC6aYy8KC",
+          "session_id": "SfwY5cSIKlIsLHZe2v2N"
+        },
+        {
+          "key": "victory",
+          "node_id": "doXaBTAsbktacV3sxTku",
+          "session_id": "tUzfIqdZsiNOzZ5RcJhX"
+        },
+        {
+          "key": "victory",
+          "node_id": "doXaBTAsbktacV3sxTku",
+          "session_id": "kEONXRhGggO9hkAHx5tX"
+        },
+        {
+          "key": "victory",
+          "node_id": "doXaBTAsbktacV3sxTku",
+          "session_id": "n7y1zQUuIyTa3MixUQSS"
+        },
+        {
+          "key": "victory",
+          "node_id": "doXaBTAsbktacV3sxTku",
+          "session_id": "51EHPn7EZ7uHJkQpnptK"
+        },
+        {
+          "key": "defeat",
+          "node_id": "hN3F0CfLoJ6scwlRUk2R",
+          "session_id": "bttQMtEIE8ybLMrnwHlq"
+        },
+        {
+          "key": "defeat",
+          "node_id": "hN3F0CfLoJ6scwlRUk2R",
+          "session_id": "njGg2qy3mUPtxO8S40rJ"
+        },
+        {
+          "key": "defeat",
+          "node_id": "hN3F0CfLoJ6scwlRUk2R",
+          "session_id": "c8k1nNEL5N9nDFmAF69j"
+        },
+        {
+          "key": "defeat",
+          "node_id": "hN3F0CfLoJ6scwlRUk2R",
+          "session_id": "x5dd2dGhbauef0yxIqdt"
+        },
+        {
+          "key": "spawn",
+          "node_id": "cqZCVIdzp06KMm5wRoDE",
+          "session_id": "2mTyLcWNYiX2SpcUskIc"
+        },
+        {
+          "key": "spawn",
+          "node_id": "cqZCVIdzp06KMm5wRoDE",
+          "session_id": "NmMvlQqNmorh6SLdRo2f"
+        },
+        {
+          "key": "spawn",
+          "node_id": "cqZCVIdzp06KMm5wRoDE",
+          "session_id": "l7FEcgATAsTfgzLBWL7i"
+        },
+        {
+          "key": "spawn",
+          "node_id": "cqZCVIdzp06KMm5wRoDE",
+          "session_id": "tghb1sNa7XOciadg9ZIh"
+        },
+        {
+          "key": "unstoppable",
+          "node_id": "WK5YtDaCeiwzjWNq7War",
+          "session_id": "k9eX0zMS3PIzHBd7u955"
+        },
+        {
+          "key": "unstoppable",
+          "node_id": "WK5YtDaCeiwzjWNq7War",
+          "session_id": "ZqslTEvkBYreHtNjJrl7"
+        },
+        {
+          "key": "unstoppable",
+          "node_id": "WK5YtDaCeiwzjWNq7War",
+          "session_id": "5rAmnO5dFvpt3mB6y0uT"
+        },
+        {
+          "key": "unstoppable",
+          "node_id": "WK5YtDaCeiwzjWNq7War",
+          "session_id": "gpseZ33ISj8lsJUtisDK"
+        }
+      ],
+      "selected_generations": [
+        {
+          "key": "codex-entered",
+          "generation_id": "qDbxY39bBKuczzGYv0hD"
+        },
+        {
+          "key": "codex-alone",
+          "generation_id": "VrTQBb4bI5N5PBqOzmOH"
+        },
+        {
+          "key": "codex-complete",
+          "generation_id": "MH8DaPxgUZmRc54Z37Xj"
+        },
+        {
+          "key": "codex-attention",
+          "generation_id": "D6EPhX0XwFaDAA8tNUCZ"
+        },
+        {
+          "key": "first-blood",
+          "generation_id": "r3WcRkiUsdRe5IJkrYrQ"
+        },
+        {
+          "key": "double-kill",
+          "generation_id": "fdI9AWCmqjEl2C7OZuXQ"
+        },
+        {
+          "key": "triple-kill",
+          "generation_id": "MYcDwj7sa9Xhq623fge1"
+        },
+        {
+          "key": "quad-kill",
+          "generation_id": "0f83DpYZu9dvT8zwhx2P"
+        },
+        {
+          "key": "penta-kill",
+          "generation_id": "IIjJHeznHyYFlxBKxGvv"
+        },
+        {
+          "key": "killing-spree",
+          "generation_id": "AbWD7Mwlwl2tNB9HFCcM"
+        },
+        {
+          "key": "rampage",
+          "generation_id": "ytAwYGVBBLp6M5iwVwpK"
+        },
+        {
+          "key": "dominating",
+          "generation_id": "bMDXYWQmZOZL5Vc4KvuE"
+        },
+        {
+          "key": "unstoppable",
+          "generation_id": "jqbA7YFckCCS3rNiZ7lM"
+        },
+        {
+          "key": "godlike",
+          "generation_id": "5EGpwN1pSBtdJwJPDvGC"
+        },
+        {
+          "key": "headshot",
+          "generation_id": "IzkMyp1fCej4x8n7bzkf"
+        },
+        {
+          "key": "humiliation",
+          "generation_id": "O1Ssf5zDBptssZLZeTcz"
+        },
+        {
+          "key": "comeback",
+          "generation_id": "0vNw4knZVZfCXJiQzUDM"
+        },
+        {
+          "key": "match-point",
+          "generation_id": "aWKZcog80xjbbgbhgfqg"
+        },
+        {
+          "key": "victory",
+          "generation_id": "dEhGxju85tO4gn6GDgCT"
+        },
+        {
+          "key": "defeat",
+          "generation_id": "6AmcUNVNhcQQq9SsSMZz"
+        },
+        {
+          "key": "spawn",
+          "generation_id": "sIo5PQjlnDrHtaZrd9wg"
+        }
+      ]
+    }
+  ],
+  "interface_revisions": [
+    {
+      "flow": {
+        "flow_id": "AxtuoM6DwEYxzF88pJ5n",
+        "name": "Agent Deathmatch \u2014 Refined Interface Cues",
+        "url": "https://elevenlabs.io/app/flows/AxtuoM6DwEYxzF88pJ5n"
+      },
+      "nodes": [
+        {
+          "key": "ui-uiHover",
+          "node_id": "WeAYxdjzDpEgi8Km6c1V"
+        },
+        {
+          "key": "ui-modalOpen",
+          "node_id": "wRYuUSuyW8xRczG3zraY"
+        },
+        {
+          "key": "ui-modalClose",
+          "node_id": "GEI2yQ4Ifx8asMeq0dPX"
+        }
+      ],
+      "successful_sessions": [
+        {
+          "success": true,
+          "node_id": "WeAYxdjzDpEgi8Km6c1V",
+          "session_id": "o1MLiLTycVfn9h0sFYkT",
+          "credit_costs": {
+            "5PsISzIucHEh1SYZ3kk9": 5
+          },
+          "key": "ui-uiHover"
+        },
+        {
+          "success": true,
+          "node_id": "WeAYxdjzDpEgi8Km6c1V",
+          "session_id": "YAGhk6iodZ9I9wIBu8wo",
+          "credit_costs": {
+            "KBn3cod5STLiJqIKyRHG": 5
+          },
+          "key": "ui-uiHover"
+        },
+        {
+          "success": true,
+          "node_id": "WeAYxdjzDpEgi8Km6c1V",
+          "session_id": "x2cF1WNxOrA6Vmaq250A",
+          "credit_costs": {
+            "h8fOqwLCLdejaMflnnZ1": 5
+          },
+          "key": "ui-uiHover"
+        },
+        {
+          "success": true,
+          "node_id": "WeAYxdjzDpEgi8Km6c1V",
+          "session_id": "x9YQasdsZMygd68606FU",
+          "credit_costs": {
+            "QrVEVzaSqDGHalhtMl3G": 5
+          },
+          "key": "ui-uiHover"
+        },
+        {
+          "success": true,
+          "node_id": "wRYuUSuyW8xRczG3zraY",
+          "session_id": "xJ5wjDuf2VOBKV5xkPG3",
+          "credit_costs": {
+            "ek0yspB1dfYRjYjRigIy": 5
+          },
+          "key": "ui-modalOpen"
+        },
+        {
+          "success": true,
+          "node_id": "wRYuUSuyW8xRczG3zraY",
+          "session_id": "eayHijUIazOteOqN81WV",
+          "credit_costs": {
+            "JNCjGyZ2Fprk9EpdDZxz": 5
+          },
+          "key": "ui-modalOpen"
+        },
+        {
+          "success": true,
+          "node_id": "wRYuUSuyW8xRczG3zraY",
+          "session_id": "h34h59nqZiC64cPWFOnD",
+          "credit_costs": {
+            "Fzk9rKAPYxOEeClBwLeh": 5
+          },
+          "key": "ui-modalOpen"
+        },
+        {
+          "success": true,
+          "node_id": "wRYuUSuyW8xRczG3zraY",
+          "session_id": "oCtIcgoIrfWPhf6RLFui",
+          "credit_costs": {
+            "FFXPKBMMSh9S7Pxtvfwp": 5
+          },
+          "key": "ui-modalOpen"
+        },
+        {
+          "success": true,
+          "node_id": "GEI2yQ4Ifx8asMeq0dPX",
+          "session_id": "5M4TaLns5AFqOgmPKvjw",
+          "credit_costs": {
+            "2HfVI0evvVYqoqXna5nv": 5
+          },
+          "key": "ui-modalClose"
+        },
+        {
+          "success": true,
+          "node_id": "GEI2yQ4Ifx8asMeq0dPX",
+          "session_id": "Kuj6taAHtVjaMrJYTlQw",
+          "credit_costs": {
+            "MUdrvUvBj54TyoOApMOL": 5
+          },
+          "key": "ui-modalClose"
+        },
+        {
+          "success": true,
+          "node_id": "GEI2yQ4Ifx8asMeq0dPX",
+          "session_id": "EsLnjfDadS3oauOrX5Ya",
+          "credit_costs": {
+            "IpJOaGWfPrPKyk9LSpjD": 5
+          },
+          "key": "ui-modalClose"
+        },
+        {
+          "success": true,
+          "node_id": "GEI2yQ4Ifx8asMeq0dPX",
+          "session_id": "TlAITLSL9FwxIiuGZTVG",
+          "credit_costs": {
+            "XdcQdAhUgRfanqFrGxwS": 5
+          },
+          "key": "ui-modalClose"
+        }
+      ],
+      "selected_generation_ids": [
+        {
+          "key": "ui-uiHover",
+          "generation_id": "5PsISzIucHEh1SYZ3kk9"
+        },
+        {
+          "key": "ui-modalOpen",
+          "generation_id": "JNCjGyZ2Fprk9EpdDZxz"
+        },
+        {
+          "key": "ui-modalClose",
+          "generation_id": "XdcQdAhUgRfanqFrGxwS"
+        }
+      ],
+      "generations_per_cue": 4,
+      "previous_specs": [
+        {
+          "key": "ui-uiHover",
+          "category": "ui",
+          "type": "sfx",
+          "model": "eleven_text_to_sound_v2",
+          "prompt": "Tiny soft high electronic hover tick One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+          "duration": 0.5,
+          "maxDuration": 0.075,
+          "variants": 1
+        },
+        {
+          "key": "ui-modalOpen",
+          "category": "ui",
+          "type": "sfx",
+          "model": "eleven_text_to_sound_v2",
+          "prompt": "Soft short upward digital panel-opening whoosh One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+          "duration": 0.5,
+          "maxDuration": 0.25,
+          "variants": 1
+        },
+        {
+          "key": "ui-modalClose",
+          "category": "ui",
+          "type": "sfx",
+          "model": "eleven_text_to_sound_v2",
+          "prompt": "Soft short downward digital panel-closing whoosh One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+          "duration": 0.5,
+          "maxDuration": 0.25,
+          "variants": 1
+        }
+      ]
+    }
+  ],
+  "movement_revisions": [
+    {
+      "flow": {
+        "flow_id": "VXercKicesQJLsUy1ZpS",
+        "name": "Agent Deathmatch \u2014 Refined Movement Cues",
+        "url": "https://elevenlabs.io/app/flows/VXercKicesQJLsUy1ZpS"
+      },
+      "nodes": [
+        {
+          "key": "jump",
+          "node_id": "0bMj1857XRyuTg1a0EgW"
+        },
+        {
+          "key": "airjump",
+          "node_id": "3P4ea4IrefJqlSpUBjJW"
+        },
+        {
+          "key": "dash",
+          "node_id": "hrm5SQ72UaaKm7R7TH9e"
+        },
+        {
+          "key": "boost",
+          "node_id": "pbsY0Vlnmit5olID0lfc"
+        }
+      ],
+      "successful_sessions": [
+        {
+          "key": "jump",
+          "node_id": "0bMj1857XRyuTg1a0EgW",
+          "session_id": "n3bjM5dp83EoYTbpp0Hb",
+          "credit_costs": {
+            "OkLYjL7VsPl9NH1jUeGI": 5
+          }
+        },
+        {
+          "key": "jump",
+          "node_id": "0bMj1857XRyuTg1a0EgW",
+          "session_id": "G6FhsZPMM9Qs1KMl46hs",
+          "credit_costs": {
+            "fNKpofEhVP5h2ionBbCU": 5
+          }
+        },
+        {
+          "key": "jump",
+          "node_id": "0bMj1857XRyuTg1a0EgW",
+          "session_id": "70YicvbS2I3YVaVVBvzI",
+          "credit_costs": {
+            "tVk6FytzOBrdIhcQQUyK": 5
+          }
+        },
+        {
+          "key": "airjump",
+          "node_id": "3P4ea4IrefJqlSpUBjJW",
+          "session_id": "dwYFzLXGPCFeVDu8RqFy",
+          "credit_costs": {
+            "ZeGj8rl4seFY3pBoozO7": 5
+          }
+        },
+        {
+          "key": "airjump",
+          "node_id": "3P4ea4IrefJqlSpUBjJW",
+          "session_id": "k1eBDgRcUr10Bm6pZsNs",
+          "credit_costs": {
+            "EYXvKo9IUHswdAzytPxb": 5
+          }
+        },
+        {
+          "key": "airjump",
+          "node_id": "3P4ea4IrefJqlSpUBjJW",
+          "session_id": "yl22zrYL9mDRaJ8wLgxz",
+          "credit_costs": {
+            "sQ3CFcvayH7upm2mxi9L": 5
+          }
+        },
+        {
+          "key": "dash",
+          "node_id": "hrm5SQ72UaaKm7R7TH9e",
+          "session_id": "sxtOJNor3h9FXf19Ey2w",
+          "credit_costs": {
+            "513ttiHmBmibUfZSnSut": 5
+          }
+        },
+        {
+          "key": "dash",
+          "node_id": "hrm5SQ72UaaKm7R7TH9e",
+          "session_id": "Jsa7B1fjHQalQrbaJIaA",
+          "credit_costs": {
+            "c0bZGYiJugEhKepHjAJL": 5
+          }
+        },
+        {
+          "key": "boost",
+          "node_id": "pbsY0Vlnmit5olID0lfc",
+          "session_id": "pwWSXskUqqcEYg9kMKJT",
+          "credit_costs": {
+            "57NEX41o74vSTGb04Nuq": 5
+          }
+        },
+        {
+          "key": "boost",
+          "node_id": "pbsY0Vlnmit5olID0lfc",
+          "session_id": "gsCDeK5XfMyKwFL7Omj1",
+          "credit_costs": {
+            "oDg6dzkZX2AMp0JPsBde": 5
+          }
+        },
+        {
+          "key": "boost",
+          "node_id": "pbsY0Vlnmit5olID0lfc",
+          "session_id": "9c2FZOsxHYttey0t2iTv",
+          "credit_costs": {
+            "QFqyNPB7RrnBoy5hYHcE": 5
+          }
+        },
+        {
+          "key": "boost",
+          "node_id": "pbsY0Vlnmit5olID0lfc",
+          "session_id": "foUJ7mB97et27c8QvFL0",
+          "credit_costs": {
+            "POLsBpoMjrdZXIpqPzGt": 5
+          }
+        }
+      ],
+      "selected_generation_ids": [
+        {
+          "key": "jump",
+          "generation_id": "fNKpofEhVP5h2ionBbCU"
+        },
+        {
+          "key": "airjump",
+          "generation_id": "ZeGj8rl4seFY3pBoozO7"
+        },
+        {
+          "key": "dash",
+          "generation_id": "513ttiHmBmibUfZSnSut"
+        },
+        {
+          "key": "boost",
+          "generation_id": "57NEX41o74vSTGb04Nuq"
+        }
+      ],
+      "generations_per_cue_requested": 4,
+      "completed_takes": {
+        "jump": 3,
+        "airjump": 3,
+        "dash": 2,
+        "boost": 4
+      },
+      "rate_limited_attempts": [
+        {
+          "key": "jump",
+          "node_id": "0bMj1857XRyuTg1a0EgW",
+          "reason": "rate_limit"
+        },
+        {
+          "key": "airjump",
+          "node_id": "3P4ea4IrefJqlSpUBjJW",
+          "reason": "rate_limit"
+        },
+        {
+          "key": "dash",
+          "node_id": "hrm5SQ72UaaKm7R7TH9e",
+          "reason": "rate_limit"
+        },
+        {
+          "key": "dash",
+          "node_id": "hrm5SQ72UaaKm7R7TH9e",
+          "reason": "rate_limit"
+        }
+      ],
+      "previous_specs": [
+        {
+          "key": "jump",
+          "category": "movement",
+          "type": "sfx",
+          "model": "eleven_text_to_sound_v2",
+          "prompt": "An armored combatant pushes off the ground, quick boot scuff and tight gear swish One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+          "duration": 0.5,
+          "maxDuration": 0.3,
+          "variants": 1
+        },
+        {
+          "key": "airjump",
+          "category": "movement",
+          "type": "sfx",
+          "model": "eleven_text_to_sound_v2",
+          "prompt": "A quick midair energy jump impulse, bright upward electric air burst with a short pneumatic pop One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+          "duration": 0.5,
+          "maxDuration": 0.34,
+          "variants": 1
+        },
+        {
+          "key": "dash",
+          "category": "movement",
+          "type": "sfx",
+          "model": "eleven_text_to_sound_v2",
+          "prompt": "A fast lateral combat dash, tight pressurized air whoosh with a crisp electric snap One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+          "duration": 0.5,
+          "maxDuration": 0.32,
+          "variants": 1
+        },
+        {
+          "key": "boost",
+          "category": "movement",
+          "type": "sfx",
+          "model": "eleven_text_to_sound_v2",
+          "prompt": "A sci-fi jump pad launches a combatant, forceful hydraulic thump and rising energy jet burst One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+          "duration": 0.75,
+          "maxDuration": 0.75,
+          "variants": 1
+        }
+      ]
+    },
+    {
+      "flow": {
+        "flow_id": "VXercKicesQJLsUy1ZpS",
+        "name": "Agent Deathmatch \u2014 Refined Movement Cues",
+        "url": "https://elevenlabs.io/app/flows/VXercKicesQJLsUy1ZpS"
+      },
+      "nodes": [
+        {
+          "key": "jump",
+          "node_id": "2UPqc5XlSFIManILl2XR"
+        },
+        {
+          "key": "airjump",
+          "node_id": "sE7Z8WHhlr9TDRggA1Dr"
+        }
+      ],
+      "successful_sessions": [
+        {
+          "key": "jump",
+          "node_id": "2UPqc5XlSFIManILl2XR",
+          "session_id": "uxDlAYRqZiDJJXVDji7k",
+          "credit_costs": {
+            "1txskTMarp9cAo1cGoBs": 10
+          }
+        },
+        {
+          "key": "jump",
+          "node_id": "2UPqc5XlSFIManILl2XR",
+          "session_id": "dSIj5fF6ZiO5A0hVpqMd",
+          "credit_costs": {
+            "nEGzdpthWsIZo4M7ywI8": 10
+          }
+        },
+        {
+          "key": "jump",
+          "node_id": "2UPqc5XlSFIManILl2XR",
+          "session_id": "LgvghXVN57AvFmQRaLEj",
+          "credit_costs": {
+            "N8G8rPwv0TMjak3xsrbS": 10
+          }
+        },
+        {
+          "key": "jump",
+          "node_id": "2UPqc5XlSFIManILl2XR",
+          "session_id": "oPd5ZAhasvtMSwJzBlHY",
+          "credit_costs": {
+            "GJGgFPk03ntQiULx3Wo8": 10
+          }
+        },
+        {
+          "key": "airjump",
+          "node_id": "sE7Z8WHhlr9TDRggA1Dr",
+          "session_id": "dGM9G5yF3rXHdNhe49iY",
+          "credit_costs": {
+            "pVHVsVfGICmgWl8f64Wa": 10
+          }
+        },
+        {
+          "key": "airjump",
+          "node_id": "sE7Z8WHhlr9TDRggA1Dr",
+          "session_id": "PorGTLHD8ojDCyg5N39Q",
+          "credit_costs": {
+            "lO3AQxJJNcksbpZmTfcr": 10
+          }
+        },
+        {
+          "key": "airjump",
+          "node_id": "sE7Z8WHhlr9TDRggA1Dr",
+          "session_id": "3fiI7ZU7ra9DbOxdji4W",
+          "credit_costs": {
+            "k521i9Eq3nGrtX7HuWqT": 10
+          }
+        },
+        {
+          "key": "airjump",
+          "node_id": "sE7Z8WHhlr9TDRggA1Dr",
+          "session_id": "dPjOYrRj5SAMeHBXYLD8",
+          "credit_costs": {
+            "nlLJkLd225j5GoyRkxvu": 10
+          }
+        }
+      ],
+      "selected_generation_ids": [
+        {
+          "key": "jump",
+          "generation_id": "GJGgFPk03ntQiULx3Wo8"
+        },
+        {
+          "key": "airjump",
+          "generation_id": "pVHVsVfGICmgWl8f64Wa"
+        }
+      ],
+      "generations_per_cue": 4,
+      "previous_specs": [
+        {
+          "key": "jump",
+          "category": "movement",
+          "type": "sfx",
+          "model": "eleven_text_to_sound_v2",
+          "prompt": "One light dry boot push-off thump, rounded punchy transient and short 100-millisecond decay, close-miked and isolated on silence, no voice or ringing.",
+          "duration": 0.5,
+          "maxDuration": 0.16,
+          "variants": 1,
+          "prompt_influence": 0.85,
+          "loop": false,
+          "processing": {
+            "highpassHz": 100,
+            "lowpassHz": 4000,
+            "fadeInMs": 2,
+            "fadeOutMs": 25,
+            "rmsDb": -26,
+            "peakDb": -12
+          }
+        },
+        {
+          "key": "airjump",
+          "category": "movement",
+          "type": "sfx",
+          "model": "eleven_text_to_sound_v2",
+          "prompt": "One short soft pressurized air puff with a crisp muted pop, immediate release and 160-millisecond decay, dry and isolated on silence, no voice or ringing.",
+          "duration": 0.5,
+          "maxDuration": 0.21,
+          "variants": 1,
+          "prompt_influence": 0.85,
+          "loop": false,
+          "processing": {
+            "highpassHz": 140,
+            "lowpassHz": 5000,
+            "fadeInMs": 2,
+            "fadeOutMs": 30,
+            "rmsDb": -24,
+            "peakDb": -10
+          }
+        }
+      ]
+    }
+  ],
+  "processing_revisions": [
+    {
+      "date": "2026-10-04",
+      "key": "rail-fire",
+      "operation": "local_remaster",
+      "generation_id": "zpOnjMOklkElXPA0UYfh",
+      "source_flow_id": "BqtTzkB2pZXfG9quZbsY",
+      "path": "public/sounds/elevenlabs-v1/weapon/instant/rail-fire_1.mp3",
+      "reason": "Front-load the recorded discharge so its main impact accompanies the accepted shot instead of building up hundreds of milliseconds later.",
+      "additional_generations": 0,
+      "previous_spec": {
+        "key": "rail-fire",
+        "category": "weapon",
+        "type": "sfx",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "A powerful futuristic railgun fires once: hard electric crack, metallic punch, deep bass thump, brief sizzling energy tail One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+        "duration": 0.9,
+        "maxDuration": 0.9,
+        "variants": 1
+      },
+      "selected_spec": {
+        "key": "rail-fire",
+        "category": "weapon",
+        "type": "sfx",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "A powerful futuristic railgun fires once: hard electric crack, metallic punch, deep bass thump, brief sizzling energy tail One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+        "duration": 0.9,
+        "maxDuration": 0.28,
+        "variants": 1,
+        "processing": {
+          "decayMs": 45,
+          "fadeInMs": 0.5,
+          "fadeOutMs": 12,
+          "rmsDb": -21,
+          "peakDb": -8
+        }
+      }
+    },
+    {
+      "date": "2026-10-04",
+      "key": "rail-fire",
+      "operation": "local_trim",
+      "generation_id": "zpOnjMOklkElXPA0UYfh",
+      "source_flow_id": "BqtTzkB2pZXfG9quZbsY",
+      "path": "public/sounds/elevenlabs-v1/weapon/crack/rail-fire_1.mp3",
+      "reason": "Physically remove the opening 180 ms and begin at the strongest audible crack, rather than only shortening the discharge's envelope.",
+      "additional_generations": 0,
+      "previous_spec": {
+        "key": "rail-fire",
+        "category": "weapon",
+        "type": "sfx",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "A powerful futuristic railgun fires once: hard electric crack, metallic punch, deep bass thump, brief sizzling energy tail One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+        "duration": 0.9,
+        "maxDuration": 0.28,
+        "variants": 1,
+        "processing": {
+          "decayMs": 45,
+          "fadeInMs": 0.5,
+          "fadeOutMs": 12,
+          "rmsDb": -21,
+          "peakDb": -8
+        }
+      },
+      "selected_spec": {
+        "key": "rail-fire",
+        "category": "weapon",
+        "type": "sfx",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "A powerful futuristic railgun fires once: hard electric crack, metallic punch, deep bass thump, brief sizzling energy tail One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+        "duration": 0.9,
+        "maxDuration": 0.22,
+        "variants": 1,
+        "processing": {
+          "trimStartMs": 180,
+          "highpassHz": 180,
+          "decayMs": 55,
+          "fadeInMs": 0.25,
+          "fadeOutMs": 12,
+          "rmsDb": -21,
+          "peakDb": -8
+        }
+      }
+    }
+  ],
+  "source_revisions": [
+    {
+      "date": "2026-10-05",
+      "key": "rail-fire",
+      "operation": "replace_from_user_file",
+      "source": {
+        "filename": "freesound_community-sci-fi-energy-gun-39409.mp3",
+        "path": "art/audio/sources/freesound_community-sci-fi-energy-gun-39409.mp3",
+        "sha256": "534d1e1e69ed10468956da304883020f8220770f48846b7e9411484bd2ecc576"
+      },
+      "path": "public/sounds/elevenlabs-v1/weapon/energy-gun-39409/rail-fire_1.mp3",
+      "previous_generation_id": "zpOnjMOklkElXPA0UYfh",
+      "previous_path": "public/sounds/elevenlabs-v1/weapon/crack/rail-fire_1.mp3",
+      "previous_spec": {
+        "key": "rail-fire",
+        "category": "weapon",
+        "type": "sfx",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "A powerful futuristic railgun fires once: hard electric crack, metallic punch, deep bass thump, brief sizzling energy tail One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+        "duration": 0.9,
+        "maxDuration": 0.22,
+        "variants": 1,
+        "processing": {
+          "trimStartMs": 180,
+          "highpassHz": 180,
+          "decayMs": 55,
+          "fadeInMs": 0.25,
+          "fadeOutMs": 12,
+          "rmsDb": -21,
+          "peakDb": -8
+        }
+      },
+      "selected_spec": {
+        "key": "rail-fire",
+        "category": "weapon",
+        "type": "file",
+        "provider": "user-provided",
+        "source": {
+          "filename": "freesound_community-sci-fi-energy-gun-39409.mp3",
+          "path": "art/audio/sources/freesound_community-sci-fi-energy-gun-39409.mp3",
+          "sha256": "534d1e1e69ed10468956da304883020f8220770f48846b7e9411484bd2ecc576"
+        },
+        "duration": 1.8,
+        "maxDuration": 0.61,
+        "variants": 1,
+        "processing": {
+          "sourceStartMs": 190,
+          "sourceEndMs": 800,
+          "fadeInMs": 0.25,
+          "fadeOutMs": 12,
+          "rmsDb": -18,
+          "peakDb": -8
+        }
+      }
+    },
+    {
+      "date": "2026-10-05",
+      "key": "death-impact",
+      "operation": "add_from_user_file",
+      "source": {
+        "filename": "dragon-studio-heavy-object-falling-515261.mp3",
+        "path": "art/audio/sources/dragon-studio-heavy-object-falling-515261.mp3",
+        "sha256": "9bd539a79bde2d6d76c57f8c3662e31df3ea9ca88ab91ceca54d63c89b4d6303"
+      },
+      "path": "public/sounds/elevenlabs-v1/weapon/death-impact/death-impact_1.mp3",
+      "selected_spec": {
+        "key": "death-impact",
+        "category": "weapon",
+        "type": "file",
+        "provider": "user-provided",
+        "source": {
+          "filename": "dragon-studio-heavy-object-falling-515261.mp3",
+          "path": "art/audio/sources/dragon-studio-heavy-object-falling-515261.mp3",
+          "sha256": "9bd539a79bde2d6d76c57f8c3662e31df3ea9ca88ab91ceca54d63c89b4d6303"
+        },
+        "duration": 3.792,
+        "maxDuration": 2.67,
+        "variants": 1,
+        "processing": {
+          "sourceStartMs": 280,
+          "sourceEndMs": 2950,
+          "trimSilence": false,
+          "fadeInMs": 0.25,
+          "fadeOutMs": 12,
+          "rmsDb": -18,
+          "peakDb": -8
+        }
+      }
+    },
+    {
+      "date": "2026-10-05",
+      "key": "jump",
+      "operation": "replace_from_user_file",
+      "source": {
+        "filename": "dragon-studio-simple-whoosh-382724.mp3",
+        "path": "art/audio/sources/dragon-studio-simple-whoosh-382724.mp3",
+        "sha256": "c2efd9d902a59bf9ec5019035d7deadd17762136896b6e3cb6dd99ea50997a30"
+      },
+      "path": "public/sounds/elevenlabs-v1/movement/whoosh-382724-376875/jump_1.mp3",
+      "previous_generation_id": "GJGgFPk03ntQiULx3Wo8",
+      "previous_path": "public/sounds/elevenlabs-v1/movement/jump-foley/jump_1.mp3",
+      "previous_spec": {
+        "key": "jump",
+        "category": "movement",
+        "type": "sfx",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "One athletic shoe pushing off a firm floor, with a quick textured rubber sole scuff and light fabric movement. Crisp natural dry close-miked Foley, immediate start and a soft short tail, isolated on silence.",
+        "duration": 1,
+        "maxDuration": 0.32,
+        "variants": 1,
+        "prompt_influence": 0.65,
+        "loop": false,
+        "processing": {
+          "highpassHz": 170,
+          "lowpassHz": 6500,
+          "fadeInMs": 2,
+          "fadeOutMs": 25,
+          "rmsDb": -25,
+          "peakDb": -9,
+          "trimStartMs": 110
+        }
+      },
+      "selected_spec": {
+        "key": "jump",
+        "category": "movement",
+        "type": "file",
+        "provider": "user-provided",
+        "source": {
+          "filename": "dragon-studio-simple-whoosh-382724.mp3",
+          "path": "art/audio/sources/dragon-studio-simple-whoosh-382724.mp3",
+          "sha256": "c2efd9d902a59bf9ec5019035d7deadd17762136896b6e3cb6dd99ea50997a30"
+        },
+        "duration": 0.5747,
+        "maxDuration": 0.326,
+        "variants": 1,
+        "loop": false,
+        "processing": {
+          "sourceStartMs": 95,
+          "sourceEndMs": 420,
+          "trimSilence": false,
+          "fadeInMs": 2,
+          "fadeOutMs": 12,
+          "rmsDb": -25,
+          "peakDb": -9
+        }
+      }
+    },
+    {
+      "date": "2026-10-05",
+      "key": "airjump",
+      "operation": "replace_from_user_file",
+      "source": {
+        "filename": "dragon-studio-whoosh-cinematic-376875.mp3",
+        "path": "art/audio/sources/dragon-studio-whoosh-cinematic-376875.mp3",
+        "sha256": "ea7eefa6fee1f6f8e08f595b0db5bfa1d941aa8a6c1a8f07a2a4dd02c588bfe4"
+      },
+      "path": "public/sounds/elevenlabs-v1/movement/whoosh-382724-376875/airjump_1.mp3",
+      "previous_generation_id": "pVHVsVfGICmgWl8f64Wa",
+      "previous_path": "public/sounds/elevenlabs-v1/movement/jump-foley/airjump_1.mp3",
+      "previous_spec": {
+        "key": "airjump",
+        "category": "movement",
+        "type": "sfx",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "One short forceful air whoosh through a wide nozzle, a continuous textured fwoosh with a full airy body and a smooth falling tail. Dry close-up recording, immediate start, isolated on silence. No pop, whistle or pitched note.",
+        "duration": 1,
+        "maxDuration": 0.34,
+        "variants": 1,
+        "prompt_influence": 0.65,
+        "loop": false,
+        "processing": {
+          "highpassHz": 170,
+          "lowpassHz": 6500,
+          "fadeInMs": 3,
+          "fadeOutMs": 40,
+          "rmsDb": -24,
+          "peakDb": -9,
+          "trimStartMs": 25
+        }
+      },
+      "selected_spec": {
+        "key": "airjump",
+        "category": "movement",
+        "type": "file",
+        "provider": "user-provided",
+        "source": {
+          "filename": "dragon-studio-whoosh-cinematic-376875.mp3",
+          "path": "art/audio/sources/dragon-studio-whoosh-cinematic-376875.mp3",
+          "sha256": "ea7eefa6fee1f6f8e08f595b0db5bfa1d941aa8a6c1a8f07a2a4dd02c588bfe4"
+        },
+        "duration": 2.1159,
+        "maxDuration": 0.85,
+        "variants": 1,
+        "loop": false,
+        "processing": {
+          "sourceStartMs": 800,
+          "sourceEndMs": 1650,
+          "trimSilence": false,
+          "fadeInMs": 2,
+          "fadeOutMs": 12,
+          "rmsDb": -24,
+          "peakDb": -9
+        }
+      }
+    }
+  ]
+}

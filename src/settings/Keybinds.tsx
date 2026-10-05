@@ -82,7 +82,7 @@ export function KeybindGrid({ keybinds, onChange }: { keybinds: Binds; onChange:
         <span>Click a key, then press the new one. Esc cancels.</span>
         <span className='st-keys-fixed'>
           <kbd className='st-key is-static'>LMB</kbd> Fire
-          <kbd className='st-key is-static'>RMB</kbd> Boost
+          <kbd className='st-key is-static'>RMB</kbd> Scope (hold)
         </span>
       </p>
     </div>

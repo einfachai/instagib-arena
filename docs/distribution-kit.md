@@ -1,4 +1,4 @@
-# Instagib Arena — Distribution & Launch Kit
+# Agent Deathmatch — Distribution & Launch Kit
 
 Everything you need to list the game on portals and seed communities. Automation
 can't create accounts or submit on your behalf — those are identity-bound and
@@ -42,29 +42,31 @@ win but gated behind the iframe fix + review. Poki is a long shot.
 
 ## Reusable copy (paste into any portal)
 
-**Name:** Instagib Arena
+**Name:** Agent Deathmatch
 
 **Tagline (≤80 chars):**
-> One shot, one kill. A free browser instagib FPS — pure aim and movement.
+> Kill time while your coding agent works.
 
 **Short description (1–2 sentences):**
-> Instagib Arena is a free, Quake-style instagib FPS you play instantly in your
-> browser — no download. The railgun always one-shots, so the whole game is aim
-> and movement: strafe, dash, double-jump, wall-jump.
+> Agent Deathmatch is a robot arena shooter for the wait while Codex works.
+> When a monitored task finishes, you leave the arena, see your personal scoreboard,
+> and return to work.
 
-**Long description (~150 words):**
-> Instagib Arena is a fast, free, browser-based arena FPS in the Quake instagib
-> tradition. There's one weapon — a railgun that kills in a single hit — so every
-> duel comes down to raw aim and movement. Master strafe-jumping, dashing,
-> double-jumps and wall-jumps to out-flick and out-position everyone in the server.
+**Long description:**
+> Give Codex a task. Grab a railgun. Agent Deathmatch turns the wait into a
+> continuous multiplayer deathmatch: one shot, one kill, with strafing, dashing,
+> double-jumps and wall-jumps. Three bots keep you company when you're alone and
+> step out when another player joins.
 >
-> No download, no install, no paywall — click and you're in. Play free-for-all and
-> team deathmatch, climb the ranked 1v1 Elo ladder, fight to be the last player
-> standing, or warm up solo against bots. Earn cosmetics, chase the weekly
-> challenge, and rewatch your best runs with the built-in replay viewer.
+> Your robot represents the coding agent you launched from: Codex or Claude Code.
+> Install the matching local plugin from the repository or a release download,
+> open the launcher, and pair its companion to enable automatic task monitoring.
+> When a task completes, your personal scoreboard appears for five seconds before
+> the companion brings your coding app forward on supported desktop platforms.
 >
-> Built as a server-authoritative game for tight, low-latency netcode. If you grew
-> up on Quake instagib or just love pure aim duels, this is your arena.
+> Join the community on [Discord](https://discord.gg/uMKsq3ESGs) and follow
+> [@einfachai on X](https://x.com/einfachai). Installation instructions are in the
+> [README](../README.md#install-in-codex).
 
 **Controls:**
 > WASD move · Mouse aim · Left click fire (railgun) · Space jump (double / wall) ·
@@ -89,7 +91,7 @@ win but gated behind the iframe fix + review. Poki is a long shot.
   have a **replay system** — use it: record a clean run, export, screen-capture
   the first-person replay into a short montage. This doubles as TikTok/Shorts
   content. Highest-leverage asset you can make.
-- **og-image.png** already exists (1200×630) and is now wired up correctly.
+- **og-agent-deathmatch.png** already exists (1731×909) and is now wired up correctly.
 
 ---
 
@@ -161,7 +163,7 @@ Two mitigations:
 ## Launch sequence (suggested)
 
 1. ✅ Technical SEO (done): OG cards absolute, canonical, JSON-LD, robots, sitemap, noscript.
-2. Add your X handle to `index.html` twitter:site/creator (one edit).
+2. Social metadata uses `@einfachai`; keep it consistent with the community links.
 3. Capture assets (cover, screenshots, 20s trailer from a replay).
 4. List on itch.io + .io directories (no code needed).
 5. Do the iframe-allowlist fix → submit to CrazyGames.

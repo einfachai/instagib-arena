@@ -1,3 +1,4 @@
+import { fallbackTextures, surface } from '../futuristic-kit';
 // Look for the 'training' arena: "Lab" — a bright, clean test facility.
 //
 // Identity: pale epoxy floor and white cladding under a clear sky, colour-
@@ -12,46 +13,14 @@ import {
   FACE_NORMAL, METAL, defaultSlot, norm, outline, prop, wallLamp,
   type Face, type Inlay, type LightDef, type SkyProp, type WorldTheme,
 } from '../theme-kit';
-import { R, bake, gratingField, panel, panelField } from '../../textures';
 import { TRAINING, TRAINING_LAYOUT as L } from '../../maps/training';
 import type { MapBox } from '../../maps/kit';
 import type { AABB } from '../../types';
 
 // ── surfaces ───────────────────────────────────────────────────────────────
-const TEXTURES: WorldTheme['textures'] = {
-  // Epoxy-coated slab: 4 m bays, hairline joints, light and quiet.
-  floor: () => bake(
-    panelField({ size: R, cols: 2, rows: 2, seamHalf: 0.8, bevel: 1, depth: 1.2, inset: 0, rivets: 'none', wobble: 0.35, seed: 12 }),
-    {
-      base: 0x979da3, seamDark: 0.7, toneNoise: 0.025, grain: 0.012,
-      rough: { base: 0.5, seam: 0.2, centre: 0.06, blotch: 0.06, grain: 0.02 },
-      ao: 0.45, aoBlur: 3, seed: 13,
-      stain: { color: 0x979ca2, amount: 0.18, cell: 80, bias: 0.12, rough: 0.05, seed: 14 },
-    },
-    8,
-  ),
-  // Facility cladding: tall pale panels (perimeter, north wall, backstop).
-  wall: () => panel(0xc9cdd1, 4, {
-    cols: 2, rows: 1, midSeam: 0.35, seamHalf: 1, bevel: 2, depth: 2, rivets: 'none',
-    rough: 0.55, tone: 0.025, grain: 0.01, seed: 24,
-  }),
-  // Never drawn (open sky) → repurposed as the catwalk grating.
-  ceiling: () => bake(
-    gratingField({ size: R, pitch: 16, bar: 2.4, cross: 48, rod: 1.6, depth: 4, frame: 5, seed: 31 }),
-    {
-      base: 0xc4cad0, seamDark: 0.64, toneNoise: 0.02, grain: 0.015,
-      rough: { base: 0.42, seam: 0.3, centre: 0, blotch: 0.05, grain: 0.03 },
-      ao: 0.75, aoBlur: 3, seed: 32,
-    },
-    1.5,
-  ),
-  // Decks / pit blocks: 2 m plates with corner studs, near-white (tinted).
-  platform: () => panel(0xd6d8da, 2, { rivets: 'corners', rivetInset: 16, rivetR: 2.2, rivetH: 1, rough: 0.45, seamDark: 0.62, tone: 0.02, seed: 42 }),
-  // Painted plate (cover, berms, steps, stands, chimney): near-white, the tint is the paint.
-  cover: () => panel(0xdcdcdc, 2, { cols: 1, rows: 1, bevel: 3, depth: 2.5, inset: 12, rough: 0.5, seamDark: 0.6, tone: 0.02, grain: 0.01, seed: 53 }),
-  // Structural plate with riveted bands (spine, towers, boost tower).
-  tower: () => panel(0xdadcde, 4, { cols: 1, rows: 2, seamHalf: 1, bevel: 1.5, depth: 1.5, rivets: 'bands', rivetInset: 8, rivetR: 1.8, rivetH: 0.8, rough: 0.48, seamDark: 0.7, tone: 0.02, seed: 68 }),
-};
+const ASSETS = {floor:surface('epoxy',8),wall:surface('ceramic',4),ceiling:surface('grate',1.5),
+  platform:surface('ceramic',2),cover:surface('cargo',2),tower:surface('titanium',4)};
+const TEXTURES = fallbackTextures(ASSETS);
 
 // ── palette ────────────────────────────────────────────────────────────────
 const AMBER = 0xf2a93a;
@@ -365,6 +334,7 @@ function facility(): SkyProp[] {
 
 export const LAB: WorldTheme = {
   id: 'lab',
+  assets: ASSETS,
   textures: TEXTURES,
   openSky: true,
   perimeterTop: 4.5,
@@ -385,6 +355,7 @@ export const LAB: WorldTheme = {
     crown: { h: 0.35, d: 0.1 },
     baseboard: { h: 0.3, d: 0.06 },
     collars: { h: 0.4, d: 0.08 },
+    panels: {spacing:4,vents:true,conduits:true},
     edges: { h: 0.12, d: 0.03 },
   },
   inlays: [...hubPaint(), ...galleryPaint(), ...coursePaint()],

@@ -1,3 +1,4 @@
+import { playerAgent } from '../agent-session';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { WornHat } from './hats';
@@ -476,7 +477,7 @@ export class CharacterPreview {
   }
 
   private buildCharacter() {
-    const ch = new Character({ colorHex: skinColorFor(this.cos.skinSeed || savedName() || 'you') });
+    const ch = new Character({ agent: playerAgent, colorHex: skinColorFor(this.cos.skinSeed || savedName() || 'you') });
     this.character = ch;
     this.applySkin();
     this.subject.add(ch.root);
@@ -508,7 +509,7 @@ export class CharacterPreview {
     if (this.dummy) return;
     const mine = skinColorFor(this.cos.skinSeed || savedName() || 'you');
     // A contrasting "training bot" skin.
-    const skin = mine === '#ff6873' || mine === '#ff6b4e' ? SKIN_PALETTE[4] : '#ff6873';
+    const skin = mine === '#ff6873' || mine === '#ff6b4e' ? SKIN_PALETTE[0] : '#ff6873';
     const d = new Character({ colorHex: skin });
     this.dummy = d;
     this.subject.add(d.root);

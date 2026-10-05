@@ -1,4 +1,5 @@
-// Instagib Arena — authoritative game server, in-process with the Next app.
+import { copyMovementCue, isMovementCue } from '../src/game/movement-cues';
+// Agent Deathmatch — authoritative game server, in-process with the Next app.
 //
 // Served at `/ws/instagib` on the main app port so it rides the existing
 // Cloudflare tunnel (wss://<domain>/ws/instagib) — no separate port/process.
@@ -45,6 +46,12 @@ import {
   ROOM_CODE_LEN,
 } from '../src/game/arena-data';
 import { randomBytes } from 'node:crypto';
+import { BotBrain } from '../src/game/bot-brain';
+import { navFor } from '../src/game/bot-nav';
+import { parseAgent, type AgentKind } from '../src/game/agent';
+import { ArcadeVisit, desiredBots } from './arcade-visit';
+import type { ArenaControllers } from './arena-controller';
+import type { CodexEvent, ExitReason } from '../src/game/arcade';
 import type { CardPayload, Vec3 } from '../src/game/types';
 import {
   DEFAULT_RAIL_COLOR,
@@ -76,7 +83,7 @@ import {
 } from './db';
 import { accountIdFromCookieHeader } from './auth';
 import { containsProfanity } from './profanity';
-import { clientIp, RateLimiter } from './security';
+import { clientIp, RateLimiter, TokenBucket } from './security';
 import type { IncomingMessage } from 'node:http';
 import { mapById } from '../src/game/arena-map-data';
 import { rayAabb as rayBox } from '../src/game/collision';
@@ -97,7 +104,9 @@ const NETCODE_DIAG_INTERVAL_MS = 5_000;
 // socket only makes that viewer see older truth later. Let the queue drain and
 // resume from a fresh frame instead. This budget is roughly four full 8p frames.
 const MAX_SNAPSHOT_BUFFERED_BYTES = 1024;
-const STALE_CLIENT_TIMEOUT_MS = 10_000;
+// Transport pings run every 15s and keep a throttled/background browser alive.
+// Allow two intervals; the transport heartbeat itself closes unresponsive peers.
+const STALE_CLIENT_TIMEOUT_MS = 35_000;
 // A dropped in-match player's slot + score are held this long for a reconnect to
 // reclaim (via the resume token) before the record is reaped.
 const RESUME_GRACE_MS = 20_000;
@@ -243,8 +252,8 @@ const MAX_VERTICAL_SPEED = 80;
 // Kick a player who hasn't moved or fired in this long (frees a slot in 2-cap
 // duel rooms; generous so a brief alt-tab doesn't drop you).
 const AFK_TIMEOUT_MS = 120_000;
-const MSG_RATE_WINDOW_MS = 1_000;
 const MSG_RATE_LIMIT = 150; // inbound messages/sec before a socket is closed (flood guard)
+const MSG_RATE_BURST = 256; // bounded headroom for buffered 64Hz movement
 // Global lobby chat guards. Stricter than the socket flood guard above: chat is
 // the one place a client picks the content, so it's rate-limited per sender,
 // length-capped, sanitized, and run through the username profanity filter.
@@ -304,6 +313,11 @@ type PosTimeline = {
 };
 
 type ClientRecord = {
+  agent?: AgentKind;
+  actor?: 'human' | 'bot';
+  brain?: BotBrain;
+  visit?: ArcadeVisit;
+  botStreak?: number;
   id: ClientId;
   socket: WebSocket;
   name: string;
@@ -327,8 +341,7 @@ type ClientRecord = {
   lastPosMs: number; // for the pos-update speed clamp
   lastPosRxMono: number; // monotonic ms of the last RECEIVED pos (accepted or not)
   posCreditMs: number; // movement time the speed clamp allows (see POS_SILENT_CREDIT_MS)
-  msgWindowStart: number; // inbound message-rate window start
-  msgCount: number; // messages seen in the current window
+  messageBudget: TokenBucket;
   roomWindowStart: number; // room-creation rate window start
   roomCount: number; // rooms created in the current window
   chatWindowStart: number; // global-chat rate window start
@@ -383,6 +396,11 @@ type ClientRecord = {
 };
 
 type Room = {
+  arcade: boolean;
+  bots: Set<ClientId>;
+  humanPhase: boolean;
+  statsAt: number;
+  noticeSeq: number;
   id: RoomId;
   name: string;
   mode: GameMode;
@@ -418,7 +436,10 @@ type Room = {
   matchLeft: { id: ClientId; playerId: string; netId: string }[];
 };
 
+const movementCueRates = new WeakMap<ClientRecord, { start: number; count: number }>();
+
 type ClientMessage =
+  | { type: 'arena'; agent?: string; controllerToken?: string; attemptId?: string }
   | { type: 'hello'; name?: string }
   | { type: 'list' }
   | { type: 'create'; name?: string; mapId?: string; isPublic?: boolean; capacity?: number; mode?: string }
@@ -426,9 +447,9 @@ type ClientMessage =
   | { type: 'ranked-queue' }
   | { type: 'ranked-cancel' }
   | { type: 'ranked-rooms' }
-  | { type: 'join'; roomId?: string; name?: string }
+  | { type: 'join'; agent?: string; roomId?: string; name?: string }
   | { type: 'spectate'; roomId?: string; name?: string }
-  | { type: 'resume'; token?: string; roomId?: string; name?: string }
+  | { type: 'resume'; agent?: string; token?: string; roomId?: string; name?: string }
   | { type: 'leave' }
   | { type: 'vote'; mapId?: string }
   | { type: 'hat'; id?: string }
@@ -442,6 +463,7 @@ type ClientMessage =
   | { type: 'railgunFinish'; id?: string }
   | { type: 'loadout'; uids?: unknown }
   | { type: 'taunt' }
+  | { type: 'motion'; cue?: unknown }
   | { type: 'crosshair'; code?: string }
   | { type: 'card'; card?: unknown }
   | { type: 'chat'; text?: string }
@@ -684,7 +706,10 @@ function rayAabb(
   return tmin < 0 ? 0 : tmin;
 }
 
-export function attachInstagibWs(wss: WebSocketServer) {
+export function attachInstagibWs(wss: WebSocketServer, controllers?: ArenaControllers) {
+  // Build the shared cache before accepting players. The first bot tick must
+  // not build a map graph while connected clients wait for heartbeats/snapshots.
+  for (const mapId of mapPoolForMode('ffa')) navFor(mapById(mapId));
   const controlHits = new RateLimiter(30, 10_000);
   const clients = new Map<ClientId, ClientRecord>();
   const sendPayload = (socket: WebSocket, data: string | Uint8Array) => {
@@ -693,6 +718,12 @@ export function attachInstagibWs(wss: WebSocketServer) {
     socket.send(data);
   };
   const rooms = new Map<RoomId, Room>();
+  const endedResumes = new Map<string, { playerId: string; message: object; expires: number }>();
+  const actors = (room: Room) => [...room.members, ...room.bots];
+  const connectedHumans = (room: Room) => [...room.members].map(id => clients.get(id)).filter((c): c is ClientRecord => !!c && c.disconnectedAt === 0 && c.socket.readyState === c.socket.OPEN);
+  const advanceVisits = (room: Room, now = Date.now()) => {
+    for (const id of actors(room)) { const c = clients.get(id); c?.visit?.advance(now, c.actor === 'bot' || c.disconnectedAt === 0, room.humanPhase); }
+  };
   const listers = new Set<ClientId>();
   // Ranked Duel matchmaking queue: account-only sockets waiting for a 1v1. The
   // pairing tick (below) matches the two closest-rated waiters, widening the
@@ -752,7 +783,7 @@ export function attachInstagibWs(wss: WebSocketServer) {
     const byAccount = new Map<string, PresencePlayer>();
     let guests = 0;
     for (const c of clients.values()) {
-      if (c.disconnectedAt > 0) continue; // dropped, awaiting resume — not live
+      if (c.actor === 'bot' || c.disconnectedAt > 0) continue;
       if (c.playerId) {
         const seen = byAccount.get(c.playerId);
         if (seen) seen.inMatch = seen.inMatch || c.roomId != null;
@@ -869,12 +900,14 @@ export function attachInstagibWs(wss: WebSocketServer) {
     capacity: number;
     hostId: ClientId | null;
     isRanked?: boolean;
+    arcade?: boolean;
   }): Room => {
     // Duel is locked to 2; ffa/tdm clamp the requested capacity to the mode max.
     const maxCap = modeCapacity(opts.mode);
     const capacity =
       opts.mode === 'duel' ? 2 : clampInt(opts.capacity, 2, maxCap, maxCap);
     const room: Room = {
+      arcade: opts.arcade === true, bots: new Set(), humanPhase: false, statsAt: 0, noticeSeq: 0,
       id: genRoomCode(),
       name: opts.name,
       mode: opts.mode,
@@ -893,7 +926,7 @@ export function attachInstagibWs(wss: WebSocketServer) {
       spectators: new Set(),
       state: 'active',
       vote: null,
-      resumeAt: Date.now() + WARMUP_MS, // initial get-ready before the first frag
+      resumeAt: opts.arcade ? 0 : Date.now() + WARMUP_MS, // initial get-ready before the first frag
       matchStartAt: Date.now() + WARMUP_MS,
       firstBloodAwarded: false,
       emptySince: Date.now(),
@@ -1151,7 +1184,7 @@ export function attachInstagibWs(wss: WebSocketServer) {
     type Threat = { x: number; z: number; fx: number; fz: number; aimed: boolean };
     const threats: Threat[] = []; // live enemies (danger/aim-cone) — excludes hidden + teammates
     const occupants: { x: number; z: number }[] = []; // ANY present player (overlap avoidance)
-    for (const id of room.members) {
+    for (const id of actors(room)) {
       const c = clients.get(id);
       if (!c) continue;
       if (forClient && c.id === forClient.id) continue;
@@ -1214,10 +1247,11 @@ export function attachInstagibWs(wss: WebSocketServer) {
     return { x: chosen.x + (Math.random() - 0.5), y: chosen.y, z: chosen.z + (Math.random() - 0.5) };
   };
 
-  const joinRoom = (record: ClientRecord, room: Room) => {
+  const joinRoom = (record: ClientRecord, room: Room, visit?: ArcadeVisit) => {
     leaveRoom(record); // ensure single-room invariant
     listers.delete(record.id);
     record.roomId = room.id;
+    if (room.arcade) advanceVisits(room);
     record.team = assignTeam(room); // null outside TDM
     room.members.add(record.id);
     // Guests get a per-room "Guest N" label; logged-in players keep their
@@ -1236,10 +1270,12 @@ export function attachInstagibWs(wss: WebSocketServer) {
       const c = clients.get(id);
       return c != null && (c.frags > 0 || c.deaths > 0);
     });
-    if (room.state === 'active' && room.members.size === 2 && !anyScore) {
+    if (!room.arcade && room.state === 'active' && room.members.size === 2 && !anyScore) {
       room.resumeAt = Date.now() + WARMUP_MS;
       room.matchStartAt = room.resumeAt;
     }
+    // Remove bots before committing the newcomer's spawn, without combat events.
+    if (room.arcade && connectedHumans(room).length >= 2) removeBots(room);
     // Spawn into the room's current map.
     const spawn = pickSpawn(room, record, null);
     record.pos = { ...spawn };
@@ -1248,11 +1284,15 @@ export function attachInstagibWs(wss: WebSocketServer) {
     record.frags = 0;
     record.deaths = 0;
     resetMatchStats(record, Date.now());
+    record.visit = room.arcade ? visit ?? new ArcadeVisit() : undefined;
+    record.botStreak = 0;
+    record.respawnAt = 0;
     record.invulnUntilMs = Date.now() + SPAWN_INVULN_MS;
     record.history.length = 0;
     resetPosTimeline(record);
     sendRaw(record.socket, {
       type: 'joined',
+      arcade: room.arcade, visitId: record.visit?.stats.visitId,
       roomId: room.id,
       mode: room.mode,
       ranked: room.isRanked,
@@ -1279,6 +1319,7 @@ export function attachInstagibWs(wss: WebSocketServer) {
     // team immediately and peers get the joiner's. The joiner's own cosmetics
     // arrive moments later (after the welcome handshake) and re-broadcast via
     // bumpMeta — see the cosmetic setters.
+    if (room.arcade) { syncBots(room); broadcastVisitStats(room); }
     broadcastMeta(room);
   };
 
@@ -1308,6 +1349,12 @@ export function attachInstagibWs(wss: WebSocketServer) {
     record.mBestStreak = old.mBestStreak;
     record.mStartedAt = old.mStartedAt;
     record.mSettled = old.mSettled;
+    record.agent = old.agent;
+    record.visit = old.visit;
+    record.visit?.advance(Date.now(), false, room.humanPhase);
+    record.botStreak = old.botStreak;
+    record.respawnAt = old.respawnAt;
+    controllers?.resume(old.id, record.id);
     record.hat = old.hat;
     record.unusual = old.unusual;
     record.emote = old.emote;
@@ -1322,7 +1369,7 @@ export function attachInstagibWs(wss: WebSocketServer) {
     record.strangeUids = old.strangeUids;
     record.lastTauntMs = old.lastTauntMs;
     record.card = old.card;
-    record.invulnUntilMs = Date.now() + SPAWN_INVULN_MS; // brief grace on return
+    record.invulnUntilMs = Math.max(Date.now(), record.respawnAt) + SPAWN_INVULN_MS;
     record.history.length = 0;
     resetPosTimeline(record);
     // Hand the old slot's room bookkeeping to the new id.
@@ -1334,8 +1381,10 @@ export function attachInstagibWs(wss: WebSocketServer) {
       room.vote.votes.delete(old.id);
     }
     clients.delete(old.id);
+    if (room.arcade) { advanceVisits(room); syncBots(room); }
     sendRaw(record.socket, {
       type: 'joined',
+      arcade: room.arcade, visitId: record.visit?.stats.visitId,
       roomId: room.id,
       mode: room.mode,
       ranked: room.isRanked,
@@ -1359,6 +1408,7 @@ export function attachInstagibWs(wss: WebSocketServer) {
     broadcastMeta(room); // reclaimed slot: refresh the room profile for everyone
     // The match ended while they were dropped: deliver the rewards they missed.
     if (old.undeliveredProgression) sendRaw(record.socket, old.undeliveredProgression);
+    if (room.arcade) broadcastVisitStats(room);
     return true;
   };
 
@@ -1375,9 +1425,13 @@ export function attachInstagibWs(wss: WebSocketServer) {
     return true;
   };
 
-  const leaveRoom = (record: ClientRecord) => {
+  const leaveRoom = (record: ClientRecord, reason: ExitReason = 'manual', event?: CodexEvent) => {
     if (!record.roomId) return;
     const room = rooms.get(record.roomId);
+    if (room?.arcade && record.visit && !record.visit.ended) {
+      endVisit(record, room, reason, event);
+      return;
+    }
     // Leaving a live match (leave button, AFK/stale kick, resume grace expiry,
     // joining elsewhere) records what they played so far as a loss.
     if (room && room.state === 'active' && room.members.has(record.id)) {
@@ -1458,7 +1512,9 @@ export function attachInstagibWs(wss: WebSocketServer) {
     rankedQueue.delete(rec.id); // a queued socket dropping leaves the queue
     const room = rec.roomId ? rooms.get(rec.roomId) : null;
     if (room && room.state === 'active' && room.members.has(rec.id)) {
+      if (room.arcade) advanceVisits(room);
       rec.disconnectedAt = Date.now();
+      if (room.arcade) { syncBots(room); broadcastMeta(room); broadcastVisitStats(room); }
       schedulePresence(); // held for resume, but hidden from the live list meanwhile
       return;
     }
@@ -1472,14 +1528,14 @@ export function attachInstagibWs(wss: WebSocketServer) {
   // ── Lobby listing ─────────────────────────────────────────────────────
   const publicRoomList = () =>
     [...rooms.values()]
-      .filter((r) => r.isPublic && r.members.size > 0)
+      .filter((r) => r.arcade && r.isPublic && connectedHumans(r).length > 0)
       .sort((a, b) => b.members.size - a.members.size || a.createdAt - b.createdAt)
       .map((r) => ({
         id: r.id,
         name: r.name,
         mode: r.mode,
         mapId: r.mapId,
-        players: r.members.size,
+        players: connectedHumans(r).length,
         capacity: r.capacity,
         spectators: r.spectators.size,
         state: r.state,
@@ -1503,7 +1559,7 @@ export function attachInstagibWs(wss: WebSocketServer) {
   // frame's timestamp is exactly the one the lag-comp history was stamped with.
   const roomSnapshot = (room: Room, now = Date.now()) => {
     const players: object[] = [];
-    for (const id of room.members) {
+    for (const id of actors(room)) {
       const c = clients.get(id);
       if (!c) continue;
       if (c.disconnectedAt > 0) continue; // dropped (awaiting resume) → hidden, untargetable
@@ -1535,6 +1591,8 @@ export function attachInstagibWs(wss: WebSocketServer) {
   // broadcastMeta run without an await between them). The client merges these
   // onto the dynamic snapshot, defaulting gracefully if a profile hasn't arrived.
   const playerMeta = (c: ClientRecord) => ({
+    actor: c.actor === 'bot' ? 'bot' : 'human',
+    agent: c.agent ?? 'codex',
     id: c.id,
     name: c.name,
     team: c.team,
@@ -1557,7 +1615,7 @@ export function attachInstagibWs(wss: WebSocketServer) {
 
   const roomMeta = (room: Room) => {
     const players: object[] = [];
-    for (const id of room.members) {
+    for (const id of actors(room)) {
       const c = clients.get(id);
       if (!c || c.disconnectedAt > 0) continue;
       players.push(playerMeta(c));
@@ -1566,6 +1624,116 @@ export function attachInstagibWs(wss: WebSocketServer) {
   };
 
   const broadcastMeta = (room: Room) => broadcastRoom(room, roomMeta(room));
+
+  const arenaNotice = (room: Room, clip: 'codex-entered' | 'codex-alone') => {
+    broadcastRoom(room, { type: 'arena-notice', id: `${room.id}:${++room.noticeSeq}`, clip: clip === 'codex-entered' ? 'agent-entered' : undefined,
+      text: clip === 'codex-entered' ? 'Another agent user entered the arena.' : 'All other agent users left the arena.' });
+  };
+  const broadcastVisitStats = (room: Room) => {
+    const players = actors(room).flatMap(id => {
+      const c = clients.get(id);
+      return c?.visit && (c.actor === 'bot' || c.disconnectedAt === 0)
+        ? [{ ...c.visit.stats, id, name: c.name, actor: c.actor === 'bot' ? 'bot' : 'human' }] : [];
+    });
+    broadcastRoom(room, { type: 'visit-stats', players });
+  };
+  const removeBots = (room: Room) => {
+    for (const id of room.bots) {
+      const c = clients.get(id);
+      // Discard the brain, history and cooldown together. No kill/respawn event.
+      c?.history.splice(0); c?.posSamples.splice(0);
+      clients.delete(id);
+      broadcastRoom(room, { type: 'peer-left', clientId: id });
+    }
+    room.bots.clear();
+  };
+  const syncBots = (room: Room) => {
+    if (!room.arcade) return;
+    const humans = connectedHumans(room);
+    const priorHumanPhase = room.humanPhase;
+    room.humanPhase = humans.length >= 2;
+    const desired = desiredBots(humans.length);
+    if (room.bots.size !== desired) {
+      removeBots(room);
+      for (let i = 0; i < desired; i++) {
+        const seed = humans[0];
+        const id = `bot-${room.id}-${genId(6)}`;
+        const spawn = pickSpawn(room, null, seed.pos);
+        const now = Date.now();
+        const socket = { readyState: 3, OPEN: 1, bufferedAmount: 0 } as WebSocket;
+        const bot: ClientRecord = { ...seed, id, actor: 'bot', socket, name: ['Byte', 'Patch', 'Token'][i],
+          playerId: '', netId: id, admin: false, verified: false, card: null, team: null,
+          hat: 'hat.none', unusual: 'unusual.none', looks: {}, strangeUids: [],
+          title: 'title.none', nameColor: 'name.default', disconnectedAt: 0,
+          pos: { ...spawn }, renderPos: { ...spawn, yaw: 0 }, history: [], posSamples: [], posTl: newPosTimeline(),
+          frags: 0, deaths: 0, mVictims: new Map(), lastShotMs: 0, respawnAt: 0,
+          invulnUntilMs: now + SPAWN_INVULN_MS, aimFlagged: false, aimShots: 0, aimHits: 0, aimHeadshots: 0,
+          visit: new ArcadeVisit(now), brain: new BotBrain(id, spawn, 'medium'), botStreak: 0,
+          loadoutTimer: null, pendingLoadout: null, undeliveredProgression: null };
+        resetMatchStats(bot, now);
+        room.bots.add(id); clients.set(id, bot);
+      }
+    }
+    if (humans.length === 0) { if (!room.emptySince) room.emptySince = Date.now(); }
+    else room.emptySince = 0;
+    if (!priorHumanPhase && humans.length === 2) arenaNotice(room, 'codex-entered');
+    if (priorHumanPhase && humans.length === 1) arenaNotice(room, 'codex-alone');
+    broadcastMeta(room);
+  };
+  const tickBots = (room: Room, now: number, dt: number) => {
+    const map = mapById(room.mapId);
+    for (const id of room.bots) {
+      const c = clients.get(id);
+      if (!c?.brain || c.respawnAt > now) continue;
+      const targets = actors(room).flatMap(other => {
+        const v = clients.get(other);
+        return v && v.id !== id && v.disconnectedAt === 0 && v.respawnAt <= now
+          ? [{ id: v.id, pos: v.pos, invuln: v.invulnUntilMs > now }] : [];
+      });
+      const shot = c.brain.step(dt, map, targets);
+      for (const cue of c.brain.movementCues) broadcastRoom(room, { type: 'motion', id: c.id, t: now, cue: copyMovementCue(cue) });
+      c.pos = { ...c.brain.pos }; c.yaw = c.brain.yaw + Math.PI; c.pitch = c.brain.pitch;
+      if (shot) handleShoot(c, { type: 'shoot', ox: shot.origin.x, oy: shot.origin.y, oz: shot.origin.z,
+        dx: shot.dir.x, dy: shot.dir.y, dz: shot.dir.z, renderTime: now });
+    }
+  };
+  const pendingSettlements = new Map<string, { delta: Parameters<typeof recordMatch>[0]; clientId: string; message?: { rewards?: ReturnType<typeof recordMatch>; rewardsPending: boolean } }>();
+  const endVisit = (c: ClientRecord, room: Room, reason: ExitReason, event?: CodexEvent) => {
+    if (!c.visit || c.visit.ended) return;
+    const now = Date.now();
+    advanceVisits(room, now);
+    const stats = c.visit.freeze();
+    // Leave combat before settling: a synchronous database failure cannot leave
+    // a frozen player targetable or prevent the solo bot transition.
+    room.members.delete(c.id); c.roomId = null; c.team = null;
+    c.history.length = 0; c.posSamples.length = 0;
+    c.mSettled = true;
+    controllers?.ended(c.id, event);
+    broadcastRoom(room, { type: 'peer-left', clientId: c.id });
+    syncBots(room); broadcastVisitStats(room); broadcastRoomList(); schedulePresence();
+    if (room.members.size === 0) { room.hostId = null; endSpectators(room); }
+    else if (room.hostId === c.id) room.hostId = room.members.values().next().value ?? null;
+    const delta: Parameters<typeof recordMatch>[0] = { playerId: c.playerId, userName: c.name,
+      kills: c.mKills, deaths: stats.human.deaths, wins: 0, bestStreak: c.mBestStreak,
+      headshots: c.mHeadshots, shotsFired: c.mShots, shotsHit: c.mHits,
+      accuracy: c.mShots ? c.mHits * 100 / c.mShots : 0, offline: stats.humanDurationMs === 0,
+      now, arcade: stats, humanPlaytimeSeconds: stats.humanDurationMs / 1000,
+      strangeUids: [...c.strangeUids], strangeKills: Math.round(c.mKillWeight),
+      killWeight: c.mKills ? c.mKillWeight / c.mKills : 1 };
+    let rewards: ReturnType<typeof recordMatch> | undefined;
+    try { rewards = recordMatch(delta); }
+    catch (error) { console.error('[arena] settlement queued', error); pendingSettlements.set(stats.visitId, { delta, clientId: c.id }); }
+    const message = { type: 'session-ended', stats, rewards, rewardsPending: !rewards, reason, event,
+      returnAfterMs: event ? 5000 : 0 };
+    const pending = pendingSettlements.get(stats.visitId);
+    if (pending) pending.message = message;
+    controllers?.ended(c.id, event, message);
+    sendRaw(c.socket, message);
+    // A task may finish during a network drop; a resumed socket gets the frozen
+    // results instead of silently beginning a new visit.
+    endedResumes.set(c.resumeToken, { playerId: c.playerId, message, expires: now + RESUME_GRACE_MS });
+    if (rewards) sendRaw(c.socket, { type: 'progression', mode: 'arcade', partial: true, visitId: stats.visitId, ...rewards });
+  };
 
   // Re-broadcast a player's room profile after a meta field changed (cosmetic
   // equip). No-op while they're browsing the lobby (not in a room yet).
@@ -1912,7 +2080,8 @@ export function attachInstagibWs(wss: WebSocketServer) {
     const ez = shooter.pos.z;
     if (Math.hypot(msg.ox - ex, msg.oy - ey, msg.oz - ez) > SHOT_ORIGIN_MAX_DIST) return;
     shooter.lastShotMs = now;
-    shooter.mShots += 1; // an accepted shot (progression accuracy)
+    if (!room.arcade || room.humanPhase) shooter.mShots += 1;
+    shooter.visit?.shot(room.humanPhase);
     shooter.lastActiveMs = now; // firing counts as activity (AFK timer)
     // Firing ends your own spawn invuln — you can't shoot from behind protection.
     if (shooter.invulnUntilMs > now) shooter.invulnUntilMs = 0;
@@ -1939,7 +2108,7 @@ export function attachInstagibWs(wss: WebSocketServer) {
     let bestHeadshot = false;
     let bestPos: Vec | null = null;
 
-    for (const id of room.members) {
+    for (const id of actors(room)) {
       if (id === shooter.id) continue;
       const victim = clients.get(id);
       if (!victim) continue;
@@ -1981,7 +2150,7 @@ export function attachInstagibWs(wss: WebSocketServer) {
     );
 
     if (!bestId || !bestPos) {
-      recordAim(shooter, false, false); // a miss
+      if (shooter.actor !== 'bot') recordAim(shooter, false, false); // a miss
       return;
     }
     const victim = clients.get(bestId);
@@ -1990,10 +2159,10 @@ export function attachInstagibWs(wss: WebSocketServer) {
     // victim's live pos — otherwise a fast-moving victim could dodge/eat a hit
     // that was legitimately in range at the rewound render time.
     if (dist(shooter.pos, bestPos) > KILL_MAX_RANGE + 5) {
-      recordAim(shooter, false, false);
+      if (shooter.actor !== 'bot') recordAim(shooter, false, false);
       return;
     }
-    recordAim(shooter, true, bestHeadshot);
+    if (shooter.actor !== 'bot') recordAim(shooter, true, bestHeadshot);
     // Throttle a flagged aimbot: the shot landed but we drop the frag (the stat
     // window keeps decaying, so a legit player who dips back under the threshold
     // un-flags within a window or two).
@@ -2001,12 +2170,20 @@ export function attachInstagibWs(wss: WebSocketServer) {
 
     shooter.frags += 1;
     victim.deaths += 1;
+    shooter.visit?.kill(victim.actor !== 'bot', bestHeadshot);
+    victim.visit?.death(shooter.actor !== 'bot');
+    victim.botStreak = 0;
+    if (room.arcade && victim.actor === 'bot') {
+      shooter.botStreak = (shooter.botStreak ?? 0) + 1;
+      if (shooter.visit) shooter.visit.stats.bot.bestStreak = Math.max(shooter.visit.stats.bot.bestStreak, shooter.botStreak);
+      shooter.mStreak = 0;
+    } else shooter.botStreak = 0;
     // Progression counters (a throttled aimbot shot above never gets here).
     // A frag counts unless the victim is YOU — the same account, or anyone on
     // your network identity (your own guest tab, a second account on the same
     // machine). Guests from elsewhere count normally. A shot spent on a
     // non-counting victim leaves accuracy untouched (out of hits and shots).
-    if (!sameIdentity(victim, shooter)) {
+    if ((!room.arcade || (shooter.actor !== 'bot' && victim.actor !== 'bot')) && !sameIdentity(victim, shooter)) {
       shooter.mKills += 1;
       shooter.mHits += 1;
       const vKey = identityKey(victim); // decay per victim identity (account, else network)
@@ -2019,7 +2196,7 @@ export function attachInstagibWs(wss: WebSocketServer) {
       if (bestHeadshot) shooter.mHeadshots += 1;
       shooter.mStreak += 1;
       if (shooter.mStreak > shooter.mBestStreak) shooter.mBestStreak = shooter.mStreak;
-    } else {
+    } else if (!room.arcade || (victim.actor !== 'bot' && shooter.actor !== 'bot')) {
       shooter.mShots = Math.max(0, shooter.mShots - 1);
     }
     victim.mStreak = 0;
@@ -2055,7 +2232,9 @@ export function attachInstagibWs(wss: WebSocketServer) {
     // Invuln spans the killcam + a full spawn grace after they reappear (see
     // KILL_RESPAWN_INVULN_MS) so they're protected the whole time they can't act.
     victim.invulnUntilMs = now + KILL_RESPAWN_INVULN_MS;
+    victim.brain?.respawn(respawnPos, mapById(room.mapId));
 
+    if (room.arcade) return; // visits end independently; arenas never reach a frag limit
     // Mode-aware resolution of the kill.
     if (room.isRanked) {
       // Ranked Duel: a flat first-to-N race. No rounds, no vote — reaching the
@@ -2134,8 +2313,7 @@ export function attachInstagibWs(wss: WebSocketServer) {
       lastPosMs: 0,
       lastPosRxMono: 0,
       posCreditMs: 0,
-      msgWindowStart: now,
-      msgCount: 0,
+      messageBudget: new TokenBucket(MSG_RATE_BURST, MSG_RATE_LIMIT, now),
       roomWindowStart: now,
       roomCount: 0,
       chatWindowStart: now,
@@ -2200,16 +2378,11 @@ export function attachInstagibWs(wss: WebSocketServer) {
 
     socket.on('message', (raw, isBinary) => {
       const ts = Date.now();
-      // Inbound message-rate guard (#2): a flood of pos/shoot/list is a cheap
-      // DoS. Count per rolling second and close a socket that blows past the cap.
-      if (ts - record.msgWindowStart >= MSG_RATE_WINDOW_MS) {
-        record.msgWindowStart = ts;
-        record.msgCount = 0;
-      }
-      record.msgCount += 1;
-      if (record.msgCount > MSG_RATE_LIMIT) {
+      // Fixed one-second windows falsely kicked legitimate movement delivered
+      // in a batch after a stall. Keep the sustained cap with bounded headroom.
+      if (!record.messageBudget.allow(ts)) {
         try {
-          socket.close();
+          socket.close(1008, 'Message rate exceeded');
         } catch {
           // ignore
         }
@@ -2431,7 +2604,27 @@ export function attachInstagibWs(wss: WebSocketServer) {
           break;
         }
 
+        case 'arena': {
+          record.agent = parseAgent(msg.agent) ?? 'codex';
+          leaveRoom(record);
+          leaveSpectate(record);
+          const visit = new ArcadeVisit();
+          let room = [...rooms.values()].filter(r => r.arcade && r.members.size < 8 && !sameAccountMember(r, record))
+            .sort((a, b) => connectedHumans(b).length - connectedHumans(a).length || a.createdAt - b.createdAt)[0];
+          if (!room) {
+            if (rooms.size >= 256 || !chargeRoomCreate(record, Date.now())) { sendRaw(socket, { type: 'join-failed', reason: 'rate' }); break; }
+            const pool = mapPoolForMode('ffa');
+            room = createRoom({ name: 'Agent Deathmatch', mode: 'ffa', mapId: pool[Math.floor(Math.random() * pool.length)], isPublic: true, capacity: 8, hostId: null, arcade: true });
+          }
+          if (msg.controllerToken && !controllers?.bind(msg.controllerToken, msg.attemptId ?? '', record.id, visit.stats.visitId)) {
+            sendRaw(socket, { type: 'join-failed', reason: 'cancelled' }); break;
+          }
+          joinRoom(record, room, visit);
+          break;
+        }
+
         case 'join': {
+          record.agent = parseAgent(msg.agent) ?? 'codex';
           rankedQueue.delete(record.id); // joining a room → leave the ranked queue
           const room = msg.roomId ? rooms.get(msg.roomId) : undefined;
           if (!room) {
@@ -2494,10 +2687,15 @@ export function attachInstagibWs(wss: WebSocketServer) {
         }
 
         case 'resume': {
+          record.agent = parseAgent(msg.agent) ?? 'codex';
           // A reconnecting client presents its previous resume token to reclaim
           // its in-match slot + score. On miss/expiry, fall back to a fresh join.
           const token = typeof msg.token === 'string' ? msg.token : '';
           let old: ClientRecord | null = null;
+          const ended = endedResumes.get(token);
+          if (ended && ended.playerId === record.playerId && ended.expires > Date.now()) {
+            sendRaw(socket, ended.message); break;
+          }
           if (token) {
             for (const c of clients.values()) {
               if (c !== record && c.disconnectedAt > 0 && c.resumeToken === token) {
@@ -2509,6 +2707,8 @@ export function attachInstagibWs(wss: WebSocketServer) {
           if (old && Date.now() - old.disconnectedAt <= RESUME_GRACE_MS && resumeMatch(record, old)) {
             break;
           }
+          // An expired arcade reconnect requires a new Play; it must not start a visit.
+          if (msg.roomId && rooms.get(msg.roomId)?.arcade) { sendRaw(socket, { type: 'join-failed', reason: 'gone' }); break; }
           // No resumable slot → behave like a normal join (or fail).
           const room = msg.roomId ? rooms.get(msg.roomId) : undefined;
           if (!room) {
@@ -2568,6 +2768,17 @@ export function attachInstagibWs(wss: WebSocketServer) {
           if (!record.playerId) break;
           const pid = record.playerId;
           queueLoadout(record, () => resolveEquipped(pid));
+          break;
+        }
+
+        case 'motion': {
+          if (!isMovementCue(msg.cue) || !record.roomId || record.disconnectedAt > 0 || record.respawnAt > ts) break;
+          const room = rooms.get(record.roomId);
+          if (!room || !room.members.has(record.id) || room.state !== 'active' || ts < room.resumeAt) break;
+          let rate = movementCueRates.get(record);
+          if (!rate || ts - rate.start >= 1000) { rate = { start: ts, count: 0 }; movementCueRates.set(record, rate); }
+          if (++rate.count > 20) break;
+          broadcastRoom(room, { type: 'motion', id: record.id, t: ts, cue: copyMovementCue(msg.cue) });
           break;
         }
 
@@ -2759,6 +2970,7 @@ export function attachInstagibWs(wss: WebSocketServer) {
       }
     });
 
+    socket.on('pong', () => { record.lastSeen = Date.now(); });
     socket.on('close', () => handleDisconnect(record));
     socket.on('error', () => handleDisconnect(record));
   });
@@ -2827,13 +3039,19 @@ export function attachInstagibWs(wss: WebSocketServer) {
       snapshotDiagTicks += 1;
     }
     for (const room of rooms.values()) {
+      if (room.arcade) {
+        advanceVisits(room, now);
+        if (connectedHumans(room).length === 0) continue;
+        tickBots(room, now, Math.min(0.05, tickDtMs / 1000));
+        if (now - room.statsAt >= 1000) { broadcastVisitStats(room); room.statsAt = now; }
+      }
       if (room.members.size === 0) continue;
       // Record each member's pose into the lag-comp history AT SNAPSHOT TIME (not
       // at pos-receive time). Clients interpolate remotes by snapshot timestamp,
       // so stamping history on the same timeline makes a rewind reconstruct the
       // exact position the shooter saw — hits land where you aimed regardless of
       // the target's ping (a high-ping target is no longer harder to hit).
-      for (const id of room.members) {
+      for (const id of actors(room)) {
         const c = clients.get(id);
         if (!c || c.disconnectedAt > 0) continue;
         // Resample to a consistent instant (anti-alias). The SAME resampled pos
@@ -2991,43 +3209,66 @@ export function attachInstagibWs(wss: WebSocketServer) {
     }
   }, 1500);
 
+  let lastSweepAt = Date.now();
   const sweepTimer = setInterval(() => {
     const now = Date.now();
+    const delayed = now - lastSweepAt > STALE_CLIENT_TIMEOUT_MS;
+    lastSweepAt = now;
     // Drop stale clients (socket dead) and AFK players (alive socket but no real
     // input in a while — pings alone keep `lastSeen` fresh but not `lastActiveMs`,
     // so an idle client used to hold a slot, e.g. blocking a 2-cap duel room).
     for (const [id, c] of clients) {
+      if (c.actor === 'bot') continue;
       // Dropped-but-held for a possible resume: reap once the grace expires
       // (skip the stale/AFK paths — its socket is already gone).
       if (c.disconnectedAt > 0) {
         if (now - c.disconnectedAt > RESUME_GRACE_MS) {
-          leaveRoom(c);
+          leaveRoom(c, 'disconnected');
           leaveSpectate(c);
           listers.delete(id);
           clients.delete(id);
         }
         continue;
       }
-      const stale = now - c.lastSeen > STALE_CLIENT_TIMEOUT_MS;
+      // Let queued socket I/O run before declaring peers stale after OUR stall.
+      const stale = !delayed && now - c.lastSeen > STALE_CLIENT_TIMEOUT_MS;
       const afk = c.roomId != null && now - c.lastActiveMs > AFK_TIMEOUT_MS;
       if (stale || afk) {
+        const arcade = c.roomId != null && rooms.get(c.roomId)?.arcade;
+        if (arcade && stale && !afk) {
+          handleDisconnect(c);
+          try { c.socket.close(); } catch { /* Already dropped. */ }
+          continue;
+        }
+        // Freeze and send arcade results while the socket is still writable.
+        if (arcade) leaveRoom(c, afk ? 'idle' : 'disconnected');
         try {
-          if (afk && !stale) sendRaw(c.socket, { type: 'error', message: 'Kicked for inactivity' });
+          if (!arcade && afk && !stale) sendRaw(c.socket, { type: 'error', message: 'Kicked for inactivity' });
           c.socket.close();
         } catch {
           // ignore
         }
-        leaveRoom(c);
+        if (!arcade) leaveRoom(c, afk ? 'idle' : 'disconnected');
         leaveSpectate(c); // a stale spectator socket must also leave room.spectators
         listers.delete(id);
         clients.delete(id);
       }
     }
+    for (const [visitId, pending] of pendingSettlements) {
+      try {
+        const rewards = recordMatch(pending.delta);
+        if (pending.message) { pending.message.rewards = rewards; pending.message.rewardsPending = false; }
+        const client = clients.get(pending.clientId);
+        if (client) sendRaw(client.socket, { type: 'progression', mode: 'arcade', visitId, partial: true, ...rewards });
+        pendingSettlements.delete(visitId);
+      } catch { /* Keep the frozen settlement identity for a later retry. */ }
+    }
+    for (const [token, ended] of endedResumes) if (now > ended.expires) endedResumes.delete(token);
     // Reap rooms that have been empty past the grace window. A room that has
     // never been joined (a private invite waiting for its first player) gets a
     // much longer grace so sharing a code over chat doesn't race a 30s reap (#16).
     for (const [rid, room] of rooms) {
-      if (room.members.size !== 0 || room.emptySince <= 0) continue;
+      if ((room.arcade ? connectedHumans(room).length !== 0 : room.members.size !== 0) || room.emptySince <= 0) continue;
       // Long grace ONLY for never-occupied PRIVATE invite rooms (a shared code
       // waiting for a slow join). Public/quickmatch rooms that nobody joined are
       // phantoms — reap them on the short window so spam can't pile them up.
@@ -3048,15 +3289,25 @@ export function attachInstagibWs(wss: WebSocketServer) {
   rankedTimer.unref?.();
   sweepTimer.unref?.();
 
+  if (controllers) {
+    controllers.onEvent = (id, event) => { const c = clients.get(id); if (c) leaveRoom(c, event.category, event); };
+    controllers.onEnd = id => { const c = clients.get(id); if (c) leaveRoom(c); };
+  }
   // Live counts for the lobby/landing "N playing now" social-proof readout.
   return {
+    dispose() {
+      clearInterval(snapshotTimer); clearInterval(voteTimer); clearInterval(rankedTimer); clearInterval(sweepTimer);
+      if (presenceTimer) clearTimeout(presenceTimer);
+      for (const c of clients.values()) { if (c.loadoutTimer) clearTimeout(c.loadoutTimer); if (c.actor !== 'bot') c.socket.terminate(); }
+      clients.clear(); rooms.clear();
+    },
     liveCounts() {
       let inMatch = 0;
-      for (const c of clients.values()) if (c.roomId) inMatch++;
+      for (const c of clients.values()) if (c.roomId && c.actor !== 'bot' && c.disconnectedAt === 0) inMatch++;
       let activeRooms = 0;
       for (const r of rooms.values()) if (r.members.size > 0) activeRooms++;
       return {
-        online: clients.size,
+        online: [...clients.values()].filter(c => c.actor !== 'bot' && c.disconnectedAt === 0).length,
         inMatch,
         rooms: activeRooms,
         loopLagMs: Math.round(loopLagEmaMs), // smoothed event-loop lag

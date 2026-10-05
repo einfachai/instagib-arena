@@ -1,0 +1,360 @@
+{
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+  "viewport": [
+    1864,
+    907,
+    1
+  ],
+  "checks": [
+    {
+      "quality": "full",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "full",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "full",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "full",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "full",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "full",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "full",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "full",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "full",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "full",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "full",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "full",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "full",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "reduced",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "reduced",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "reduced",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "reduced",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "reduced",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "reduced",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "reduced",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "reduced",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "reduced",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "reduced",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "reduced",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "reduced",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "reduced",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "low",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "low",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "low",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "low",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "low",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "low",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "low",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "low",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "low",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "low",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "low",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "low",
+      "characters": 8,
+      "passed": true
+    },
+    {
+      "quality": "low",
+      "characters": 8,
+      "passed": true
+    }
+  ],
+  "performance": [
+    {
+      "model": "original procedural character",
+      "quality": "full",
+      "state": "eight moving characters",
+      "frames": 120,
+      "cpuP50Ms": 0.7999999970197678,
+      "cpuP95Ms": 1.2000000029802322,
+      "frameP50Ms": 8.30000000000291,
+      "frameP95Ms": 9.89999999999418,
+      "peakDrawCalls": 9,
+      "peakTriangles": 35458
+    },
+    {
+      "model": "original procedural character",
+      "quality": "full",
+      "state": "eight simultaneous deaths",
+      "frames": 60,
+      "cpuP50Ms": 0.7999999970197678,
+      "cpuP95Ms": 1.2000000029802322,
+      "frameP50Ms": 8.30000000000291,
+      "frameP95Ms": 9.900000000001455,
+      "peakDrawCalls": 17,
+      "peakTriangles": 35474
+    },
+    {
+      "model": "Codex Y Bot",
+      "quality": "full",
+      "state": "eight moving characters",
+      "frames": 120,
+      "cpuP50Ms": 3.5,
+      "cpuP95Ms": 4.800000011920929,
+      "frameP50Ms": 8.30000000000291,
+      "frameP95Ms": 9.700000000004366,
+      "peakDrawCalls": 9,
+      "peakTriangles": 461218
+    },
+    {
+      "model": "Codex Y Bot",
+      "quality": "full",
+      "state": "eight simultaneous deaths",
+      "frames": 60,
+      "cpuP50Ms": 1,
+      "cpuP95Ms": 1.7000000029802322,
+      "frameP50Ms": 8.299999999995634,
+      "frameP95Ms": 9.80000000000291,
+      "peakDrawCalls": 17,
+      "peakTriangles": 461234
+    },
+    {
+      "model": "original procedural character",
+      "quality": "reduced",
+      "state": "eight moving characters",
+      "frames": 120,
+      "cpuP50Ms": 0.9000000059604645,
+      "cpuP95Ms": 1.5999999940395355,
+      "frameP50Ms": 8.299999999995634,
+      "frameP95Ms": 9.700000000004366,
+      "peakDrawCalls": 9,
+      "peakTriangles": 35458
+    },
+    {
+      "model": "original procedural character",
+      "quality": "reduced",
+      "state": "eight simultaneous deaths",
+      "frames": 60,
+      "cpuP50Ms": 0.6000000089406967,
+      "cpuP95Ms": 1.0999999940395355,
+      "frameP50Ms": 8.30000000000291,
+      "frameP95Ms": 9.900000000001455,
+      "peakDrawCalls": 9,
+      "peakTriangles": 35458
+    },
+    {
+      "model": "Codex Y Bot",
+      "quality": "reduced",
+      "state": "eight moving characters",
+      "frames": 120,
+      "cpuP50Ms": 3.300000011920929,
+      "cpuP95Ms": 4.5,
+      "frameP50Ms": 8.299999999995634,
+      "frameP95Ms": 10.19999999999709,
+      "peakDrawCalls": 9,
+      "peakTriangles": 461218
+    },
+    {
+      "model": "Codex Y Bot",
+      "quality": "reduced",
+      "state": "eight simultaneous deaths",
+      "frames": 60,
+      "cpuP50Ms": 1,
+      "cpuP95Ms": 2.3999999910593033,
+      "frameP50Ms": 8.30000000000291,
+      "frameP95Ms": 9.599999999998545,
+      "peakDrawCalls": 9,
+      "peakTriangles": 461218
+    },
+    {
+      "model": "original procedural character",
+      "quality": "low",
+      "state": "eight moving characters",
+      "frames": 120,
+      "cpuP50Ms": 0.7000000029802322,
+      "cpuP95Ms": 1.2000000029802322,
+      "frameP50Ms": 8.30000000000291,
+      "frameP95Ms": 9.900000000001455,
+      "peakDrawCalls": 9,
+      "peakTriangles": 35458
+    },
+    {
+      "model": "original procedural character",
+      "quality": "low",
+      "state": "eight simultaneous deaths",
+      "frames": 60,
+      "cpuP50Ms": 0.7000000029802322,
+      "cpuP95Ms": 1.7000000029802322,
+      "frameP50Ms": 8.30000000000291,
+      "frameP95Ms": 10,
+      "peakDrawCalls": 17,
+      "peakTriangles": 35474
+    },
+    {
+      "model": "Codex Y Bot",
+      "quality": "low",
+      "state": "eight moving characters",
+      "frames": 120,
+      "cpuP50Ms": 3.7999999970197678,
+      "cpuP95Ms": 6.9000000059604645,
+      "frameP50Ms": 8.30000000000291,
+      "frameP95Ms": 9.60000000000582,
+      "peakDrawCalls": 9,
+      "peakTriangles": 461218
+    },
+    {
+      "model": "Codex Y Bot",
+      "quality": "low",
+      "state": "eight simultaneous deaths",
+      "frames": 60,
+      "cpuP50Ms": 0.7999999970197678,
+      "cpuP95Ms": 1.5999999940395355,
+      "frameP50Ms": 8.30000000000291,
+      "frameP95Ms": 9.80000000000291,
+      "peakDrawCalls": 17,
+      "peakTriangles": 461234
+    }
+  ],
+  "measuredAt": "2026-10-03T08:46:54.285Z",
+  "validationNotes": {
+    "scope": "Measurements captured before the final visor, emblem, socket and paused-pose fixes. Final browser rerun was interrupted by Chrome automation timeouts.",
+    "finisherChecksValid": false,
+    "reason": "The original harness read a nonexistent KillEffectCosmetic.style field. These 39 browser checks exercised the default pulse finisher; they do not verify all 13 effects.",
+    "deathPerformanceScope": "Eight simultaneous default pulse deaths. Mixed-finisher GPU measurements remain pending.",
+    "correctedHarness": "art/ybot/validation/preview.ts now selects finisher.id and restores quality flags explicitly.",
+    "correctedCpuTests": "All 13 IDs at three quality settings passed in tests/character.test.ts."
+  }
+}

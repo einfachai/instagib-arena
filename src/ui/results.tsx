@@ -13,6 +13,7 @@ import { TEAM_COLORS, TEAM_NAMES } from '../game/constants';
 import { ordinal } from './match-info';
 import { RewardsPending, RewardsReveal } from './rewards/RewardsReveal';
 import './postgame.css';
+import { BrandLogo } from './BrandLogo';
 
 // Deterministic 32-bit hash (FNV-1a) so a given name always maps to the same
 // podium hat/emote when we don't know its real loadout (offline bots / remotes).
@@ -39,7 +40,7 @@ function buildPodiumWinners(scores: PlayerScore[], settings: Settings): PodiumWi
     const emoteId = s.isLocal
       ? settings.emote
       : s.emote ?? emoteIds[(h >>> 4) % emoteIds.length] ?? DEFAULT_EMOTE;
-    return { place: i + 1, name: s.name, score: s.frags, hatId, emoteId, you: !!s.isLocal, looks: s.isLocal ? settings.looks : undefined };
+    return { place: i + 1, agent: s.agent, name: s.name, score: s.frags, hatId, emoteId, you: !!s.isLocal, looks: s.isLocal ? settings.looks : undefined };
   });
 }
 
@@ -403,7 +404,7 @@ function ResultsPanel({
       ? { text: 'text-emerald-300', glow: 'rgba(52,211,153,0.6)', line: '#6ee7b7', wash: 'rgba(16,185,129,0.16)' }
       : head.tone === 'loss'
         ? { text: 'text-rose-300', glow: 'rgba(244,63,94,0.6)', line: '#fda4af', wash: 'rgba(225,29,72,0.16)' }
-        : { text: 'text-cyan-100', glow: 'rgba(34,211,238,0.45)', line: '#a5f3fc', wash: 'rgba(34,211,238,0.12)' };
+        : { text: 'text-cyan-100', glow: 'rgba(var(--arena-accent-rgb),0.45)', line: '#c6d4ff', wash: 'rgba(var(--arena-accent-rgb),0.12)' };
 
   return (
     <ModalShell
@@ -442,6 +443,7 @@ function ResultsPanel({
             className='rw-flare pointer-events-none absolute inset-x-0 h-[2px]'
             style={{ top: 'calc(50% - 8px)', background: `linear-gradient(90deg, transparent, ${tone.line}, transparent)` }}
           />
+          <BrandLogo className='brand-results-logo' />
           <div className='rw-sub-in mb-1.5 font-display text-[10px] font-bold uppercase tracking-[0.42em] text-white/40'>
             Match complete
           </div>

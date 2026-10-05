@@ -24,11 +24,11 @@ import { BARREL_Y, COIL_COUNT, COIL_R, COIL_Z, CORE_R, CORE_Y, CORE_Z, MUZZLE_Z,
 // ─────────────────────────────────────────────────────────────────────────
 
 export const STOCK_FINISH: RailgunFinish = {
-  body: 0x171b22,
-  metal: 0x2c333f,
-  metalLt: 0x515d6e,
-  accent: 0x37a6ff,
-  accentHot: 0x8af2ff,
+  body: 0xe4e8eb,
+  metal: 0x252a30,
+  metalLt: 0x8b939d,
+  accent: 0x008aff,
+  accentHot: 0x66bdff,
 };
 
 // Keyed by string so the table can run ahead of the FinishPattern union

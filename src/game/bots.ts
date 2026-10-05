@@ -1,4 +1,7 @@
+import type { MovementCue } from './movement-cues';
 import * as THREE from 'three';
+import type { GroundImpactListener } from './character/gibs';
+import { preloadCharacterAssets } from './character/assets';
 import {
   BOT_HEADSHOT_THRESHOLD,
   BOT_HEIGHT,
@@ -55,6 +58,7 @@ const COMBATANT_MODEL: BotModel = Object.freeze({ kind: 'combatant' as const });
 
 // Resolves immediately. The URL (the old soldier.glb path) is ignored.
 export async function loadBotModel(_url?: string): Promise<BotModel | null> {
+  await preloadCharacterAssets();
   return COMBATANT_MODEL;
 }
 
@@ -146,6 +150,8 @@ export class Bot {
   private eyes: EyesLike | null = null; // Professional Killstreak eyes while on a streak
   private gun: AttachedRailgun | null = null; // third-person railgun (disposed with the bot)
   // Reused animator input (no per-frame allocation).
+  onMovementCue: ((cue: MovementCue) => void) | null = null;
+  private readonly pendingCues: MovementCue[] = [];
   private readonly animIn: CharacterAnimInput = { dt: 0, yaw: 0, pitch: 0, pos: new THREE.Vector3() };
   // Shared third-person animator (gait, aim, jump/land, gibs) — the same
   // implementation remote players use. Null on the capsule fallback.
@@ -155,6 +161,9 @@ export class Bot {
   // overlays such as the enemy outline.
   get body(): Character | null {
     return this.character;
+  }
+  set onDeathGroundImpact(listener: GroundImpactListener | null) {
+    if (this.anim) this.anim.onDeathGroundImpact = listener;
   }
   private highlight: THREE.Color | null = null; // viewer's enemy-highlight colour
   private teamLook: string | null = null; // TDM team colour (overrides highlight)
@@ -245,12 +254,14 @@ export class Bot {
         this.state.alive = true;
         this.group.visible = true;
         this.anim?.respawn(this.group.position); // clear the gibs, back to idle
+        this.gun?.setCharge(1);
         this.nameSprite.visible = !this.plateSuppressed;
       }
       return null;
     }
 
     const shot = this.brain.step(dt, map, enemies);
+    for (const cue of this.brain.movementCues) { this.pendingCues.push(cue); this.onMovementCue?.(cue); }
     this.state.pos = this.brain.pos;
     this.group.position.set(this.state.pos.x, this.state.pos.y, this.state.pos.z);
     if (!shot) return null;
@@ -278,7 +289,11 @@ export class Bot {
     ai.yaw = this.brain.yaw + MODEL_YAW_OFFSET;
     ai.pitch = this.state.alive ? this.brain.pitch : 0;
     ai.pos = this.group.position;
+    ai.cues = this.pendingCues;
+    ai.grounded = this.brain.onGround;
+    ai.velocity = this.brain.vel;
     this.anim.update(ai);
+    this.pendingCues.length = 0;
   }
 
   // TDM team assignment (null = FFA/Duel). `color` tints the nameplate so the
@@ -311,6 +326,7 @@ export class Bot {
   // coils recharge.
   notifyFire(railColor?: number) {
     this.gun?.notifyFire(railColor);
+    this.anim?.notifyFire();
   }
 
   // World position of the 3rd-person gun's muzzle into `out` (null without a
@@ -323,6 +339,7 @@ export class Bot {
   kill(style?: KillEffectStyle) {
     if (!this.state.alive) return;
     this.state.alive = false;
+    this.pendingCues.length = 0;
     this.state.respawnTimer = BOT_RESPAWN_DELAY;
     // Instagib: the body bursts into its armour chunks where it stood; step()
     // hides it once they've shrunk away. Capsule fallback: vanish at once.

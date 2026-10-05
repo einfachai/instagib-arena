@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import type { Settings } from '../app-types';
 import { useModalStack } from '../deck-core';
 import { DeckButton, SegButton, UtilButton } from '../deck';
-import { ReplayViewer, type ReplayViewerState } from '../game/replay-viewer';
+import { RetiredReplayLayoutError, ReplayViewer, type ReplayViewerState } from '../game/replay-viewer';
 import { decodeReplay, type ReplayData } from '../game/replay-codec';
 import { fmtChallengeTime } from './shared';
 
@@ -78,8 +78,10 @@ export function ReplayViewerOverlay({
         );
         viewerRef.current = viewer;
         await viewer.start(); // starts paused on the first frame
-      } catch {
-        if (!cancelled) setError('This run could not be loaded.');
+      } catch (error) {
+        viewerRef.current?.dispose();
+        viewerRef.current=null;
+        if (!cancelled) setError(error instanceof RetiredReplayLayoutError ? error.message : 'This run could not be loaded.');
       }
     })();
     // Esc closes (or exits fullscreen first); Space toggles play.
@@ -160,7 +162,7 @@ export function ReplayViewerOverlay({
           ) : countdown !== null ? (
             <>
               <div className='text-[10px] uppercase tracking-[0.3em] text-cyan-300/80'>Starting run</div>
-              <div className='mt-1 font-display text-7xl font-bold tabular-nums text-white drop-shadow-[0_0_24px_rgba(34,211,238,0.5)]'>
+              <div className='mt-1 font-display text-7xl font-bold tabular-nums text-white drop-shadow-[0_0_24px_rgba(125,155,255,0.5)]'>
                 {countdown}
               </div>
             </>

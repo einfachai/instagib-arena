@@ -400,7 +400,7 @@ export function cm360(sensitivity: number, dpi: number): number {
   return (360 / (sensitivity * M_YAW_DEG * dpi)) * 2.54;
 }
 
-// Rebindable keyboard actions (fire/boost stay on the mouse). Values are
+// Rebindable keyboard actions (fire/scope stay on the mouse). Values are
 // KeyboardEvent.code strings.
 export type KeybindAction =
   | 'forward'
@@ -409,6 +409,7 @@ export type KeybindAction =
   | 'right'
   | 'jump'
   | 'dash'
+  | 'boost'
   | 'zoom'
   | 'scoreboard'
   | 'chat'
@@ -423,7 +424,8 @@ export const KEYBIND_ACTIONS: ReadonlyArray<{ id: KeybindAction; label: string }
   { id: 'right', label: 'Strafe right' },
   { id: 'jump', label: 'Jump' },
   { id: 'dash', label: 'Dash' },
-  { id: 'zoom', label: 'Zoom (hold)' },
+  { id: 'boost', label: 'Boost jump' },
+  { id: 'zoom', label: 'Scope (hold, alternate key)' },
   { id: 'scoreboard', label: 'Scoreboard' },
   { id: 'chat', label: 'Chat' },
   { id: 'taunt', label: 'Taunt (equipped emote)' },
@@ -458,6 +460,7 @@ export const DEFAULT_KEYBINDS: Record<KeybindAction, string> = {
   right: 'KeyD',
   jump: 'Space',
   dash: 'ShiftLeft',
+  boost: 'KeyE',
   zoom: 'KeyC',
   scoreboard: 'Tab',
   chat: 'KeyY',

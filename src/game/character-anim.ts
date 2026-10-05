@@ -1,465 +1,375 @@
 import * as THREE from 'three';
+import type { GroundImpactListener } from './character/gibs';
 import { DEFAULT_KILL_EFFECT, type KillEffectStyle } from './cosmetics';
 import { Character } from './character/character';
-import { B } from './character/rig';
-import { PoseSpec, SIDE_L, SIDE_R, solvePose } from './character/pose';
-import { evalClip, type Clip } from './character/clip';
-import { HOLD, PALM_OFFSET } from './character/gun';
+import { characterAssets } from './character/assets';
 import { GibBurst, type GibFloor } from './character/gibs';
-import { Locomotion, type FootfallListener, type LocoInput } from './locomotion';
-import { emoteClip, emoteStance, type AnyEmoteKind as EmoteKind } from './emotes';
-import { EmoteProps } from './emote-props';
+import { Locomotion, type FootfallListener } from './locomotion';
+import type { AnyEmoteKind as EmoteKind } from './emotes';
+import type { MovementCue } from './movement-cues';
+import { HOLD, gunSupportHold } from './character/gun';
 
-// Third-person animation for the code-built arena combatant, shared by
-// networked remote players, offline bots, replays, the podium and the Locker.
-//
-// Pipeline each frame:
-//   motion tracking (from the entity's world position — the server owns it)
-//   → Locomotion (procedural gait, air, land, dash, wall-kick) → PoseSpec
-//   → aim layer (pitch through spine/neck/head; gun hold on the aim line)
-//   → optional full-body emote clip, blended in/out (+ its hard-light props)
-//   → solver (FK + two-bone IK for all four limbs) → bone matrices.
-// Death is an instagib: the body's own rigid parts fly apart (see gibs.ts).
-// Purely visual — hitboxes and positions are never written.
-
-export type CharacterModel = {
-  scene: THREE.Object3D;
-  animations: THREE.AnimationClip[];
-};
-
+export type CharacterModel = { scene: THREE.Object3D; animations: THREE.AnimationClip[] };
 export type CharacterAnimInput = {
-  dt: number;
-  // Model-root yaw (three.js Y rotation, radians); forward is (-sin, -cos).
-  yaw: number;
-  // View/aim pitch, radians, positive = looking up.
-  pitch: number;
-  // World-space feet position of the entity this frame (read, never written).
-  pos: THREE.Vector3;
+  dt: number; yaw: number; pitch: number; pos: THREE.Vector3;
+  velocity?: { x: number; y: number; z: number };
+  grounded?: boolean;
+  cues?: readonly MovementCue[];
 };
-
-const DEG = Math.PI / 180;
-const MAX_DT = 0.1;
-const TELEPORT_SPEED = 60;
-const VERTICAL_SNAP_SPEED = 40;
-const SPEED_SMOOTH_HZ = 10;
-const PITCH_SMOOTH_HZ = 14;
-const TAKEOFF_VY = 2.0;
-const AIR_COMMIT_JUMP_SEC = 0.05;
-const AIR_COMMIT_FALL_SEC = 0.22;
-const GROUND_VY = 0.35;
-const GROUND_COMMIT_SEC = 0.08;
-const LAND_IMPACT_VY = -2.0;
-const LAND_IMPACT_WINDOW_SEC = 0.05;
-const AIM_PITCH_LIMIT = 70 * DEG;
-const RIFLE_TWIST = 16 * DEG; // chest bladed to the right; head/gun stay on the aim
-const EMOTE_BLEND_HZ = 7;
-
-const clamp = (v: number, lo: number, hi: number) => (v < lo ? lo : v > hi ? hi : v);
-function wrapPi(a: number): number {
-  while (a > Math.PI) a -= Math.PI * 2;
-  while (a < -Math.PI) a += Math.PI * 2;
-  return a;
-}
-
-// Enable shadow casting on every mesh under `root`.
+export type AnimatorOptions = { driveYaw?: boolean; holdGun?: boolean };
 export function enableShadows(root: THREE.Object3D): void {
-  root.traverse((obj) => {
-    if ((obj as THREE.Mesh).isMesh) obj.castShadow = true;
-  });
+  root.traverse((o) => { if ((o as THREE.Mesh).isMesh) o.castShadow = true; });
 }
-
-export type AnimatorOptions = {
-  // Rotate the character root by the input yaw (live entities). Podium/Locker
-  // characters are placed by their own outer group instead.
-  driveYaw?: boolean;
-  // Hold the railgun (live) — off for podium/Locker unless an emote wants it.
-  holdGun?: boolean;
+const clamp = THREE.MathUtils.clamp;
+const DIRECTIONS = ['forward', 'forward-right', 'right', 'backward-right', 'backward', 'backward-left', 'left', 'forward-left'];
+const WRIST_FRAMES = {
+  Right: new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(new THREE.Vector3(0, 0.9, -0.43589), new THREE.Vector3(0, -0.43589, -0.9), new THREE.Vector3(-1, 0, 0))),
+  Left: new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(new THREE.Vector3(0, 0, 1), new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 1, 0))),
 };
 
+// The support palm cups the fore-end diagonally: the wrist points forward
+// from the elbow, while the fingers cross the underside. The thumb opposes
+// them along the near rail instead of sticking vertically up the receiver.
+const R01_SUPPORT_WRIST = WRIST_FRAMES.Left.clone().premultiply(
+  new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), 0.35),
+);
+const R01_SUPPORT_PALM = new THREE.Vector3(0, 0.1021, 0.01604).applyQuaternion(R01_SUPPORT_WRIST);
+const R01_FINGERS = { Index: [0.5, 1.1, 0.3], Middle: [0.85, 0.75, 0.3], Ring: [1.05, 0.55, 0.3], Pinky: [1.2, 0.4, 0.3] };
+const R01_THUMB = [new THREE.Vector3(-0.27, 0.92, 0.3), new THREE.Vector3(-0.95, 0.30, 0.1), new THREE.Vector3(-0.95, 0.30, -0.06)]
+  .map(direction => new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize()));
+// Bone rotations are relative to the previous phalange, not the wrist.
+for (let i = R01_THUMB.length - 1; i > 0; i--) R01_THUMB[i].premultiply(R01_THUMB[i - 1].clone().invert());
+
+// Independent mixer and cloned skeleton per character. The mixer changes only
+// canonical bone transforms; position, gravity, collision and hitboxes stay in
+// the existing gameplay controller. Directional strafing never implies a dash.
 export class CharacterAnimator {
-  readonly loco = new Locomotion();
-  private readonly spec = new PoseSpec();
-  private readonly emoteSpec = new PoseSpec();
+  readonly loco = new Locomotion(); // compatibility/footfall telemetry for labs
+  readonly mixer: THREE.AnimationMixer;
+  private readonly actions = new Map<string, THREE.AnimationAction>();
+  private readonly gibs: GibBurst;
+  private readonly prev = new THREE.Vector3();
+  private readonly velocity = new THREE.Vector3();
+  private hasPrev = false;
+  private grounded = true;
+  private speed = 0;
+  private pitch = 0;
+  private prevYaw = 0;
+  private event: { id: string; t: number; duration: number; weight: number } | null = null;
+  private emote: EmoteKind | null = null;
+  private emoteWeight = 0;
+  private emoteTarget = 0;
+  private recoil = 0;
+  private r01SupportGrip = false;
+  private stepPhase = 0;
   private readonly driveYaw: boolean;
   private readonly holdGun: boolean;
-  private readonly gibs: GibBurst;
-  private time = Math.random() * 100;
-  private readonly li: LocoInput = { dt: 0, vx: 0, vz: 0, speed: 0, vy: 0, grounded: true, yawRate: 0, time: 0 };
+  private readonly v = new THREE.Vector3();
+  private readonly q = new THREE.Quaternion();
+  private readonly q2 = new THREE.Quaternion();
+  private readonly scale = new THREE.Vector3();
+  private readonly m = new THREE.Matrix4();
+  private readonly target = new THREE.Vector3();
+  private readonly elbow = new THREE.Vector3();
+  private readonly ikGoal = new THREE.Vector3();
+  private readonly ikDirection = new THREE.Vector3();
+  private readonly shoulder = new THREE.Vector3();
+  private readonly bend = new THREE.Vector3();
+  private readonly joint = new THREE.Vector3();
+  private readonly end = new THREE.Vector3();
+  private readonly aimQuaternion = new THREE.Quaternion();
+  private readonly weights = new Map<string, number>();
+  private readonly upperActions = new Map<string, THREE.AnimationAction>();
+  private readonly upperAim: THREE.AnimationAction | null;
+  private readonly authoredRotations = new Map<THREE.Bone, THREE.Quaternion>();
 
-  // Motion tracking.
-  private readonly prev = new THREE.Vector3();
-  private hasPrev = false;
-  private vx = 0;
-  private vz = 0;
-  private prevVx = 0;
-  private prevVz = 0;
-  private prevVy = 0;
-  private vyNow = 0;
-  private speed = 0;
-  private airborne = false;
-  private airTimer = 0;
-  private groundTimer = 0;
-  private minVy = 0;
-  private sinceFastFall = Infinity;
-  private prevYaw = 0;
-  private hasYaw = false;
-  private aimPitch = 0;
-
-  // Emote override.
-  private emote: Clip | null = null;
-  private emoteKind: EmoteKind | null = null;
-  private emoteT = 0;
-  private emoteW = 0;
-  private emoteTarget = 0;
-  // Pending clip swap: blend out the old one first.
-  private nextEmote: EmoteKind | null = null;
-  // The emote's props (L glyph, sign, mic…), made on the first clip that has any.
-  private props: EmoteProps | null = null;
-
-  constructor(
-    readonly character: Character,
-    opts: AnimatorOptions = {},
-  ) {
+  constructor(readonly character: Character, opts: AnimatorOptions = {}) {
     this.driveYaw = opts.driveYaw ?? true;
     this.holdGun = opts.holdGun ?? true;
     this.gibs = new GibBurst(character);
+    this.mixer = new THREE.AnimationMixer(character.model);
+    for (const name of ['Spine', 'Spine2', 'Neck', 'Head', 'LeftArm', 'LeftForeArm', 'LeftHand', 'RightArm', 'RightForeArm', 'RightHand', ...['Left', 'Right'].flatMap(side => ['Thumb', 'Index', 'Middle', 'Ring', 'Pinky'].flatMap(digit => [1, 2, 3].map(segment => side + 'Hand' + digit + segment)))]) {
+      const bone = character.canonicalBones.get('mixamorig' + name);
+      if (bone) this.authoredRotations.set(bone, bone.quaternion.clone());
+    }
+    const lower = (name: string) => /mixamorig(?:Hips|(?:Left|Right)(?:UpLeg|Leg|Foot|Toe))/.test(name);
+    for (const [id, clip] of characterAssets(character.agent).clips) {
+      const movement = this.holdGun && !id.startsWith('emote.') && id !== 'rig.tpose' && id !== 'idle.relaxed';
+      const action = this.mixer.clipAction(movement ? new THREE.AnimationClip(id, clip.duration, clip.tracks.filter((t) => lower(t.name))) : clip);
+      action.play(); action.setEffectiveWeight(0);
+      this.actions.set(id, action);
+      if (movement && !/^(walk|run|sprint)\.|^idle\.|^jump\.(loop|down)$/.test(id)) {
+        const upper = this.mixer.clipAction(new THREE.AnimationClip(id + '.upper', clip.duration, clip.tracks.filter((t) => !lower(t.name))));
+        upper.play().setEffectiveWeight(0); this.upperActions.set(id, upper);
+      }
+    }
+    const aim = characterAssets(character.agent).clips.get('idle.armed')!;
+    this.upperAim = this.holdGun ? this.mixer.clipAction(new THREE.AnimationClip('aim.upper', aim.duration, aim.tracks.filter((t) => !lower(t.name)))) : null;
+    this.upperAim?.play();
     this.character.root.rotation.order = 'YXZ';
-    this.solve(0);
+    this.pose(0, 0, 0, 0, 0);
   }
-
-  // ── Footfalls (for synced footstep audio) ─────────────────────────────────
-  get footfalls(): number {
-    return this.loco.footfalls;
-  }
-  set onFootfall(fn: FootfallListener | null) {
-    this.loco.onFootfall = fn;
-  }
-  get isAirborne(): boolean {
-    return this.airborne;
-  }
-
-  // ── Emotes ─────────────────────────────────────────────────────────────────
-  // Play a full-body emote (null = back to the live/idle pose). Blends in/out.
+  get footfalls(): number { return this.loco.footfalls; }
+  set onFootfall(fn: FootfallListener | null) { this.loco.onFootfall = fn; }
+  get isAirborne(): boolean { return !this.grounded; }
+  get currentEmote(): EmoteKind | null { return this.emote; }
+  get movementClip(): string | null { return this.event?.id ?? null; }
+  get emoteShowsGun(): boolean { return false; }
   playEmote(kind: EmoteKind | null, restart = false): void {
-    if (kind === this.emoteKind && !restart) return;
-    if (kind === null) {
-      this.emoteTarget = 0;
-      this.nextEmote = null;
-      return;
-    }
-    if (this.emote && this.emoteW > 0.05 && kind !== this.emoteKind) {
-      // Blend the current clip out, then start the new one.
-      this.nextEmote = kind;
-      this.emoteTarget = 0;
-      return;
-    }
-    this.startEmote(kind);
+    if (kind === this.emote && !restart) return;
+    if (kind === null) { this.emoteTarget = 0; return; }
+    const id = kind === 'idle' ? 'idle.relaxed' : 'emote.placeholder';
+    const action = this.actions.get(id);
+    if (!action) throw new Error('Missing character emote: ' + id);
+    this.emote = kind; this.emoteTarget = 1; action.reset().play();
   }
-
-  // Jump an active emote to time t (lab / deterministic previews).
   setEmoteTime(t: number, weight = 1): void {
-    this.emoteT = t;
-    this.emoteW = weight;
-    this.emoteTarget = weight;
+    if (!this.emote) return;
+    const a = this.actions.get(this.emote === 'idle' ? 'idle.relaxed' : 'emote.placeholder');
+    if (a) a.time = t;
+    this.emoteWeight = this.emoteTarget = weight;
+    this.pose(0, 0, 0, 0, 0);
   }
-
-  get currentEmote(): EmoteKind | null {
-    return this.emoteKind;
-  }
-
-  get emoteShowsGun(): boolean {
-    return !!this.emote?.gun && this.emoteW > 0.5;
-  }
-
-  private startEmote(kind: EmoteKind) {
-    this.emote = emoteClip(kind);
-    if (this.emote.props.length && !this.props) this.props = new EmoteProps(this.character);
-    this.emoteKind = kind;
-    this.emoteT = 0;
-    this.emoteTarget = 1;
-    this.nextEmote = null;
-  }
-
-  // ── Lifecycle ──────────────────────────────────────────────────────────────
-
-  // Instagib: burst the body into its rigid parts. Always succeeds (even in
-  // mid-air — chunks just fall and shrink without a floor to bounce on).
-  // `style` = the killer's finisher: it picks how the body breaks apart.
+  notifyFire(): void { this.recoil = 1; }
+  set onDeathGroundImpact(listener: GroundImpactListener | null) { this.gibs.onGroundImpact = listener; }
   die(floor?: GibFloor, style: KillEffectStyle = DEFAULT_KILL_EFFECT): boolean {
-    if (this.gibs.active) return true;
-    this.props?.hide();
-    this.gibs.start(this.vx, this.vyNow, this.vz, floor ?? this.guessFloor(), style);
+    if (!this.gibs.active) this.gibs.start(this.velocity.x, this.velocity.y, this.velocity.z, floor === undefined ? (this.grounded ? { y: this.prev.y } : null) : floor, style);
     return true;
   }
-
-  isDying(): boolean {
-    return this.gibs.active;
-  }
-
-  deathDone(): boolean {
-    return this.gibs.active && this.gibs.done;
-  }
-
+  isDying(): boolean { return this.gibs.active; }
+  deathDone(): boolean { return this.gibs.active && this.gibs.done; }
   respawn(pos?: THREE.Vector3): void {
-    this.gibs.stop();
-    this.loco.reset();
-    this.aimPitch = 0;
-    this.hasYaw = false;
-    this.character.root.position.set(0, 0, 0);
-    this.resetMotion(pos);
-    this.solve(0);
+    this.gibs.stop(); this.event = null; this.emote = null; this.emoteTarget = this.emoteWeight = 0;
+    this.character.root.position.set(0, 0, 0); this.resetMotion(pos); this.pose(0, 0, 0, 0, 0);
   }
-
   resetMotion(pos?: THREE.Vector3): void {
-    if (pos) {
-      this.prev.copy(pos);
-      this.hasPrev = true;
-    } else {
-      this.hasPrev = false;
+    this.hasPrev = !!pos; if (pos) this.prev.copy(pos);
+    this.velocity.set(0, 0, 0); this.speed = this.pitch = this.recoil = 0;
+    this.grounded = true; this.event = null; this.stepPhase = 0; this.loco.reset();
+  }
+  dispose(): void { this.gibs.dispose(); this.mixer.stopAllAction(); this.mixer.uncacheRoot(this.character.model); }
+
+  update(input: CharacterAnimInput): void {
+    const dt = clamp(input.dt, 0, 0.1);
+    if (this.gibs.active) { this.gibs.update(dt); return; }
+    const oldGround = this.grounded, oldVy = this.velocity.y, oldVx = this.velocity.x, oldVz = this.velocity.z, oldSpeed = this.speed;
+    if (input.velocity) this.velocity.copy(input.velocity);
+    else if (this.hasPrev && dt > 0) {
+      this.velocity.subVectors(input.pos, this.prev).divideScalar(dt);
+      if (this.velocity.length() > 60) this.resetMotion(input.pos);
     }
-    this.vx = this.vz = this.prevVx = this.prevVz = 0;
-    this.prevVy = 0;
-    this.vyNow = 0;
-    this.speed = 0;
-    this.airborne = false;
-    this.airTimer = 0;
-    this.groundTimer = 0;
-    this.minVy = 0;
-    this.sinceFastFall = Infinity;
-    this.lastGroundY = pos ? pos.y : this.lastGroundY;
-  }
-
-  dispose(): void {
-    this.gibs.dispose();
-    this.props?.dispose();
-    this.props = null;
-  }
-
-  // ── Per-frame ──────────────────────────────────────────────────────────────
-
-  update(inp: CharacterAnimInput): void {
-    const dt = inp.dt > 0 ? Math.min(inp.dt, MAX_DT) : 0;
-    this.time += dt;
-    if (this.gibs.active) {
-      this.gibs.update(dt);
-      return;
+    this.prev.copy(input.pos); this.hasPrev = true;
+    this.grounded = input.grounded ?? Math.abs(this.velocity.y) < 0.35;
+    this.speed += (Math.hypot(this.velocity.x, this.velocity.z) - this.speed) * (1 - Math.exp(-10 * dt));
+    const cy = Math.cos(input.yaw), sy = Math.sin(input.yaw);
+    const vx = this.velocity.x * cy - this.velocity.z * sy, vz = this.velocity.x * sy + this.velocity.z * cy;
+    if (this.driveYaw) this.character.root.rotation.set(0, input.yaw, 0);
+    const yawRate = dt ? THREE.MathUtils.euclideanModulo(input.yaw - this.prevYaw + Math.PI, 2 * Math.PI) - Math.PI : 0;
+    this.prevYaw = input.yaw;
+    this.pitch += (clamp(input.pitch, -70 * Math.PI / 180, 70 * Math.PI / 180) - this.pitch) * (1 - Math.exp(-14 * dt));
+    // Older clients/replays have no events. Infer launch/relaunch/landing from
+    // motion, while dash remains an explicit cue to avoid false strafe lunges.
+    if (!input.cues?.length) {
+      if (oldGround && !this.grounded && this.velocity.y > 2) this.trigger({ kind: 'jump' });
+      else if (!oldGround && !this.grounded && this.velocity.y - oldVy > 4) {
+        const impulse = Math.hypot(this.velocity.x - oldVx, this.velocity.z - oldVz);
+        const length = Math.hypot(this.velocity.x, this.velocity.z) || 1;
+        this.trigger({ kind: this.velocity.y > 15 ? 'boost' : impulse > 7 ? 'wall-jump' : 'double-jump', direction: { x: this.velocity.x / length, z: this.velocity.z / length } }, input.yaw);
+      }
+      else if (!oldGround && this.grounded) this.trigger({ kind: 'landing', impact: Math.max(2, -oldVy) });
     }
-    this.trackMotion(inp.pos, dt);
-
-    // Aim yaw rate (for turn-in-place steps); the root carries the aim yaw.
-    let yawRate = 0;
-    if (this.hasYaw && dt > 0) yawRate = wrapPi(inp.yaw - this.prevYaw) / dt;
-    this.prevYaw = inp.yaw;
-    this.hasYaw = true;
-    if (this.driveYaw) this.character.root.rotation.set(0, inp.yaw, 0);
-
-    // World velocity → model space.
-    const cy = Math.cos(inp.yaw);
-    const sy = Math.sin(inp.yaw);
-    const mvx = this.vx * cy - this.vz * sy;
-    const mvz = this.vx * sy + this.vz * cy;
-
-    const target = clamp(inp.pitch, -AIM_PITCH_LIMIT, AIM_PITCH_LIMIT);
-    this.aimPitch += (target - this.aimPitch) * (1 - Math.exp(-PITCH_SMOOTH_HZ * dt));
-
-    const spec = this.spec;
-    spec.reset();
-    const li = this.li;
-    li.dt = dt;
-    li.vx = mvx;
-    li.vz = mvz;
-    li.speed = this.speed;
-    li.vy = this.vyNow;
-    li.grounded = !this.airborne;
-    li.yawRate = clamp(yawRate, -30, 30);
-    li.time = this.time;
-    this.loco.update(li, spec);
-    if (this.holdGun) this.applyAim(spec, this.aimPitch);
-    this.solve(dt);
+    for (const cue of input.cues ?? []) this.trigger(cue, input.yaw);
+    if (!this.event && this.grounded) {
+      if (oldSpeed < 0.8 && this.speed >= 0.8) this.startEvent('run.start', 0.25, 0.35);
+      if (oldSpeed >= 0.8 && this.speed < 0.8) this.startEvent(oldSpeed > 4 ? 'run.stop' : 'walk.stop', 0.3, 0.5);
+      if (this.speed < 0.5 && Math.abs(yawRate) > 0.05) this.startEvent(yawRate > 0 ? 'turn.left' : 'turn.right', 0.3, 0.4);
+    }
+    this.pose(dt, vx, vz, this.speed, this.holdGun ? this.pitch : 0);
+    this.loco.air = this.grounded ? 0 : 1; this.loco.move = clamp(this.speed / 5, 0, 1);
+    if (this.grounded && this.speed > 0.8 && !this.emote) {
+      const phase = this.stepPhase;
+      this.stepPhase += dt * clamp(this.speed * 0.45, 1.4, 6);
+      if (Math.floor(phase) !== Math.floor(this.stepPhase)) { this.loco.footfalls++; this.loco.onFootfall?.((Math.floor(this.stepPhase) % 2) as 0 | 1, this.speed); }
+    }
   }
-
-  // Emote-only update for podium/Locker characters (no motion tracking).
   updateStatic(dt: number): void {
-    dt = Math.max(0, Math.min(dt, MAX_DT));
-    this.time += dt;
-    if (this.gibs.active) {
-      this.gibs.update(dt);
-      return;
+    if (this.gibs.active) { this.gibs.update(clamp(dt, 0, 0.1)); return; }
+    this.grounded = true; this.pose(clamp(dt, 0, 0.1), 0, 0, 0, 0);
+  }
+  private trigger(cue: MovementCue, yaw = 0): void {
+    let id: string, duration: number, weight = 1;
+    switch (cue.kind) {
+      case 'jump': id = 'jump.up'; duration = 0.22; break;
+      case 'double-jump': id = 'jump.double'; duration = 0.32; break;
+      case 'boost': id = 'jump.boost'; duration = 0.38; break;
+      case 'wall-jump': {
+        const d = cue.direction; const side = d ? d.x * Math.cos(yaw) - d.z * Math.sin(yaw) : 1;
+        id = side > 0 ? 'wall.left' : 'wall.right'; duration = 0.28; break;
+      }
+      case 'dash': {
+        const d = cue.direction ?? { x: -Math.sin(yaw), z: -Math.cos(yaw) };
+        const x = d.x * Math.cos(yaw) - d.z * Math.sin(yaw), z = d.x * Math.sin(yaw) + d.z * Math.cos(yaw);
+        const direction = Math.abs(x) > Math.abs(z) ? x > 0 ? 'right' : 'left' : z > 0 ? 'backward' : 'forward';
+        id = 'dash.' + direction; duration = 0.15; break;
+      }
+      case 'landing': id = 'land'; duration = 0.2 + clamp((cue.impact ?? 5) / 40, 0, 0.2); weight = clamp((cue.impact ?? 5) / 12, 0.25, 1); break;
     }
-    const spec = this.spec;
-    spec.reset();
-    const li = this.li;
-    li.dt = dt;
-    li.vx = li.vz = li.speed = li.vy = li.yawRate = 0;
-    li.grounded = true;
-    li.time = this.time;
-    this.loco.update(li, spec);
-    if (this.holdGun) this.applyAim(spec, 0);
-    else this.relaxedArms(spec);
-    this.solve(dt);
+    if (!this.startEvent(id, duration, weight, cue.age)) return;
+    if (cue.kind === 'landing') this.grounded = true;
+    else if (cue.kind !== 'dash') this.grounded = false;
   }
-
-  // Aim layer: pitch spread through the spine, rifle-bladed chest, gun hold.
-  private applyAim(spec: PoseSpec, pitch: number) {
-    spec.addR(B.spine, pitch * 0.2, 0, 0);
-    spec.addR(B.chest, pitch * 0.3, -RIFLE_TWIST, 0);
-    spec.addR(B.neck, pitch * 0.15, RIFLE_TWIST * 0.4, 0);
-    spec.addR(B.head, pitch * 0.35, RIFLE_TWIST * 0.6, 0);
-    spec.handSpace = 'aim';
-    spec.aimPitch = pitch;
-    // Hand orientations in the aim frame: right = the gun's own frame (the
-    // socket has no rotation), left = palm up under the barrel, fingers
-    // wrapping toward the right.
-    spec.handQOn[SIDE_R] = true;
-    spec.handQ[SIDE_R].identity();
-    _e.set(0, 0, 90 * DEG, 'YXZ');
-    spec.handQ[SIDE_L].setFromEuler(_e);
-    const air = this.loco.air;
-    spec.handQOn[SIDE_L] = air < 0.5;
-    // Wrist targets = palm targets − handQ·palmOffset.
-    _v.copy(PALM_OFFSET).applyQuaternion(spec.handQ[SIDE_R]);
-    spec.hand[SIDE_R].copy(HOLD.grip).sub(_v);
-    _v.copy(PALM_OFFSET).applyQuaternion(spec.handQ[SIDE_L]);
-    spec.hand[SIDE_L].copy(HOLD.support).sub(_v);
-    // Air: the support hand lets go for balance, the gun stays on the aim.
-    if (air > 0.01) {
-      const k = air * 0.85;
-      const h = spec.hand[SIDE_L];
-      h.x += (-0.36 - h.x) * k;
-      h.y += (-0.02 - h.y) * k;
-      h.z += (0.02 - h.z) * k;
+  private startEvent(id: string, duration: number, weight: number, age = 0): boolean {
+    const a = this.actions.get(id);
+    if (!a || age >= duration) return false;
+    a.reset().play(); a.time = age / duration * a.getClip().duration;
+    this.event = { id, t: age, duration, weight };
+    return true;
+  }
+  private pose(dt: number, vx: number, vz: number, speed: number, pitch: number): void {
+    for (const a of this.actions.values()) { a.setEffectiveWeight(0); a.setEffectiveTimeScale(1); }
+    const weights = this.weights; weights.clear();
+    for (const a of this.upperActions.values()) a.setEffectiveWeight(0);
+    if (!this.grounded) weights.set(this.velocity.y < -2 ? 'jump.down' : 'jump.loop', 1);
+    else if (speed < 0.65) weights.set(this.holdGun ? 'idle.armed' : 'idle.relaxed', 1);
+    else {
+      const angle = THREE.MathUtils.euclideanModulo(Math.atan2(vx, -vz), Math.PI * 2) / (Math.PI / 4);
+      const first = Math.floor(angle) % 8, fraction = angle - Math.floor(angle);
+      const sprint = clamp((speed - 11) / 7, 0, 1), run = clamp((speed - 2) / 4, 0, 1);
+      for (const [gait, weight] of [['walk', 1 - run], ['run', run * (1 - sprint)], ['sprint', sprint]] as const) {
+        weights.set(gait + '.' + DIRECTIONS[first], weight * (1 - fraction));
+        weights.set(gait + '.' + DIRECTIONS[(first + 1) % 8], weight * fraction);
+      }
+      for (const [id] of weights) this.actions.get(id)?.setEffectiveTimeScale(clamp(speed / (id.startsWith('walk') ? 3 : id.startsWith('run') ? 7 : 12), 0.65, 1.8));
     }
-    // Landing: the gun dips with the body.
-    spec.hand[SIDE_R].y -= 0.05 * this.loco.land;
-    spec.hand[SIDE_L].y -= 0.05 * this.loco.land;
-    spec.elbow[SIDE_R].set(0.55, -1, 0.35);
-    spec.elbow[SIDE_L].set(-0.7, -1, -0.1);
-  }
-
-  private relaxedArms(spec: PoseSpec) {
-    spec.hand[SIDE_L].set(-0.27, 0.9, -0.02);
-    spec.hand[SIDE_R].set(0.27, 0.9, -0.02);
-    spec.elbow[SIDE_L].set(-0.3, 0, 1);
-    spec.elbow[SIDE_R].set(0.3, 0, 1);
-    spec.setR(B.handL, 0, 0, -6 * DEG);
-    spec.setR(B.handR, 0, 0, 6 * DEG);
-  }
-
-  private solve(dt: number) {
-    // Emote blend.
-    if (this.emote) {
-      this.emoteW += (this.emoteTarget - this.emoteW) * (1 - Math.exp(-EMOTE_BLEND_HZ * dt));
-      if (this.emoteTarget === 0 && this.emoteW < 0.02) {
-        if (this.nextEmote) this.startEmote(this.nextEmote);
-        else {
-          this.emote = null;
-          this.emoteKind = null;
-          this.emoteW = 0;
+    let eventWeight = 0;
+    if (this.event) {
+      this.event.t += dt;
+      if (this.event.t >= this.event.duration) this.event = null;
+      else {
+        eventWeight = this.event.weight * Math.min(1, (this.event.duration - this.event.t) / 0.06);
+        const a = this.actions.get(this.event.id);
+        if (a) {
+          a.time = this.event.t / this.event.duration * a.getClip().duration; a.setEffectiveTimeScale(0);
+          const upper = this.upperActions.get(this.event.id);
+          if (upper) { upper.time = a.time; upper.setEffectiveTimeScale(0); upper.setEffectiveWeight(eventWeight * 0.5 * (1 - this.emoteWeight)); }
         }
       }
     }
-    const rig = this.character.rig;
-    if (this.emote && this.emoteW > 0.001) {
-      this.emoteT += dt;
-      emoteStance(this.emoteSpec);
-      evalClip(this.emote, this.emoteT, this.emoteSpec);
-      solvePose(rig, this.spec, this.emoteSpec, this.emoteW);
-    } else {
-      solvePose(rig, this.spec);
-    }
-    rig.writeBones();
-    this.props?.update(this.emote, this.emoteT, this.emoteW);
+    this.emoteWeight += (this.emoteTarget - this.emoteWeight) * (1 - Math.exp(-9 * dt));
+    if (!this.emoteTarget && this.emoteWeight < 0.01) { this.emote = null; this.emoteWeight = 0; }
+    for (const [id, weight] of weights) this.actions.get(id)?.setEffectiveWeight(weight * (1 - eventWeight) * (1 - this.emoteWeight));
+    if (this.event) this.actions.get(this.event.id)?.setEffectiveWeight(eventWeight * (1 - this.emoteWeight));
+    if (this.emote) this.actions.get(this.emote === 'idle' ? 'idle.relaxed' : 'emote.placeholder')?.setEffectiveWeight(this.emoteWeight);
+    this.upperAim?.setEffectiveWeight((1 - this.emoteWeight) * (1 - (this.event && this.upperActions.has(this.event.id) ? eventWeight * 0.5 : 0)));
+    // PropertyMixer skips assigning a transform when its sampled value has
+    // not changed. Restore the authored rotations so aim/IK cannot accumulate
+    // on a paused replay or a held animation frame.
+    for (const [bone, rotation] of this.authoredRotations) bone.quaternion.copy(rotation);
+    this.mixer.update(dt);
+    for (const [bone, rotation] of this.authoredRotations) rotation.copy(bone.quaternion);
+    this.recoil *= Math.exp(-20 * dt);
+    this.character.root.updateWorldMatrix(true, true);
+    if (this.holdGun && this.emoteWeight < 0.5) this.aim(pitch);
+    this.character.syncRigFacade();
+    // Socket coordinates are in the game's normalized logical frame.
+    if ((this.holdGun && this.emoteWeight < 0.5) || this.emoteShowsGun) this.grip(pitch);
   }
-
-  // ── Motion tracking ────────────────────────────────────────────────────────
-  private lastGroundY = 0;
-  private sinceGround = 0;
-
-  private guessFloor(): GibFloor {
-    // Grounded (or just left the ground a moment ago, not far above it) → the
-    // victim's last standing height is a good floor for the chunks to bounce on.
-    const y = this.prev.y;
-    if (!this.airborne) return { y };
-    if (this.sinceGround < 0.7 && y - this.lastGroundY < 2.5 && y >= this.lastGroundY - 0.1) return { y: this.lastGroundY };
-    return null;
+  private aim(pitch: number): void {
+    for (const [name, share] of [['Spine', 0.2], ['Spine2', 0.3], ['Neck', 0.15], ['Head', 0.35]] as const) {
+      const b = this.character.canonicalBones.get('mixamorig' + name);
+      if (!b) continue;
+      b.getWorldQuaternion(this.q);
+      this.v.set(1, 0, 0).applyQuaternion(this.character.root.getWorldQuaternion(this.q2));
+      this.q.premultiply(this.q2.setFromAxisAngle(this.v, pitch * share + (name === 'Spine2' ? this.recoil * 0.035 : 0)));
+      b.parent!.getWorldQuaternion(this.q2); b.quaternion.copy(this.q2.invert().multiply(this.q)); b.updateWorldMatrix(false, true);
+    }
   }
-
-  private trackMotion(pos: THREE.Vector3, dt: number): void {
-    if (dt <= 0) return;
-    if (!this.hasPrev) {
-      this.prev.copy(pos);
-      this.hasPrev = true;
-      this.lastGroundY = pos.y;
-      return;
-    }
-    const dx = pos.x - this.prev.x;
-    const dy = pos.y - this.prev.y;
-    const dz = pos.z - this.prev.z;
-    this.prev.copy(pos);
-    const hs = Math.hypot(dx, dz) / dt;
-    const vyRaw = dy / dt;
-    if (hs > TELEPORT_SPEED || Math.abs(vyRaw) > TELEPORT_SPEED) {
-      this.resetMotion(pos);
-      return;
-    }
-    this.prevVx = this.vx;
-    this.prevVz = this.vz;
-    this.vx = dx / dt;
-    this.vz = dz / dt;
-    this.speed += (hs - this.speed) * (1 - Math.exp(-SPEED_SMOOTH_HZ * dt));
-    const vy = Math.abs(vyRaw) > VERTICAL_SNAP_SPEED ? this.prevVy : vyRaw;
-    this.vyNow = vy;
-    this.sinceFastFall = vy < LAND_IMPACT_VY ? 0 : this.sinceFastFall + dt;
-
-    const still = Math.abs(vy) < GROUND_VY;
-    if (!this.airborne) {
-      this.sinceGround = 0;
-      this.lastGroundY = pos.y;
-      if (still) {
-        this.airTimer = 0;
-      } else {
-        this.airTimer += dt;
-        const launch = vy > TAKEOFF_VY;
-        if (this.airTimer >= (launch ? AIR_COMMIT_JUMP_SEC : AIR_COMMIT_FALL_SEC)) {
-          this.airborne = true;
-          this.groundTimer = 0;
-          this.minVy = Math.min(0, vy);
-          this.loco.takeoff(launch);
+  private grip(pitch: number): void {
+    const ch = this.character, socket = ch.sockets.gun;
+    // Gun aim frame is relative to the gameplay root, never to the imported
+    // hand's arbitrary FBX rest axes. Railgun scale and first-person gun stay.
+    this.aimQuaternion.setFromAxisAngle(this.v.set(1, 0, 0), pitch + this.recoil * 0.035);
+    ch.rig.modelPos(3, this.target);
+    this.target.add(this.v.copy(HOLD.grip).applyQuaternion(this.aimQuaternion));
+    this.target.z += this.recoil * 0.015;
+    this.m.compose(this.target, this.aimQuaternion, this.scale.set(1, 1, 1));
+    const hand = ch.rig.bones[13];
+    socket.matrix.copy(hand.matrix).invert().multiply(this.m); socket.matrixAutoUpdate = false;
+    // Correct the real Mixamo arm chains and orient the wrists to the gun.
+    // Palm contact is on the side of the slanted pistol grip. The hand's
+    // +Y runs wrist-to-knuckles and +Z points out through its padded palm.
+    this.target.add(this.v.set(0.0305, 0.0392, -0.0004).applyQuaternion(this.aimQuaternion));
+    this.target.sub(this.v.set(0, 0.103, 0).applyQuaternion(WRIST_FRAMES.Right).applyQuaternion(this.aimQuaternion));
+    ch.root.localToWorld(this.target); this.solveArm('Right', this.target);
+    this.orientWrist('Right');
+    const support = gunSupportHold(socket);
+    // Custom models return their legacy HOLD.support anchor and retain that pose.
+    this.r01SupportGrip = support !== HOLD.support;
+    this.target.setFromMatrixPosition(this.m).add(this.elbow.copy(support).sub(HOLD.grip).applyQuaternion(this.aimQuaternion));
+    if (this.r01SupportGrip) this.v.copy(R01_SUPPORT_PALM);
+    else this.v.set(0.108, 0.027, 0);
+    this.target.sub(this.v.applyQuaternion(this.aimQuaternion));
+    ch.root.localToWorld(this.target); this.solveArm('Left', this.target);
+    this.orientWrist('Left');
+    this.curlFingers();
+    ch.syncRigFacade();
+    socket.matrix.copy(hand.matrix).invert().multiply(this.m); socket.matrixWorldNeedsUpdate = true;
+  }
+  private orientWrist(side: 'Left' | 'Right'): void {
+    const hand = this.character.canonicalBones.get('mixamorig' + side + 'Hand');
+    if (!hand) return;
+    this.character.root.getWorldQuaternion(this.q);
+    this.q.multiply(this.aimQuaternion).multiply(side === 'Left' && this.r01SupportGrip ? R01_SUPPORT_WRIST : WRIST_FRAMES[side]);
+    hand.parent!.getWorldQuaternion(this.q2);
+    hand.quaternion.copy(this.q2.invert().multiply(this.q)).normalize();
+    hand.updateWorldMatrix(false, true);
+  }
+  private curlFingers(): void {
+    // Dedicated grasp, independent of the fingers in the old rifle animation.
+    for (const side of ['Left', 'Right'] as const) {
+      for (const digit of ['Index', 'Middle', 'Ring', 'Pinky'] as const) {
+        const angles = side === 'Right' ? (digit === 'Index' ? [0, 1.53, 1.5] : [1.05, 1.35, 0.9]) : this.r01SupportGrip ? R01_FINGERS[digit] : [0.8, 0.9, 0.55];
+        for (let i = 0; i < 3; i++) {
+          const bone = this.character.canonicalBones.get(`mixamorig${side}Hand${digit}${i + 1}`)!;
+          bone.quaternion.setFromAxisAngle(this.v.set(1, 0, 0), angles[i]);
+          if (side === 'Right' && digit === 'Index' && i === 0) bone.quaternion.multiply(this.q.setFromAxisAngle(this.v.set(0, 0, 1), 0.234));
         }
       }
-    } else {
-      this.sinceGround += dt;
-      if (vy < this.minVy) this.minVy = vy;
-      const impact = still && this.sinceFastFall <= LAND_IMPACT_WINDOW_SEC;
-      this.groundTimer = still ? this.groundTimer + dt : 0;
-      if (impact || this.groundTimer >= GROUND_COMMIT_SEC) {
-        this.airborne = false;
-        this.airTimer = 0;
-        this.loco.landed(-this.minVy);
-        this.minVy = 0;
-      } else if (vy > TAKEOFF_VY && vy - this.prevVy > TAKEOFF_VY) {
-        // Mid-air relaunch: double jump / boost / wall jump. A sharp
-        // horizontal redirect at the same instant means a wall kicked us.
-        const dvx = this.vx - this.prevVx;
-        const dvz = this.vz - this.prevVz;
-        const wall = Math.hypot(dvx, dvz) > 4.5;
-        const yaw = this.character.root.rotation.y;
-        const c = Math.cos(yaw);
-        const s = Math.sin(yaw);
-        this.loco.relaunch(dvx * c - dvz * s, dvx * s + dvz * c, wall);
-        this.minVy = 0;
+      if (side === 'Left') for (let i = 0; i < 3; i++) {
+        const rotation = this.character.canonicalBones.get(`mixamorigLeftHandThumb${i + 1}`)!.quaternion;
+        if (this.r01SupportGrip) rotation.copy(R01_THUMB[i]);
+        else rotation.setFromAxisAngle(this.v.set(1, 0, 0), [0.9, 0.9, 0.35][i]);
       }
     }
-    this.prevVy = vy;
+  }
+  private pointBone(bone: THREE.Bone, child: THREE.Bone, target: THREE.Vector3): void {
+    bone.getWorldPosition(this.elbow); child.getWorldPosition(this.v);
+    this.v.sub(this.elbow).normalize(); this.ikDirection.copy(target).sub(this.elbow).normalize();
+    this.q.setFromUnitVectors(this.v, this.ikDirection);
+    bone.getWorldQuaternion(this.q2); this.q.multiply(this.q2);
+    bone.parent!.getWorldQuaternion(this.q2); bone.quaternion.copy(this.q2.invert().multiply(this.q));
+    bone.updateWorldMatrix(false, true);
+  }
+  private solveArm(side: 'Left' | 'Right', target: THREE.Vector3): void {
+    const bones = this.character.canonicalBones;
+    const upper = bones.get('mixamorig' + side + 'Arm')!, lower = bones.get('mixamorig' + side + 'ForeArm')!, hand = bones.get('mixamorig' + side + 'Hand')!;
+    upper.getWorldPosition(this.shoulder); lower.getWorldPosition(this.joint); hand.getWorldPosition(this.end);
+    const a = this.shoulder.distanceTo(this.joint), b = this.joint.distanceTo(this.end);
+    this.ikGoal.copy(target);
+    this.end.subVectors(target, this.shoulder);
+    const distance = clamp(this.end.length(), Math.abs(a - b) + 0.0001, a + b - 0.0001);
+    this.end.normalize();
+    this.ikGoal.copy(this.shoulder).addScaledVector(this.end, distance);
+    // A stable outward/downward elbow pole avoids wrist reach errors and arm
+    // flips as pitch crosses zero. Solve the full two-bone triangle directly.
+    this.bend.set(side === 'Right' ? 0.7 : -0.7, -1, 0.15).applyQuaternion(this.character.root.getWorldQuaternion(this.q));
+    this.bend.addScaledVector(this.end, -this.bend.dot(this.end)).normalize();
+    const along = (a * a - b * b + distance * distance) / (2 * distance);
+    this.joint.copy(this.shoulder).addScaledVector(this.end, along).addScaledVector(this.bend, Math.sqrt(Math.max(0, a * a - along * along)));
+    this.pointBone(upper, lower, this.joint);
+    this.pointBone(lower, hand, this.ikGoal);
   }
 }
-
-const _e = new THREE.Euler();
-const _v = new THREE.Vector3();
-
-// Build a character + animator pair (the common case for live entities).
 export function createCombatant(opts: { colorHex?: string; castShadow?: boolean } & AnimatorOptions = {}) {
-  const character = new Character({ colorHex: opts.colorHex, castShadow: opts.castShadow });
-  const anim = new CharacterAnimator(character, opts);
-  return { character, anim };
+  const character = new Character(opts); return { character, anim: new CharacterAnimator(character, opts) };
 }

@@ -68,6 +68,26 @@ export class RateLimiter {
   }
 }
 
+// A bounded token budget preserves a sustained rate limit while tolerating
+// short batches delivered together by TCP after a scheduling/network stall.
+export class TokenBucket {
+  private tokens: number;
+  private updatedAt: number;
+  constructor(private capacity: number, private perSecond: number, now = Date.now()) {
+    this.tokens = capacity;
+    this.updatedAt = now;
+  }
+  allow(now = Date.now()): boolean {
+    if (now > this.updatedAt) {
+      this.tokens = Math.min(this.capacity, this.tokens + (now - this.updatedAt) * this.perSecond / 1000);
+      this.updatedAt = now;
+    }
+    if (this.tokens < 1) return false;
+    this.tokens -= 1;
+    return true;
+  }
+}
+
 const apiHits = new RateLimiter(120, 10_000);
 export const protectApi: RequestHandler = (req, res, next) => {
   res.setHeader('Cache-Control', 'no-store');

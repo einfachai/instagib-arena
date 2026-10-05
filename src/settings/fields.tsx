@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react';
 import { DeckSwitch, SegButton, UtilButton } from '../deck';
 import { sfxProps, toast } from '../deck-core';
 import { ANNOUNCER_PACKS, DEFAULT_ANNOUNCER_PACK, type AnnouncerPackId } from '../game/audio';
-import { announcerPackCosmeticId, cosmeticById, sourceLabel } from '../game/cosmetics';
 import type { CrosshairConfig, Settings } from '../app-types';
 import { decodeCrosshair, decodeSettings, encodeCrosshair, encodeSettings } from './codec';
 import { IconReset } from './icons';
@@ -381,11 +380,7 @@ export function TextRow({
   );
 }
 
-// Announcer-pack picker, gated by ownership. Packs are registered as cosmetics
-// (see cosmetics.ts) so the server's `unlocked` list already reflects admin-all +
-// level/credit grants — we just fetch the profile and lock the rest. The default
-// pack is always free; admins get everything. A locked pack that's somehow active
-// (persisted, then lost) is reset to default.
+// The game uses one voice. Migrate old saved selections when this row opens.
 export function AnnouncerPackRow({
   value,
   onChange,
@@ -393,58 +388,25 @@ export function AnnouncerPackRow({
   value: AnnouncerPackId;
   onChange: (v: AnnouncerPackId) => void;
 }) {
-  const [unlocked, setUnlocked] = useState<Set<string> | null>(null);
   useEffect(() => {
-    let active = true;
-    fetch('/api/profile', { credentials: 'same-origin' })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d: { profile?: { unlocked?: string[] } } | null) => {
-        if (active) setUnlocked(new Set(d?.profile?.unlocked ?? [])); // empty (e.g. guest) → only default
-      })
-      .catch(() => active && setUnlocked(new Set()));
-    return () => {
-      active = false;
-    };
-  }, []);
-  const isUnlocked = useCallback(
-    (packId: string): boolean => {
-      const cos = cosmeticById(announcerPackCosmeticId(packId));
-      if (!cos || cos.source.type === 'default') return true; // default pack is always free
-      return unlocked?.has(cos.id) ?? false;
-    },
-    [unlocked],
-  );
-  // If the active pack isn't owned (locked / persisted from a prior unlock), drop to default.
-  useEffect(() => {
-    if (unlocked && value !== DEFAULT_ANNOUNCER_PACK && !isUnlocked(value)) onChange(DEFAULT_ANNOUNCER_PACK);
-  }, [unlocked, value, isUnlocked, onChange]);
+    if (value !== DEFAULT_ANNOUNCER_PACK) onChange(DEFAULT_ANNOUNCER_PACK);
+  }, [value, onChange]);
   return (
     <SettingRow
-      label='Announcer pack'
-      hint='Premium packs unlock by level (or are staff-granted). Admins have all of them.'
+      label='Announcer voice'
+      hint='Victor voices every kill, match callout, and Codex notice.'
       dirty={value !== DEFAULT_ANNOUNCER_PACK}
       onReset={() => onChange(DEFAULT_ANNOUNCER_PACK)}
     >
       <select
-        value={value}
-        aria-label='Announcer pack'
-        onChange={(e) => {
-          const v = e.target.value as AnnouncerPackId;
-          if (isUnlocked(v)) onChange(v);
-        }}
+        value={DEFAULT_ANNOUNCER_PACK}
+        aria-label='Announcer voice'
+        onChange={() => onChange(DEFAULT_ANNOUNCER_PACK)}
         className='deck-input deck-select st-select'
       >
-        {ANNOUNCER_PACKS.map((p) => {
-          const ok = isUnlocked(p.id);
-          const cos = cosmeticById(announcerPackCosmeticId(p.id));
-          const lock = !ok && cos ? ` 🔒 ${sourceLabel(cos.source)}` : '';
-          return (
-            <option key={p.id} value={p.id} disabled={!ok} className='bg-zinc-900 text-white'>
-              {p.name}
-              {lock}
-            </option>
-          );
-        })}
+        {ANNOUNCER_PACKS.map((p) => (
+          <option key={p.id} value={p.id} className='bg-zinc-900 text-white'>{p.name}</option>
+        ))}
       </select>
     </SettingRow>
   );

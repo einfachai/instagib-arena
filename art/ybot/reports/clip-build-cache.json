@@ -1,0 +1,767 @@
+{
+  "walk.forward": {
+    "hash": "c8e5d19fcbf8ebc6b6c31ce6964f07661d343739920163f66f03a6f94676a35c",
+    "entry": {
+      "id": "walk.forward",
+      "url": "/models/codex-ybot/clips/walk.forward.glb",
+      "duration": 1.0,
+      "frames": 61,
+      "source": "rifle-pack/walk forward.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "walk.forward-right": {
+    "hash": "a7193db14fd9eb7aaa15596da0e2b1da1ad960fc404ec71e70c0a252d87c6329",
+    "entry": {
+      "id": "walk.forward-right",
+      "url": "/models/codex-ybot/clips/walk.forward-right.glb",
+      "duration": 1.0,
+      "frames": 61,
+      "source": "rifle-pack/walk forward right.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "walk.right": {
+    "hash": "d1e8cefc284bd8902faf56a7a7af087da5bad6113cd7716210292c8936d85963",
+    "entry": {
+      "id": "walk.right",
+      "url": "/models/codex-ybot/clips/walk.right.glb",
+      "duration": 1.0,
+      "frames": 61,
+      "source": "rifle-pack/walk right.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "walk.backward-right": {
+    "hash": "f118496fa3124e637c21fdd8cbb7770e60d42f0aed20fad2ace4872c8ce34357",
+    "entry": {
+      "id": "walk.backward-right",
+      "url": "/models/codex-ybot/clips/walk.backward-right.glb",
+      "duration": 1.0,
+      "frames": 61,
+      "source": "rifle-pack/walk backward right.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "walk.backward": {
+    "hash": "9b73f463d522faaf6d953deb6a3bca5aab73cb8e7bb7ab8cf81a80078f853b62",
+    "entry": {
+      "id": "walk.backward",
+      "url": "/models/codex-ybot/clips/walk.backward.glb",
+      "duration": 0.9666666666666667,
+      "frames": 59,
+      "source": "rifle-pack/walk backward.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "walk.backward-left": {
+    "hash": "89f732e20a58780ea941e5307dee56bd3a354d7d8e4adb73f6f5509492e33d74",
+    "entry": {
+      "id": "walk.backward-left",
+      "url": "/models/codex-ybot/clips/walk.backward-left.glb",
+      "duration": 1.0,
+      "frames": 61,
+      "source": "rifle-pack/walk backward left.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "walk.left": {
+    "hash": "d1892a9331b80820881b75e450a39c9352214c3071da19413e101b7fd4bd4a89",
+    "entry": {
+      "id": "walk.left",
+      "url": "/models/codex-ybot/clips/walk.left.glb",
+      "duration": 1.0,
+      "frames": 61,
+      "source": "rifle-pack/walk left.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "walk.forward-left": {
+    "hash": "11ef77122f96c7d582bd7cc35688af2e4ef4e4e31b1af835ed0cbf2c4c244835",
+    "entry": {
+      "id": "walk.forward-left",
+      "url": "/models/codex-ybot/clips/walk.forward-left.glb",
+      "duration": 1.0,
+      "frames": 61,
+      "source": "rifle-pack/walk forward left.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "run.forward": {
+    "hash": "7d4e74e713cfd184c5e62c2560c5dd923916f741a53859b27809030ea8149d0c",
+    "entry": {
+      "id": "run.forward",
+      "url": "/models/codex-ybot/clips/run.forward.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/run forward.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "run.forward-right": {
+    "hash": "a0707efae7f9dc9d7e7563b885f0ef5cf818f36c1a0d01c423abfd925e9a473d",
+    "entry": {
+      "id": "run.forward-right",
+      "url": "/models/codex-ybot/clips/run.forward-right.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/run forward right.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "run.right": {
+    "hash": "2e476e5c18966c67c76db9fcf1d9f37b7813803bae942b56eb04401591aa432e",
+    "entry": {
+      "id": "run.right",
+      "url": "/models/codex-ybot/clips/run.right.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/run right.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "run.backward-right": {
+    "hash": "1c83070a0b6794f6f05aea124625d894e2c47b1248e7a55db4bfb2e1ff471b2c",
+    "entry": {
+      "id": "run.backward-right",
+      "url": "/models/codex-ybot/clips/run.backward-right.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/run backward right.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "run.backward": {
+    "hash": "d78e24af80475e6c1c41b7ad22a74790d31f121301aa7ef38be1501f5074e65d",
+    "entry": {
+      "id": "run.backward",
+      "url": "/models/codex-ybot/clips/run.backward.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/run backward.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "run.backward-left": {
+    "hash": "3e9bd65e1508467d8d40056b991e55a5a6493c2ca889496a7c24320c3b2c9086",
+    "entry": {
+      "id": "run.backward-left",
+      "url": "/models/codex-ybot/clips/run.backward-left.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/run backward left.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "run.left": {
+    "hash": "1407ddb47b8092feb63d50829d1af9e5e4e4c18ce26b2d5b0a17c5954b0b0089",
+    "entry": {
+      "id": "run.left",
+      "url": "/models/codex-ybot/clips/run.left.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/run left.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "run.forward-left": {
+    "hash": "ca3bdf65363fd4728cde9f11012ecfd154ca1eb04148c64ebce4eb53d137651c",
+    "entry": {
+      "id": "run.forward-left",
+      "url": "/models/codex-ybot/clips/run.forward-left.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/run forward left.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "sprint.forward": {
+    "hash": "68306f5f9124129bc01ff0b6a45bac8dd2703e51c1e4f50169833dfd1a24f2bc",
+    "entry": {
+      "id": "sprint.forward",
+      "url": "/models/codex-ybot/clips/sprint.forward.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/sprint forward.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "sprint.forward-right": {
+    "hash": "ae4a2c409935178ed3fa5beb42065e0b530d261254655af4bd67fd72f1986371",
+    "entry": {
+      "id": "sprint.forward-right",
+      "url": "/models/codex-ybot/clips/sprint.forward-right.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/sprint forward right.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "sprint.right": {
+    "hash": "2540dcfe08b219bfae45f93881f3cd7738e090d26f9ba10152df91f359f53266",
+    "entry": {
+      "id": "sprint.right",
+      "url": "/models/codex-ybot/clips/sprint.right.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/sprint right.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "sprint.backward-right": {
+    "hash": "09b7d82a39d2ed785d85e56f7fdb6a6ab83a2d7403fc7f1a83fe8f5f18f51a62",
+    "entry": {
+      "id": "sprint.backward-right",
+      "url": "/models/codex-ybot/clips/sprint.backward-right.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/sprint backward right.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "sprint.backward": {
+    "hash": "6b775166e61e01262d3baf6ec49c0d2d7ce7a93d188e4607fa858348a3b000b7",
+    "entry": {
+      "id": "sprint.backward",
+      "url": "/models/codex-ybot/clips/sprint.backward.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/sprint backward.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "sprint.backward-left": {
+    "hash": "94a4121b466c38d3da956ffbdb498ea78eabafdcbbb1e1bdd1659274c3005b30",
+    "entry": {
+      "id": "sprint.backward-left",
+      "url": "/models/codex-ybot/clips/sprint.backward-left.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/sprint backward left.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "sprint.left": {
+    "hash": "b96294bdb849dd42d46cb055b5fd7c9b5e10e1ba354c9a53caa53e7e6709e122",
+    "entry": {
+      "id": "sprint.left",
+      "url": "/models/codex-ybot/clips/sprint.left.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/sprint left.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "sprint.forward-left": {
+    "hash": "19b3592e34c8a68eec35885c76ccceb01651d80ebe001bbdebf7e7d6c6a4b931",
+    "entry": {
+      "id": "sprint.forward-left",
+      "url": "/models/codex-ybot/clips/sprint.forward-left.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/sprint forward left.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "idle.armed": {
+    "hash": "945dfbfa39cb3e8062a860a1b60fbe5e17f15c2deeb987b8e2bd86ac3c165a7a",
+    "entry": {
+      "id": "idle.armed",
+      "url": "/models/codex-ybot/clips/idle.armed.glb",
+      "duration": 2.1,
+      "frames": 127,
+      "source": "rifle-pack/idle aiming.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "turn.left": {
+    "hash": "d52f34b7071c93c47d5ffae93aa1c719cd980effa25e0185bb968a7fa5e81bbb",
+    "entry": {
+      "id": "turn.left",
+      "url": "/models/codex-ybot/clips/turn.left.glb",
+      "duration": 1.0,
+      "frames": 61,
+      "source": "rifle-pack/turn 90 left.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "turn.right": {
+    "hash": "ad3020561513e3dc2ebcd23db3d0cc1e4a8dca2625e9fc4ee1e68f629c104009",
+    "entry": {
+      "id": "turn.right",
+      "url": "/models/codex-ybot/clips/turn.right.glb",
+      "duration": 1.0,
+      "frames": 61,
+      "source": "rifle-pack/turn 90 right.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "jump.up": {
+    "hash": "7c258ae15c246b4a6813002fb499bc5d3aa1cbcf574f7de5489aca6f74efa0a2",
+    "entry": {
+      "id": "jump.up",
+      "url": "/models/codex-ybot/clips/jump.up.glb",
+      "duration": 0.5333333333333333,
+      "frames": 33,
+      "source": "rifle-pack/jump up.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "jump.loop": {
+    "hash": "05ff71c285b796d3796d1543cd07e3439981cb8d85d3b2d8d45edb6129b550f4",
+    "entry": {
+      "id": "jump.loop",
+      "url": "/models/codex-ybot/clips/jump.loop.glb",
+      "duration": 0.9333333333333333,
+      "frames": 57,
+      "source": "rifle-pack/jump loop.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "jump.down": {
+    "hash": "3e8b41c346dd44e1cf081f626241dfefb1ff9309786902d3e54253bd8800c732",
+    "entry": {
+      "id": "jump.down",
+      "url": "/models/codex-ybot/clips/jump.down.glb",
+      "duration": 0.6666666666666666,
+      "frames": 41,
+      "source": "rifle-pack/jump down.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "idle.relaxed": {
+    "hash": "c257b29a959937d0e9c2272fff665a855864c6473b9c281a0f97b66084513e6c",
+    "entry": {
+      "id": "idle.relaxed",
+      "url": "/models/codex-ybot/clips/idle.relaxed.glb",
+      "duration": 9.916666666666666,
+      "frames": 596,
+      "source": "Breathing Idle.fbx",
+      "loop": true,
+      "movement": false,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "dash.forward": {
+    "hash": "c87072f574f0ed04c27a244fa7ce8453e542a016026ae06b18f66c2abb3ddba1",
+    "entry": {
+      "id": "dash.forward",
+      "url": "/models/codex-ybot/clips/dash.forward.glb",
+      "duration": 0.36666666666666664,
+      "frames": 23,
+      "source": "Standing Dodge Forward.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0.12,
+        0.5
+      ],
+      "mirrored": false
+    }
+  },
+  "dash.backward": {
+    "hash": "37750d24e9ea3b30e0c9e33d90131a9c0c0a0ae011b5ae30ef21ffd2650c260c",
+    "entry": {
+      "id": "dash.backward",
+      "url": "/models/codex-ybot/clips/dash.backward.glb",
+      "duration": 0.6166666666666667,
+      "frames": 38,
+      "source": "Standing Dodge Backward.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0.12,
+        0.5
+      ],
+      "mirrored": false
+    }
+  },
+  "dash.left": {
+    "hash": "11b2cfc19492fd389a6e4b4bbe4f8ff053c17dd46d27c8e79c86f162982354f4",
+    "entry": {
+      "id": "dash.left",
+      "url": "/models/codex-ybot/clips/dash.left.glb",
+      "duration": 0.36666666666666664,
+      "frames": 23,
+      "source": "Standing Dodge Left.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0.12,
+        0.5
+      ],
+      "mirrored": false
+    }
+  },
+  "dash.right": {
+    "hash": "c655eb32940b59c0109071c3c2612ee608183f10f94a1c1ad90f11a8a1fb0d00",
+    "entry": {
+      "id": "dash.right",
+      "url": "/models/codex-ybot/clips/dash.right.glb",
+      "duration": 0.36666666666666664,
+      "frames": 23,
+      "source": "Standing Dodge Right.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0.12,
+        0.5
+      ],
+      "mirrored": false
+    }
+  },
+  "run.start": {
+    "hash": "f4d02e0ecceb9d453f390a799eb9e19b84ae6fccece6adf58c2ba7272bfb370e",
+    "entry": {
+      "id": "run.start",
+      "url": "/models/codex-ybot/clips/run.start.glb",
+      "duration": 1.7333333333333334,
+      "frames": 105,
+      "source": "Rifle Start Run.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "run.stop": {
+    "hash": "9b0b2a93cb2c0e1d4d917618278dbb38a27364ad4f6c0533919f216bc8d5d1eb",
+    "entry": {
+      "id": "run.stop",
+      "url": "/models/codex-ybot/clips/run.stop.glb",
+      "duration": 1.4666666666666666,
+      "frames": 89,
+      "source": "Rifle Run To Stop.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "walk.stop": {
+    "hash": "8e2cb94db732df8b20b1bce96a5269350fbaa60f119c866d1e73f540d7f51a1f",
+    "entry": {
+      "id": "walk.stop",
+      "url": "/models/codex-ybot/clips/walk.stop.glb",
+      "duration": 3.566666666666667,
+      "frames": 215,
+      "source": "Rifle Walk To Stop.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "jump.rifle": {
+    "hash": "42ebd9b796791174761dfcba9b065a773f48099415fc7d6ab07a11244c63a708",
+    "entry": {
+      "id": "jump.rifle",
+      "url": "/models/codex-ybot/clips/jump.rifle.glb",
+      "duration": 2.25,
+      "frames": 136,
+      "source": "Rifle Jump.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "land": {
+    "hash": "1fea2f575fdb743cfd6f12b284175250dd688095c0e389129e728b46f13c00af",
+    "entry": {
+      "id": "land",
+      "url": "/models/codex-ybot/clips/land.glb",
+      "duration": 1.0666666666666667,
+      "frames": 65,
+      "source": "Falling To Landing.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "wall.left": {
+    "hash": "40d692f8af82fcdf93a463a9d7b479a2c4c2d872eefc23b15fb6accfa0990fa9",
+    "entry": {
+      "id": "wall.left",
+      "url": "/models/codex-ybot/clips/wall.left.glb",
+      "duration": 0.4166666666666667,
+      "frames": 26,
+      "source": "Wall Run.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0.55,
+        1
+      ],
+      "mirrored": false
+    }
+  },
+  "wall.right": {
+    "hash": "c724799e724d49f22fad5d8ac9f79c01ea1c59264472dc51b22a56425fa8ce62",
+    "entry": {
+      "id": "wall.right",
+      "url": "/models/codex-ybot/clips/wall.right.glb",
+      "duration": 0.4166666666666667,
+      "frames": 26,
+      "source": "Wall Run.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0.55,
+        1
+      ],
+      "mirrored": true
+    }
+  },
+  "jump.double": {
+    "hash": "04f0f1931c98569ded46feeede7461f3d809e134df29d7370c70f3c0d2718abc",
+    "entry": {
+      "id": "jump.double",
+      "url": "/models/codex-ybot/clips/jump.double.glb",
+      "duration": 0.7833333333333333,
+      "frames": 48,
+      "source": "Rifle Jump.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0.3,
+        0.65
+      ],
+      "mirrored": false
+    }
+  },
+  "jump.boost": {
+    "hash": "9f6f48860e7439e8a3b9ea516f04c1bd66fb957088aaa4a87e3f435516b1b451",
+    "entry": {
+      "id": "jump.boost",
+      "url": "/models/codex-ybot/clips/jump.boost.glb",
+      "duration": 0.38333333333333336,
+      "frames": 24,
+      "source": "rifle-pack/jump up.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0.12,
+        0.85
+      ],
+      "mirrored": false
+    }
+  },
+  "emote.placeholder": {
+    "hash": "b41add0dd47f5e4cf5c8dfd6a2421d3c305375387f7909e9eca3f9a87fe9bb56",
+    "entry": {
+      "id": "emote.placeholder",
+      "url": "/models/codex-ybot/clips/emote.placeholder.glb",
+      "duration": 8.533333333333333,
+      "frames": 513,
+      "source": "Victory.fbx",
+      "loop": true,
+      "movement": false,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  }
+}

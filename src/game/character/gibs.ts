@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { DEREZ_BANDS, getBodyGeometry, getBodySamples, SAMPLE_ARMOR, SAMPLE_GLOW } from './body';
+import { DEREZ_BANDS, getBodySamples, SAMPLE_ARMOR, SAMPLE_GLOW } from './body';
 import type { KillEffectStyle } from '../cosmetics';
 import type { Character } from './character';
 import { B, BONE_COUNT, REST_ABS } from './rig';
@@ -36,6 +36,7 @@ import { FINISHER_TIMING, fxFlags, noteDeath, viewPos } from '../fx/fx-settings'
 // setCharacterFxQuality() (shared with the worn unusuals through fxFlags).
 
 export type GibFloor = { y: number } | null; // world-space floor height, null = none
+export type GroundImpactListener = (x: number, y: number, z: number) => void;
 
 export function setCharacterFxQuality(opts: { reducedEffects?: boolean; lowSpec?: boolean }): void {
   if (opts.reducedEffects !== undefined) fxFlags.reduced = opts.reducedEffects;
@@ -50,8 +51,8 @@ let floorProbe: FloorProbe | null = null;
 export function setGibFloorProbe(fn: FloorProbe | null): void {
   floorProbe = fn;
 }
-export function probeGibFloor(x: number, y: number, z: number): GibFloor {
-  if (!floorProbe) return null;
+export function probeGibFloor(x: number, y: number, z: number): GibFloor | undefined {
+  if (!floorProbe) return undefined;
   const f = floorProbe(x, y, z);
   return f === null || y - f > 6 ? null : { y: f };
 }
@@ -236,6 +237,8 @@ const DEREZ_SLABS = 7;
 export class GibBurst {
   active = false;
   done = false;
+  onGroundImpact: GroundImpactListener | null = null;
+  private impactReported = false;
   // The killer's finisher — which death animation this burst plays.
   style: KillEffectStyle = 'pulse';
   private t = 0;
@@ -298,7 +301,7 @@ export class GibBurst {
       this.rel.push(new THREE.Matrix4());
       this.startM.push(new THREE.Matrix4());
     }
-    const body = getBodyGeometry();
+    const body = this.ch.breakup;
     for (let i = 0; i < BONE_COUNT; i++) {
       for (let k = 0; k < 3; k++) this.comLocal[i * 3 + k] = body.com[i * 3 + k] - REST_ABS[i][k];
     }
@@ -309,11 +312,13 @@ export class GibBurst {
     this.style = MOTION[style] ? style : 'pulse';
     const mo = (this.mo = MOTION[this.style]);
     const ch = this.ch;
+    ch.beginBreakup();
     const root = ch.root;
     const rig = ch.rig;
-    const body = getBodyGeometry();
+    const body = this.ch.breakup;
     this.active = true;
     this.done = false;
+    this.impactReported = false;
     this.t = 0;
     this.calm = fxFlags.reduced;
     this.q = getFxQuality() * (fxFlags.low ? 0.6 : 1) * (this.calm ? 0.5 : 1);
@@ -344,7 +349,7 @@ export class GibBurst {
       this.startM[i].copy(b.matrix);
     }
     rig.frozen = true;
-    ch.mesh.frustumCulled = false;
+    ch.breakupMesh.frustumCulled = false;
     ch.sockets.gun.visible = false;
     // The hat rides the head bone, which shrinks to nothing — but point-sprite
     // size ignores object scale, so an unusual-effect cloud would collapse into
@@ -355,8 +360,8 @@ export class GibBurst {
     ch.sockets.face.visible = false;
     ch.sockets.back.visible = false;
     // Styles that cut the body with discard would leave a whole-body shadow.
-    this.castShadow0 = ch.mesh.castShadow;
-    ch.mesh.castShadow = this.castShadow0 && !(this.style === 'derez' || this.style === 'vaporize' || this.style === 'ember');
+    this.castShadow0 = ch.breakupMesh.castShadow;
+    ch.breakupMesh.castShadow = this.castShadow0 && !(this.style === 'derez' || this.style === 'vaporize' || this.style === 'ember');
 
     // Parent-space frame: floor height + velocity rotation.
     const parent = root.parent;
@@ -515,7 +520,7 @@ export class GibBurst {
       const mx = (wx * sideX + wz * sideZ) / sl;
       const mz = (wx * backX + wz * backZ) / bl;
       u.uDissolveDir.value.set(mx, 0, mz, 0.85);
-      const smp = getBodySamples();
+      const smp = getBodySamples(this.ch.breakup);
       for (let i = 0; i < SAMPLE_N; i++) {
         const px = smp.pos[i * 3], py = smp.pos[i * 3 + 1] - 1, pz = smp.pos[i * 3 + 2];
         const nz = rnd();
@@ -610,7 +615,7 @@ export class GibBurst {
   // Rigid chunks: ballistic + drag + tumble + shrink, bouncing on the floor.
   private integrate(dt: number, mo: Motion) {
     const t = this.t;
-    const body = getBodyGeometry();
+    const body = this.ch.breakup;
     const drag = Math.exp(-mo.drag * dt);
     const floorBounce = this.calm ? 0 : mo.bounce;
     // Fairness: from 0.3 s, anything still above the knee is pulled down
@@ -661,6 +666,14 @@ export class GibBurst {
         if (this.pos[o3 + 1] - r < this.floorY) {
           this.pos[o3 + 1] = this.floorY + r;
           if (this.landT[i] < 0) this.landT[i] = t;
+          // A corpse owns one downward impact, including a chunk initially
+          // clamped while moving upwards. Later chunks and bounces stay silent.
+          if (!this.impactReported && dt > 0 && this.vel[o3 + 1] < 0 &&
+              s > 0.02 && body.hasGeo[i] && this.ch.breakupMesh.visible) {
+            this.impactReported = true;
+            _w.set(this.pos[o3], this.floorY, this.pos[o3 + 2]).applyMatrix4(this.parentM);
+            this.onGroundImpact?.(_w.x, _w.y, _w.z);
+          }
           if (this.vel[o3 + 1] < 0) {
             if (floorBounce > 0) {
               this.vel[o3 + 1] *= -floorBounce;
@@ -691,7 +704,7 @@ export class GibBurst {
     const t = this.t;
     const POP = FINISHER_TIMING.singularityPop;
     if (t < POP) {
-      const body = getBodyGeometry();
+      const body = this.ch.breakup;
       const u = t / POP;
       const e = Math.pow(u, 1.25);
       const px = this.pullP.x, py = this.pullP.y, pz = this.pullP.z;
@@ -719,7 +732,7 @@ export class GibBurst {
     }
     if (!this.popped) {
       this.popped = true;
-      const body = getBodyGeometry();
+      const body = this.ch.breakup;
       const sp = this.calm ? 0.55 : 1;
       for (let i = 0; i < BONE_COUNT; i++) {
         if (this.lead[i] !== i || (!body.hasGeo[i] && i !== B.chest)) continue;
@@ -812,7 +825,7 @@ export class GibBurst {
   private relaunch() {
     this.launched = true;
     const rig = this.ch.rig;
-    const body = getBodyGeometry();
+    const body = this.ch.breakup;
     for (let i = 0; i < BONE_COUNT; i++) {
       if (this.lead[i] !== i || (!body.hasGeo[i] && i !== B.chest)) continue;
       const bm = rig.bones[i].matrix;
@@ -986,7 +999,7 @@ export class GibBurst {
 
   // World position of surface sample i under the current bone matrices.
   private sampleW(i: number, out: THREE.Vector3): THREE.Vector3 {
-    const s = getBodySamples();
+    const s = getBodySamples(this.ch.breakup);
     const b = s.bone[i];
     const r = REST_ABS[b];
     out.set(s.pos[i * 3] - r[0], s.pos[i * 3 + 1] - r[1], s.pos[i * 3 + 2] - r[2]);
@@ -1018,7 +1031,7 @@ export class GibBurst {
   private particles(dt: number) {
     const t = this.t;
     const E = this.energy;
-    const smp = getBodySamples();
+    const smp = getBodySamples(this.ch.breakup);
     const cw = this.centerW;
     switch (this.style) {
       case 'pulse': {
@@ -1429,7 +1442,7 @@ export class GibBurst {
 
   // Starburst: a light spike fired along each chunk's flight line.
   private spikes() {
-    const body = getBodyGeometry();
+    const body = this.ch.breakup;
     const E = this.energy;
     for (let i = 0; i < BONE_COUNT; i++) {
       if (this.lead[i] !== i || (!body.hasGeo[i] && i !== B.chest)) continue;
@@ -1497,13 +1510,15 @@ export class GibBurst {
 
   // Back to a whole body (respawn). The animator re-poses the bones next update.
   stop(): void {
+    this.impactReported = false;
     if (!this.active) return;
     this.active = false;
     this.done = false;
     const ch = this.ch;
     ch.rig.frozen = false;
-    ch.mesh.frustumCulled = true;
-    ch.mesh.castShadow = this.castShadow0;
+    ch.endBreakup();
+    ch.breakupMesh.frustumCulled = true;
+    ch.breakupMesh.castShadow = this.castShadow0;
     ch.sockets.gun.visible = true;
     ch.sockets.headTop.visible = true;
     ch.sockets.face.visible = true;
@@ -1517,6 +1532,7 @@ export class GibBurst {
   }
 
   dispose(): void {
+    this.onGroundImpact = null;
     this.stop();
     if (this.flash) {
       this.flash.material.dispose();

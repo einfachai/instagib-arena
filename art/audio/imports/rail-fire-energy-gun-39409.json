@@ -1,0 +1,37 @@
+{
+  "provider": "user-provided",
+  "specs": [
+    {
+      "key": "rail-fire",
+      "category": "weapon",
+      "type": "file",
+      "provider": "user-provided",
+      "source": {
+        "filename": "freesound_community-sci-fi-energy-gun-39409.mp3",
+        "path": "art/audio/sources/freesound_community-sci-fi-energy-gun-39409.mp3",
+        "sha256": "534d1e1e69ed10468956da304883020f8220770f48846b7e9411484bd2ecc576"
+      },
+      "duration": 1.8,
+      "maxDuration": 0.61,
+      "variants": 1,
+      "processing": {
+        "sourceStartMs": 190,
+        "sourceEndMs": 800,
+        "fadeInMs": 0.25,
+        "fadeOutMs": 12,
+        "rmsDb": -18,
+        "peakDb": -8
+      }
+    }
+  ],
+  "media": [
+    {
+      "key": "rail-fire",
+      "source": {
+        "filename": "freesound_community-sci-fi-energy-gun-39409.mp3",
+        "path": "art/audio/sources/freesound_community-sci-fi-energy-gun-39409.mp3",
+        "sha256": "534d1e1e69ed10468956da304883020f8220770f48846b7e9411484bd2ecc576"
+      }
+    }
+  ]
+}

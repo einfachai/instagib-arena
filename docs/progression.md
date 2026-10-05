@@ -1,4 +1,4 @@
-# Instagib Arena — Progression (2.0)
+# Agent Deathmatch — Progression (2.0)
 
 How XP, levels, credits, the Career Road, the hat case and challenges work, as
 built. **Cosmetic-only — never pay/grind-to-win.** Nothing here touches aim,

@@ -1,0 +1,38 @@
+{
+  "provider": "user-provided",
+  "specs": [
+    {
+      "key": "death-impact",
+      "category": "weapon",
+      "type": "file",
+      "provider": "user-provided",
+      "source": {
+        "filename": "dragon-studio-heavy-object-falling-515261.mp3",
+        "path": "art/audio/sources/dragon-studio-heavy-object-falling-515261.mp3",
+        "sha256": "9bd539a79bde2d6d76c57f8c3662e31df3ea9ca88ab91ceca54d63c89b4d6303"
+      },
+      "duration": 3.792,
+      "maxDuration": 2.67,
+      "variants": 1,
+      "processing": {
+        "sourceStartMs": 280,
+        "sourceEndMs": 2950,
+        "trimSilence": false,
+        "fadeInMs": 0.25,
+        "fadeOutMs": 12,
+        "rmsDb": -18,
+        "peakDb": -8
+      }
+    }
+  ],
+  "media": [
+    {
+      "key": "death-impact",
+      "source": {
+        "filename": "dragon-studio-heavy-object-falling-515261.mp3",
+        "path": "art/audio/sources/dragon-studio-heavy-object-falling-515261.mp3",
+        "sha256": "9bd539a79bde2d6d76c57f8c3662e31df3ea9ca88ab91ceca54d63c89b4d6303"
+      }
+    }
+  ]
+}

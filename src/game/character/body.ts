@@ -502,6 +502,12 @@ export type BodyGeometry = {
 
 let cached: BodyGeometry | null = null;
 
+// Installed by the canonical GLB preload; all death effects sample this mesh.
+export function installBreakupGeometry(body: BodyGeometry): void {
+  cached = body;
+  samples = null;
+}
+
 // Hard-edge mask for one flat part (non-indexed). For every triangle, flags
 // which of its three edges is a HARD crease (neighbour face bends > ~18°, or
 // no neighbour). Component j marks the edge opposite vertex j. Coplanar
@@ -612,6 +618,7 @@ export function getBodyGeometry(): BodyGeometry {
   }
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.BufferAttribute(position, 3));
+  geometry.setAttribute('aRest', new THREE.BufferAttribute(position, 3));
   geometry.setAttribute('normal', new THREE.BufferAttribute(normal, 3));
   geometry.setAttribute('color', new THREE.BufferAttribute(color, 3));
   geometry.setAttribute('aMat', new THREE.BufferAttribute(mat, 4));
@@ -777,6 +784,7 @@ function injectCharacterShader(this: THREE.MeshPhysicalMaterial, shader: THREE.W
         '#include <common>',
         'attribute vec4 aMat;',
         'attribute vec3 aEdge;',
+        'attribute vec3 aRest;',
         'varying vec4 vMat;',
         'varying vec3 vEdge;',
         'varying vec3 vBary;',
@@ -794,7 +802,7 @@ function injectCharacterShader(this: THREE.MeshPhysicalMaterial, shader: THREE.W
         '#include <begin_vertex>',
         'vMat = aMat;',
         'vEdge = aEdge;',
-        'vRest = position;',
+        'vRest = aRest;',
         'vBone = skinIndex.x;',
         'int igK = gl_VertexID % 3;',
         'vBary = vec3(igK == 0 ? 1.0 : 0.0, igK == 1 ? 1.0 : 0.0, igK == 2 ? 1.0 : 0.0);',
@@ -1087,6 +1095,21 @@ function injectCharacterShader(this: THREE.MeshPhysicalMaterial, shader: THREE.W
     );
 }
 
+// Alpha windows avoid a full-scene transmission pass for each combatant.
+// Physical thickness and the internal electronics remain in the geometry.
+// Share the same uniform objects so every finisher also removes the windows.
+export function createCharacterWindowMaterial(uniforms: CharacterUniforms): THREE.MeshPhysicalMaterial {
+  const material = new THREE.MeshPhysicalMaterial({
+    vertexColors: true, transparent: true, opacity: 0.24, depthWrite: false,
+    roughness: 0.16, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.12,
+    envMapIntensity: 1.1, side: THREE.FrontSide,
+  });
+  material.name = 'Android inspection windows';
+  material.userData.charUniforms = uniforms;
+  material.onBeforeCompile = injectCharacterShader;
+  return material;
+}
+
 export function createCharacterMaterial(): { material: THREE.MeshPhysicalMaterial; uniforms: CharacterUniforms } {
   const uniforms: CharacterUniforms = {
     uPlayer: { value: new THREE.Color(1, 0.4, 0.2) },
@@ -1180,10 +1203,12 @@ export type BodySamples = {
 };
 
 let samples: BodySamples | null = null;
+const variantSamples = new WeakMap<BodyGeometry, BodySamples>();
 
-export function getBodySamples(): BodySamples {
-  if (samples) return samples;
-  const g = getBodyGeometry().geometry;
+export function getBodySamples(body?: BodyGeometry): BodySamples {
+  const ready = body ? variantSamples.get(body) : samples;
+  if (ready) return ready;
+  const g = (body ?? getBodyGeometry()).geometry;
   const pos = g.getAttribute('position') as THREE.BufferAttribute;
   const skin = g.getAttribute('skinIndex') as THREE.BufferAttribute;
   const mat = g.getAttribute('aMat') as THREE.BufferAttribute;
@@ -1238,6 +1263,7 @@ export function getBodySamples(): BodySamples {
     const tb = out.bone[i]; out.bone[i] = out.bone[j]; out.bone[j] = tb;
     const tk = out.kind[i]; out.kind[i] = out.kind[j]; out.kind[j] = tk;
   }
-  samples = out;
+  if (body) variantSamples.set(body, out);
+  else samples = out;
   return out;
 }

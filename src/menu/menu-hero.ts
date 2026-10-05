@@ -1,3 +1,4 @@
+import { playerAgent } from '../agent-session';
 // The menu hero: YOUR combatant, standing on a spawn pad beside the menu
 // column in your loadout (hat + unusual, railgun finish in hand, skin colour
 // from your name), idling at the low ready with the equipped emote every
@@ -232,7 +233,7 @@ export class MenuHero {
     for (const t of [haloTex, poolTex, shadowTex]) if (t) this.owned.tex.push(t);
 
     // The combatant.
-    this.character = new Character({ colorHex: `#${this.color.getHexString()}`, castShadow: false });
+    this.character = new Character({ agent: playerAgent, colorHex: `#${this.color.getHexString()}`, castShadow: false });
     this.character.wearDye(dyeById(loadout.looks?.dye?.d), skinColorFor(loadout.seed || 'you'));
     this.holder.add(this.character.root);
     this.holder.rotation.y = FACE_CAMERA + REST_YAW;

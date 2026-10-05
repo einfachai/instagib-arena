@@ -1,0 +1,45 @@
+{
+  "viewport": [
+    1265,
+    712
+  ],
+  "samples": [
+    {
+      "name": "hip",
+      "frames": 45,
+      "cpuMedianMs": 1,
+      "cpuP95Ms": 1.5,
+      "frameMedianMs": 8.299999982118607,
+      "frameP95Ms": 10.5,
+      "drawCalls": 17
+    },
+    {
+      "name": "handoff-with-blur",
+      "frames": 45,
+      "cpuMedianMs": 1.0999999940395355,
+      "cpuP95Ms": 1.300000011920929,
+      "frameMedianMs": 8.5,
+      "frameP95Ms": 10.600000023841858,
+      "drawCalls": 18
+    },
+    {
+      "name": "handoff-no-blur",
+      "frames": 45,
+      "cpuMedianMs": 1.0999999940395355,
+      "cpuP95Ms": 1.5999999940395355,
+      "frameMedianMs": 8.5,
+      "frameP95Ms": 10,
+      "drawCalls": 18
+    },
+    {
+      "name": "scoped",
+      "frames": 45,
+      "cpuMedianMs": 0.7000000178813934,
+      "cpuP95Ms": 0.9000000059604645,
+      "frameMedianMs": 8.200000017881393,
+      "frameP95Ms": 13,
+      "drawCalls": 11
+    }
+  ],
+  "note": "Warmed CPU submission and rAF intervals in the local browser. Not isolated GPU timestamps. Video includes the live vector overlay and equivalent masked Canvas2D blur."
+}

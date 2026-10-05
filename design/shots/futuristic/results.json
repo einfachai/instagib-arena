@@ -1,0 +1,117 @@
+{
+  "sampleDurationMs": 20000,
+  "rollingMaxFrames": 600,
+  "warmupExcluded": true,
+  "samples": [
+    {
+      "map": "causeway",
+      "quality": "high",
+      "combatants": 8,
+      "fps": 60,
+      "meanMs": 16.67,
+      "p95Ms": 16.8,
+      "width": 1920,
+      "height": 1080,
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)"
+    },
+    {
+      "map": "causeway",
+      "quality": "low",
+      "combatants": 8,
+      "fps": 60,
+      "meanMs": 16.67,
+      "p95Ms": 16.8,
+      "width": 1920,
+      "height": 1080,
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)"
+    },
+    {
+      "map": "reactor",
+      "quality": "high",
+      "combatants": 8,
+      "fps": 60,
+      "meanMs": 16.86,
+      "p95Ms": 16.7,
+      "width": 1920,
+      "height": 1080,
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)"
+    },
+    {
+      "map": "reactor",
+      "quality": "low",
+      "combatants": 8,
+      "fps": 60,
+      "meanMs": 16.67,
+      "p95Ms": 16.7,
+      "width": 1920,
+      "height": 1080,
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)"
+    },
+    {
+      "map": "containeryard",
+      "quality": "high",
+      "combatants": 8,
+      "fps": 60,
+      "meanMs": 16.67,
+      "p95Ms": 16.7,
+      "width": 1920,
+      "height": 1080,
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)"
+    },
+    {
+      "map": "containeryard",
+      "quality": "low",
+      "combatants": 8,
+      "fps": 60,
+      "meanMs": 16.67,
+      "p95Ms": 16.7,
+      "width": 1920,
+      "height": 1080,
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)"
+    },
+    {
+      "map": "derrick",
+      "quality": "high",
+      "combatants": 8,
+      "fps": 60,
+      "meanMs": 16.67,
+      "p95Ms": 16.7,
+      "width": 1920,
+      "height": 1080,
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)"
+    },
+    {
+      "map": "derrick",
+      "quality": "low",
+      "combatants": 8,
+      "fps": 60,
+      "meanMs": 16.67,
+      "p95Ms": 16.8,
+      "width": 1920,
+      "height": 1080,
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)"
+    },
+    {
+      "map": "training",
+      "quality": "high",
+      "combatants": 1,
+      "fps": 60,
+      "meanMs": 16.67,
+      "p95Ms": 16.8,
+      "width": 1920,
+      "height": 1080,
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)"
+    },
+    {
+      "map": "training",
+      "quality": "low",
+      "combatants": 1,
+      "fps": 60,
+      "meanMs": 16.67,
+      "p95Ms": 16.7,
+      "width": 1920,
+      "height": 1080,
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5, Unspecified Version)"
+    }
+  ]
+}

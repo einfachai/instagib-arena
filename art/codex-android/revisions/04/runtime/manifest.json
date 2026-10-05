@@ -1,0 +1,647 @@
+{
+  "version": 2,
+  "name": "Codex Android",
+  "revision": 4,
+  "model": "/models/codex-android/model.glb",
+  "fps": 60,
+  "clips": [
+    {
+      "id": "walk.forward",
+      "url": "/models/codex-ybot/clips/walk.forward.glb",
+      "duration": 1.0,
+      "frames": 61,
+      "source": "rifle-pack/walk forward.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "walk.forward-right",
+      "url": "/models/codex-ybot/clips/walk.forward-right.glb",
+      "duration": 1.0,
+      "frames": 61,
+      "source": "rifle-pack/walk forward right.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "walk.right",
+      "url": "/models/codex-ybot/clips/walk.right.glb",
+      "duration": 1.0,
+      "frames": 61,
+      "source": "rifle-pack/walk right.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "walk.backward-right",
+      "url": "/models/codex-ybot/clips/walk.backward-right.glb",
+      "duration": 1.0,
+      "frames": 61,
+      "source": "rifle-pack/walk backward right.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "walk.backward",
+      "url": "/models/codex-ybot/clips/walk.backward.glb",
+      "duration": 0.9666666666666667,
+      "frames": 59,
+      "source": "rifle-pack/walk backward.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "walk.backward-left",
+      "url": "/models/codex-ybot/clips/walk.backward-left.glb",
+      "duration": 1.0,
+      "frames": 61,
+      "source": "rifle-pack/walk backward left.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "walk.left",
+      "url": "/models/codex-ybot/clips/walk.left.glb",
+      "duration": 1.0,
+      "frames": 61,
+      "source": "rifle-pack/walk left.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "walk.forward-left",
+      "url": "/models/codex-ybot/clips/walk.forward-left.glb",
+      "duration": 1.0,
+      "frames": 61,
+      "source": "rifle-pack/walk forward left.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "run.forward",
+      "url": "/models/codex-ybot/clips/run.forward.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/run forward.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "run.forward-right",
+      "url": "/models/codex-ybot/clips/run.forward-right.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/run forward right.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "run.right",
+      "url": "/models/codex-ybot/clips/run.right.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/run right.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "run.backward-right",
+      "url": "/models/codex-ybot/clips/run.backward-right.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/run backward right.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "run.backward",
+      "url": "/models/codex-ybot/clips/run.backward.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/run backward.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "run.backward-left",
+      "url": "/models/codex-ybot/clips/run.backward-left.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/run backward left.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "run.left",
+      "url": "/models/codex-ybot/clips/run.left.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/run left.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "run.forward-left",
+      "url": "/models/codex-ybot/clips/run.forward-left.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/run forward left.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "sprint.forward",
+      "url": "/models/codex-ybot/clips/sprint.forward.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/sprint forward.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "sprint.forward-right",
+      "url": "/models/codex-ybot/clips/sprint.forward-right.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/sprint forward right.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "sprint.right",
+      "url": "/models/codex-ybot/clips/sprint.right.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/sprint right.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "sprint.backward-right",
+      "url": "/models/codex-ybot/clips/sprint.backward-right.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/sprint backward right.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "sprint.backward",
+      "url": "/models/codex-ybot/clips/sprint.backward.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/sprint backward.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "sprint.backward-left",
+      "url": "/models/codex-ybot/clips/sprint.backward-left.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/sprint backward left.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "sprint.left",
+      "url": "/models/codex-ybot/clips/sprint.left.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/sprint left.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "sprint.forward-left",
+      "url": "/models/codex-ybot/clips/sprint.forward-left.glb",
+      "duration": 0.5,
+      "frames": 31,
+      "source": "rifle-pack/sprint forward left.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "idle.armed",
+      "url": "/models/codex-ybot/clips/idle.armed.glb",
+      "duration": 2.1,
+      "frames": 127,
+      "source": "rifle-pack/idle aiming.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "turn.left",
+      "url": "/models/codex-ybot/clips/turn.left.glb",
+      "duration": 1.0,
+      "frames": 61,
+      "source": "rifle-pack/turn 90 left.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "turn.right",
+      "url": "/models/codex-ybot/clips/turn.right.glb",
+      "duration": 1.0,
+      "frames": 61,
+      "source": "rifle-pack/turn 90 right.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "jump.up",
+      "url": "/models/codex-ybot/clips/jump.up.glb",
+      "duration": 0.5333333333333333,
+      "frames": 33,
+      "source": "rifle-pack/jump up.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "jump.loop",
+      "url": "/models/codex-ybot/clips/jump.loop.glb",
+      "duration": 0.9333333333333333,
+      "frames": 57,
+      "source": "rifle-pack/jump loop.fbx",
+      "loop": true,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "jump.down",
+      "url": "/models/codex-ybot/clips/jump.down.glb",
+      "duration": 0.6666666666666666,
+      "frames": 41,
+      "source": "rifle-pack/jump down.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "idle.relaxed",
+      "url": "/models/codex-ybot/clips/idle.relaxed.glb",
+      "duration": 9.916666666666666,
+      "frames": 596,
+      "source": "Breathing Idle.fbx",
+      "loop": true,
+      "movement": false,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "dash.forward",
+      "url": "/models/codex-ybot/clips/dash.forward.glb",
+      "duration": 0.36666666666666664,
+      "frames": 23,
+      "source": "Standing Dodge Forward.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0.12,
+        0.5
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "dash.backward",
+      "url": "/models/codex-ybot/clips/dash.backward.glb",
+      "duration": 0.6166666666666667,
+      "frames": 38,
+      "source": "Standing Dodge Backward.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0.12,
+        0.5
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "dash.left",
+      "url": "/models/codex-ybot/clips/dash.left.glb",
+      "duration": 0.36666666666666664,
+      "frames": 23,
+      "source": "Standing Dodge Left.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0.12,
+        0.5
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "dash.right",
+      "url": "/models/codex-ybot/clips/dash.right.glb",
+      "duration": 0.36666666666666664,
+      "frames": 23,
+      "source": "Standing Dodge Right.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0.12,
+        0.5
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "run.start",
+      "url": "/models/codex-ybot/clips/run.start.glb",
+      "duration": 1.7333333333333334,
+      "frames": 105,
+      "source": "Rifle Start Run.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "run.stop",
+      "url": "/models/codex-ybot/clips/run.stop.glb",
+      "duration": 1.4666666666666666,
+      "frames": 89,
+      "source": "Rifle Run To Stop.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "walk.stop",
+      "url": "/models/codex-ybot/clips/walk.stop.glb",
+      "duration": 3.566666666666667,
+      "frames": 215,
+      "source": "Rifle Walk To Stop.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "jump.rifle",
+      "url": "/models/codex-ybot/clips/jump.rifle.glb",
+      "duration": 2.25,
+      "frames": 136,
+      "source": "Rifle Jump.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "land",
+      "url": "/models/codex-ybot/clips/land.glb",
+      "duration": 1.0666666666666667,
+      "frames": 65,
+      "source": "Falling To Landing.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "wall.left",
+      "url": "/models/codex-ybot/clips/wall.left.glb",
+      "duration": 0.4166666666666667,
+      "frames": 26,
+      "source": "Wall Run.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0.55,
+        1
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "wall.right",
+      "url": "/models/codex-ybot/clips/wall.right.glb",
+      "duration": 0.4166666666666667,
+      "frames": 26,
+      "source": "Wall Run.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0.55,
+        1
+      ],
+      "mirrored": true
+    },
+    {
+      "id": "jump.double",
+      "url": "/models/codex-ybot/clips/jump.double.glb",
+      "duration": 0.7833333333333333,
+      "frames": 48,
+      "source": "Rifle Jump.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0.3,
+        0.65
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "jump.boost",
+      "url": "/models/codex-ybot/clips/jump.boost.glb",
+      "duration": 0.38333333333333336,
+      "frames": 24,
+      "source": "rifle-pack/jump up.fbx",
+      "loop": false,
+      "movement": true,
+      "segment": [
+        0.12,
+        0.85
+      ],
+      "mirrored": false
+    },
+    {
+      "id": "emote.placeholder",
+      "url": "/models/codex-ybot/clips/emote.placeholder.glb",
+      "duration": 8.533333333333333,
+      "frames": 513,
+      "source": "Victory.fbx",
+      "loop": true,
+      "movement": false,
+      "segment": [
+        0,
+        1
+      ],
+      "mirrored": false
+    }
+  ],
+  "source": "art/codex-android/codex-android.blend",
+  "sourceSha256": "bd3e2ef38a08f9a9a3ecf0d63194bc28d06683dc9264fcee1f94cc1a16297dcb",
+  "bones": 65,
+  "authoredObjects": 817,
+  "triangles": 70265,
+  "bytes": 2196940,
+  "runtimeDraws": 2,
+  "windows": "Blue-tinted alpha windows; solid thickness and internals retained."
+}

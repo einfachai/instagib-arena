@@ -1,0 +1,30 @@
+{
+  "canvas": [
+    2526,
+    1422
+  ],
+  "triangleBudgets": {
+    "high": 7400,
+    "low": 1868
+  },
+  "video": "Two automatic recharge cycles, real viewmodel renderer, no audio",
+  "benchmark": [
+    {
+      "model": "previous railgun",
+      "characters": 8,
+      "drawCalls": 32,
+      "triangles": 594696,
+      "cpuP50Ms": 2.699999988079071,
+      "cpuP95Ms": 6.699999988079071
+    },
+    {
+      "model": "R-01",
+      "characters": 8,
+      "drawCalls": 48,
+      "triangles": 587232,
+      "cpuP50Ms": 2.4000000059604645,
+      "cpuP95Ms": 5.5999999940395355
+    }
+  ],
+  "timingNote": "Synchronous CPU render-submission samples; not a GPU or frame-rate benchmark. Other local builds may affect timing."
+}

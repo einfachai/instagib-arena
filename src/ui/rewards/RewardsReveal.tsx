@@ -522,7 +522,7 @@ export function RewardsReveal({
             <span
               key={shownTotal}
               className={`rw-bump font-display text-[2.75rem] font-bold leading-none tabular-nums ${guest ? 'text-cyan-200/80' : 'text-cyan-200'}`}
-              style={{ textShadow: '0 0 24px rgba(34,211,238,0.35)' }}
+              style={{ textShadow: '0 0 24px rgba(var(--arena-accent-rgb),0.35)' }}
             >
               +<CountUp value={shownTotal} ms={220} instant={instant} />
             </span>

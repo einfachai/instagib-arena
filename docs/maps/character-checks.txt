@@ -1,0 +1,22 @@
+✔ approved android surfaces preserve the original rig and fit the runtime budget (2179.418375ms)
+✔ android and R-01 share the combat, firing and respawn lifecycle (133.178667ms)
+✔ R-01 grasp keeps palms, wrists and finger wraps aligned through aim and recoil (285.74975ms)
+✔ every baked motion binds on independently cloned characters with a stationary root (48.206333ms)
+✔ all 23 inventory emotes play the shared Victory placeholder (23.900792ms)
+✔ ordinary strafing stays locomotion; explicit cues select every special movement (60.877167ms)
+✔ all finishers place rigid pieces from the live pose and restore the same canonical rig (136.211542ms)
+✔ cosmetic cues use the interpolation timeline, reject malformed data, and clear at respawn (0.788625ms)
+✔ replay v4 retains cues; v1/v2/v3 still round-trip without them (5.345375ms)
+✔ replay seeks restore cue phases, freeze when paused, clear at respawn, and play older recordings (48.238625ms)
+✔ network deaths stay at the hit location through early respawn snapshots and duplicate events (21.925041ms)
+✔ first-person full arms reach from fixed shoulders and retain both grips throughout inspection (664.105042ms)
+✔ Claude characters retain their own geometry through animations and breakup alongside Codex (65.53975ms)
+✔ replay v5 round trips both robots while older recordings default to Codex (1.505ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4833.6705

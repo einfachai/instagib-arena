@@ -33,6 +33,7 @@ type Piece = {
   parent: LmFace | null;
   color: THREE.Color; // linear
   color2?: THREE.Color; // linear colour at the top (max y) — vertical gradient
+  bevel?: number;
   mask: number; // bit per face to skip: 0 +x, 1 -x, 2 +y, 3 -y, 4 +z, 5 -z
 };
 
@@ -182,6 +183,30 @@ export function buildDressing(inp: DressingInput): DressingBuild {
       const { h, d } = st.edges;
       const hz = st.edges.hazard && b.min.y > 0.5;
       (hz ? hazard : metal).push(onFace(f, f.u0 - ext(d), f.u1 + ext(d), top - Math.min(h, height), top, d, trimColor));
+    }
+
+    // Recessed equipment cassettes with chamfered frames, louvres and cable runs.
+    // Every detail is attached to an existing collision face, within MAX_PROUD.
+    if (st.panels && vertical && height >= 2 && f.u1-f.u0 >= 2 && !low) {
+      const spacing = st.panels.spacing;
+      const v0 = Math.max(f.v0 + .45, b.min.y + .45);
+      const v1 = Math.min(f.v1 - .9, v0 + 1.5);
+      for (let uc = f.u0 + spacing/2; uc < f.u1 - .8; uc += spacing) {
+        const u0 = Math.max(f.u0 + .2, uc - .85), u1 = Math.min(f.u1 - .2, uc + .85);
+        if (v1-v0 < .5 || !clearOfFixtures(f,u0,u1)) continue;
+        metal.push(onFace(f,u0,u1,v0,v1,.025,housing));
+        for (const [a,b,c,d] of [[u0,u0+.07,v0,v1],[u1-.07,u1,v0,v1],[u0,u1,v0,v0+.07],[u0,u1,v1-.07,v1]]) {
+          const frame = onFace(f,a,b,c,d,.11,trimColor); frame.bevel=.025; metal.push(frame);
+        }
+        if (st.panels.vents) for (let y=v0+.2; y<v1-.15; y+=.16) {
+          const louvre=onFace(f,u0+.16,u1-.16,y,y+.055,.08,trimColor.clone().multiplyScalar(.7));
+          louvre.bevel=.02; metal.push(louvre);
+        }
+      }
+      if (st.panels.conduits && v1 > v0) {
+        const y = Math.max(f.v0+.15, v0-.2);
+        const cable=onFace(f,f.u0+.1,f.u1-.1,y,y+.07,.09,housing); cable.bevel=.03; metal.push(cable);
+      }
     }
 
     if (!perimeter[i] || !vertical) continue;
@@ -394,12 +419,26 @@ function toGeometry(pieces: Piece[], lm: Lightmap, tile: number): THREE.BufferGe
       const vs = [p.min[va], p.min[va], p.max[va], p.max[va]];
       // (u × v) · n: x-faces and y-faces are left-handed in (u, v).
       const flip = (axis === 2 ? 1 : -1) * sign < 0;
-      const n = FACE_NORMAL[`${sign > 0 ? '+' : '-'}${'xyz'[axis]}` as keyof typeof FACE_NORMAL];
+      let n: V3 = FACE_NORMAL[`${sign > 0 ? '+' : '-'}${'xyz'[axis]}` as keyof typeof FACE_NORMAL];
+      const corners = us.map((u,c): V3 => {
+        const point: V3 = [0,0,0]; point[axis]=plane; point[ua]=u; point[va]=vs[c];
+        if (p.bevel && p.parent) {
+          const f=p.parent;
+          const front=f.sign>0?p.max[f.axis]:p.min[f.axis];
+          if (Math.abs(point[f.axis]-front)<1e-5) for (const a of [f.ua,f.va]) {
+            point[a] += point[a]<(p.min[a]+p.max[a])/2?p.bevel:-p.bevel;
+          }
+        }
+        return point;
+      });
+      if (p.bevel) {
+        const ab = new THREE.Vector3(...corners[1]).sub(new THREE.Vector3(...corners[0]));
+        const ac = new THREE.Vector3(...corners[2]).sub(new THREE.Vector3(...corners[0]));
+        const normal=ab.cross(ac).normalize().multiplyScalar(flip?-1:1); n=[normal.x,normal.y,normal.z];
+      }
       for (let c = 0; c < 4; c++) {
         const o = q * 4 + c;
-        v[axis] = plane;
-        v[ua] = us[c];
-        v[va] = vs[c];
+        v[0]=corners[c][0]; v[1]=corners[c][1]; v[2]=corners[c][2];
         pos[o * 3] = v[0];
         pos[o * 3 + 1] = v[1];
         pos[o * 3 + 2] = v[2];

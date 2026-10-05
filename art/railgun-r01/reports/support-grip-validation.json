@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-04",
+  "change": "R-01 support-hand contact and grasp",
+  "supportAnchor": [
+    0,
+    -0.038,
+    -0.37
+  ],
+  "changes": [
+    "Palm moved beneath the fore-end, 90 mm forward in weapon coordinates",
+    "Support wrist rotated 20 degrees toward the fore-end",
+    "Four individual finger curls clear the far side; opposing thumb points forward along the near side",
+    "First-person support shoulder leads by 80 mm to keep inspect poses within arm reach",
+    "Trigger-hand pose and special-model character grasps retained",
+    "Support anchors synchronized in high/low GLB, Blender source, generator and manifests"
+  ],
+  "validation": {
+    "characterTests": {
+      "passed": 12,
+      "failed": 0,
+      "coverage": [
+        "trigger and support contact",
+        "five aim pitches from -1.22 to +1.22 radians with movement and recoil",
+        "deterministic paused poses",
+        "first-person carry, inspect, reduced inspect and move/fire/zoom",
+        "respawn and replay"
+      ]
+    },
+    "weaponTests": {
+      "passed": 7,
+      "failed": 0
+    },
+    "scopeInputTests": {
+      "passed": 15,
+      "failed": 0
+    },
+    "typecheck": "pass",
+    "lint": {
+      "errors": 0,
+      "existingWarnings": 15
+    },
+    "productionBuild": "pass",
+    "assetTriangles": {
+      "high": 7400,
+      "low": 1868
+    },
+    "visualReview": "Actual game renderer: left and right grip close-ups, first-person carry and inspection. Blender runtime-mesh previews used during fitting."
+  },
+  "screenshots": [
+    "../renders/r01-support-grip-left-level-0.png",
+    "../renders/r01-support-grip-right-level-0.png",
+    "../renders/r01-support-first-person-level-1-2.png"
+  ],
+  "captureCommand": "node scripts/railgun/capture-server.mjs --manual; open /art/codex-android/runtime/index.html and select Save grip review"
+}

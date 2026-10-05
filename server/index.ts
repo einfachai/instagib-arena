@@ -1,4 +1,4 @@
-// Instagib Arena — standalone server.
+// Agent Deathmatch — standalone server.
 //
 // One Node process hosts everything on a single port:
 //   • the built web client (dist/, in production)
@@ -26,6 +26,7 @@ import { authRouter, adminUsernamesFromEnv } from './auth';
 import { adminApiTokenEnabled, adminRouter, setLiveCountsSource } from './admin';
 import { syncAdminsFromEnv } from './db';
 import { attachInstagibWs } from './instagib-game';
+import { ArenaControllers } from './arena-controller';
 import { allowedOrigin, clientIp, protectApi } from './security';
 
 const INSTAGIB_WS_PATH = '/ws/instagib';
@@ -65,7 +66,7 @@ const CSP = [
   "frame-ancestors 'none'",
   "img-src 'self' data: blob:",
   "media-src 'self'",
-  "script-src 'self'",
+  "script-src 'self' 'wasm-unsafe-eval'",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com data:",
   // blob:/data: are needed by three.js: GLTFLoader decodes GLB-embedded textures
@@ -111,6 +112,9 @@ let liveCounts: () => {
   loopLagMaxMs: 0,
 });
 app.get('/api/live', (_req, res) => res.json(liveCounts()));
+const arenaControllers = new ArenaControllers();
+app.use('/api/arena', arenaControllers.claimRouter());
+app.use('/api/arena', arenaControllers.router());
 app.use('/api', authRouter);
 app.use('/api', statsRouter);
 app.use('/api', leaderboardRouter);
@@ -217,7 +221,7 @@ const instagibWss = new WebSocketServer({
   maxPayload: 16 * 1024,
   perMessageDeflate: false,
 });
-({ liveCounts } = attachInstagibWs(instagibWss));
+({ liveCounts } = attachInstagibWs(instagibWss, arenaControllers));
 // Let the token-gated metrics API report live concurrency too (one-call /report).
 setLiveCountsSource(liveCounts);
 instagibWss.on('error', (err) => console.error('[ws] server error', err));
@@ -273,10 +277,16 @@ server.on('upgrade', (req, socket, head) => {
 
 // Heartbeat: terminate sockets that stop answering pings (half-open TCP, yanked
 // network) so dead peers don't hold game slots until the app-level stale sweep.
+const WS_HEARTBEAT_MS = 15_000;
+let lastHeartbeatAt = Date.now();
 const wsHeartbeat = setInterval(() => {
+  const now = Date.now();
+  const delayed = now - lastHeartbeatAt > WS_HEARTBEAT_MS * 1.5;
+  lastHeartbeatAt = now;
   for (const ws of instagibWss.clients) {
     const w = ws as WebSocket & { isAlive?: boolean };
-    if (w.isAlive === false) {
+    // A delayed timer must allow queued pongs to be processed before closing.
+    if (w.isAlive === false && !delayed) {
       ws.terminate();
       continue;
     }
@@ -287,12 +297,12 @@ const wsHeartbeat = setInterval(() => {
       /* socket already closing */
     }
   }
-}, 15_000);
+}, WS_HEARTBEAT_MS);
 wsHeartbeat.unref();
 startTradeSweep(); // expire stale trade offers (48 h)
 
 server.listen(port, host, () => {
-  console.log(`> Instagib Arena server ready on http://${host}:${port}`);
+  console.log(`> Agent Deathmatch server ready on http://${host}:${port}`);
   console.log(`>   game socket:  ws://${host}:${port}${INSTAGIB_WS_PATH}`);
   console.log(`>   stats api:    http://${host}:${port}/api/stats`);
   console.log(

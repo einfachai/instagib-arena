@@ -51,6 +51,8 @@ export class InputManager {
   private prevDash = false;
   private prevBoost = false;
   private prevFire = false;
+  private mouseZoom = false;
+  private keyZoom = false;
   private accumYaw = 0;
   private accumPitch = 0;
   private locked = false;
@@ -148,6 +150,10 @@ export class InputManager {
     return this.state.scoreboard;
   }
 
+  get zoomHeld(): boolean {
+    return this.mouseZoom || this.keyZoom;
+  }
+
   // Drain the accumulated look delta. Called once per RENDERED frame (not the
   // fixed sim step) so camera rotation is as smooth as the display refresh —
   // critical for flick aim on 144Hz+ monitors. See Game.applyLook().
@@ -159,7 +165,7 @@ export class InputManager {
   }
 
   consume(): InputState {
-    const s = { ...this.state };
+    const s = { ...this.state, zoom: this.zoomHeld };
     // Look is drained separately per render frame via consumeLook(); the fixed
     // sim step only consumes movement + button edges, so zero these here.
     s.yawDelta = 0;
@@ -267,7 +273,8 @@ export class InputManager {
       case 'right': this.state.right = down; break;
       case 'jump': this.state.jump = down; break;
       case 'dash': this.state.dash = down; break;
-      case 'zoom': this.state.zoom = down; break;
+      case 'boost': this.state.boost = down; break;
+      case 'zoom': this.keyZoom = down; break;
       case 'scoreboard': this.state.scoreboard = down; break;
     }
   }
@@ -297,13 +304,13 @@ export class InputManager {
   private onMousedown = (e: MouseEvent) => {
     if (!this.locked || this.chatting) return;
     if (e.button === 0) this.state.fire = true;
-    else if (e.button === 2) this.state.boost = true; // RMB → boost jump
+    else if (e.button === 2) { this.mouseZoom = true; e.preventDefault(); }
   };
 
   private onMouseup = (e: MouseEvent) => {
     if (this.chatting) return;
     if (e.button === 0) this.state.fire = false;
-    else if (e.button === 2) this.state.boost = false;
+    else if (e.button === 2) this.mouseZoom = false;
   };
 
   // Suppress the browser context menu so RMB is a clean game input.
@@ -340,6 +347,8 @@ export class InputManager {
     this.state.boost = false;
     this.state.fire = false;
     this.state.zoom = false;
+    this.mouseZoom = false;
+    this.keyZoom = false;
     this.accumYaw = 0;
     this.accumPitch = 0;
   }

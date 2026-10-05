@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { getBodyGeometry } from './body';
 import type { Character } from './character';
 
 // ── Enemy outline (viewer accessibility option) ──────────────────────────────
@@ -45,9 +44,8 @@ export const OUTLINE_WIDTH_MAX = 5;
 
 let hullGeometry: THREE.BufferGeometry | null = null;
 
-function getHullGeometry(): THREE.BufferGeometry {
+function getHullGeometry(body: THREE.BufferGeometry): THREE.BufferGeometry {
   if (hullGeometry) return hullGeometry;
-  const body = getBodyGeometry().geometry;
   const pos = body.getAttribute('position') as THREE.BufferAttribute;
   const skin = body.getAttribute('skinIndex') as THREE.BufferAttribute;
   const count = pos.count;
@@ -263,7 +261,7 @@ export class CharacterOutline {
 
   constructor(character: Character, style: OutlineStyle) {
     this.body = character.mesh;
-    const mesh = new THREE.SkinnedMesh(getHullGeometry(), style.material);
+    const mesh = new THREE.SkinnedMesh(getHullGeometry(character.mesh.geometry), style.material);
     mesh.name = 'combatant-outline';
     mesh.castShadow = false;
     mesh.receiveShadow = false;
@@ -276,7 +274,7 @@ export class CharacterOutline {
     // Game.disposeScene() must skip this mesh.
     mesh.userData.shared = true;
     this.body.add(mesh);
-    mesh.bind(character.rig.skeleton, new THREE.Matrix4());
+    mesh.bind(character.mesh.skeleton, character.mesh.bindMatrix.clone());
     this.mesh = mesh;
     // The body must draw after the outline so it paints over the inner part.
     this.prevBodyOrder = this.body.renderOrder;

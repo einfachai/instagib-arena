@@ -241,11 +241,11 @@ function HudTickerLab({ hold, reduced }: { hold?: number; reduced: boolean }) {
 // ?view=vote|ranked|rankedloss: the map vote / ranked result overlays with fake state.
 function OverlayLab({ view }: { view: string }) {
   const [vote, setVote] = useState<MapVoteState>(() => ({
-    options: ['causeway', 'reactor', 'lounge'],
+    options: ['causeway', 'reactor'],
     endsAtClient: Date.now() + 18000,
     durationMs: 25000,
-    counts: { causeway: 2, reactor: 4, lounge: 1 },
-    myVote: 'lounge',
+    counts: { causeway: 2, reactor: 4 },
+    myVote: 'reactor',
   }));
   const won = view !== 'rankedloss';
   const side = (rating: number, delta: number) => ({ id: 'x', userName: 'Wraith', rating, delta, rank: 42 });

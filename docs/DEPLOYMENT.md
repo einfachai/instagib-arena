@@ -1,6 +1,6 @@
 # Deployment
 
-Instagib Arena ships as **one Node process** that serves the built client, the
+Agent Deathmatch ships as **one Node process** that serves the built client, the
 stats API, and the `/ws/instagib` game socket on a single port (default
 `8787`). There's nothing else to run — no separate API tier, no external
 services. Put a TLS terminator / reverse proxy in front and you're live.
@@ -70,7 +70,7 @@ HTTPS origin so the WebSocket origin allow-list accepts your browser clients.
 
 ## 3. Railway (recommended PaaS)
 
-Instagib Arena is an ideal fit for Railway: one always-on container with
+Agent Deathmatch is an ideal fit for Railway: one always-on container with
 WebSockets, a persistent volume, and a free HTTPS domain. The repo ships a
 [`railway.json`](../railway.json) that builds from the `Dockerfile` and
 health-checks `/api/health`.
@@ -165,3 +165,63 @@ Run `npm run test:security`, `npm run typecheck`, `npm run lint`,
 `npm run build`, and `npm audit` before shipping. CI runs these checks and CodeQL
 analyzes JavaScript/TypeScript on every push/PR and weekly. GitHub dependency
 alerts, security updates, secret scanning and push protection must remain enabled.
+
+## VPS: Agent Deathmatch
+
+The dedicated VPS is `ubuntu@51.222.25.178` (the **Agent Deathmatch** remote
+connection). It runs Node 24 and Caddy from the official stable package repository.
+The checked-in configuration is under [`deploy/vps`](../deploy/vps).
+
+- Game service: `agent-deathmatch.service`, enabled at boot and restarted on exit.
+- Proxy service: `caddy.service`, serving HTTP/HTTPS and WebSocket upgrades.
+- Active release: `/opt/agent-deathmatch/current`, a symlink into `releases/`.
+- Node runtime: `/opt/node24/bin/node`.
+- Runtime configuration: `/etc/agent-deathmatch.env`.
+- Persistent SQLite data: `/var/lib/agent-deathmatch` (outside release directories).
+- Daily consistent SQLite backups: `/var/lib/agent-deathmatch/backups`, retaining
+  the latest 14 copies, scheduled by `agent-deathmatch-backup.timer`. These are
+  local recovery copies; copy them off the VPS for protection against disk loss.
+- The game runs as the dedicated `agent-deathmatch` user and binds only to
+  `127.0.0.1:8787`. Caddy overwrites the forwarded client IP at the sole ingress.
+
+The public game is `https://agent-deathmatch.hi-fa2.workers.dev/play`. Cloudflare
+serves the frontend and proxies API/WebSocket requests to the authenticated
+provider-hostname ingress on this VPS. See [Cloudflare deployment](CLOUDFLARE.md)
+for the GitHub build settings and the current manual release workflow. The IP
+URL remains available for direct guest-play checks.
+
+### Attach the domain
+
+1. Point the chosen hostname's DNS **A** record to `51.222.25.178`. Do not add an
+   AAAA record unless IPv6 routing is configured and verified.
+2. Replace `/etc/caddy/Caddyfile` with `deploy/vps/Caddyfile.domain.example`,
+   substituting the chosen hostname for `arena.example.com`.
+3. Set `APP_BASE_URL=https://<hostname>` in `/etc/agent-deathmatch.env` so browser
+   writes and game sockets use the same exact origin.
+4. Validate the proxy config, restart the game, and reload Caddy:
+
+   ```sh
+   sudo caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+   sudo systemctl restart agent-deathmatch
+   sudo systemctl reload caddy
+   ```
+
+Caddy obtains and renews the public TLS certificate. Keep TCP ports 80 and 443
+reachable; the backend port stays private. The game restart disconnects current
+players; schedule later production updates accordingly.
+
+### Operations and later releases
+
+```sh
+sudo systemctl status agent-deathmatch caddy
+sudo journalctl -u agent-deathmatch -n 100 --no-pager
+curl --fail http://127.0.0.1:8787/api/health
+```
+
+Build each new release in a fresh staging directory using the locked dependencies
+and Node 24. Run the validation commands above and `npm run test:arcade`, then
+prune development dependencies with `npm prune --omit=dev`. Move the release into
+`/opt/agent-deathmatch/releases/`, make it root-owned, update `current`, and restart
+the game. Keep at least the preceding release for rollback; never replace or
+delete `/var/lib/agent-deathmatch` during a deployment. Database schema changes may
+require restoring a matching backup as well as switching the release symlink.

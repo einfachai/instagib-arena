@@ -1,0 +1,14 @@
+World material pack for Agent Deathmatch
+
+Source surface photographs: ambientCG Metal032 and Concrete034, CC0 1.0.
+https://ambientcg.com/view?id=Metal032
+https://ambientcg.com/view?id=Concrete034
+https://docs.ambientcg.com/license/
+
+Plate seams, chamfers, fastener recesses, material color treatments, aligned
+normal/occlusion/roughness/metalness maps and 1K variants were authored for
+this project. See manifest.json for source archive and output SHA-256 hashes.
+
+Encoded with the official Khronos KTX-Software 4.4.2 encoder, UASTC and
+Zstandard, with complete mip chains. Regenerate using
+scripts/maps/prepare-materials.py; source archives are cached outside public/.
