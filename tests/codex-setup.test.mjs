@@ -22,15 +22,17 @@ test('the plugin relocates without developer paths and completes an MCP handshak
     const [init, list, resources] = output.trim().split('\n').map(JSON.parse);
     assert.equal(init.result.serverInfo.name, 'agent-deathmatch');
     assert.equal(list.result.tools[0].name, 'open_agent_deathmatch');
-    assert.deepEqual(resources.result.resources, []);
-    assert.equal(list.result.tools[0]._meta.ui, undefined);
-    assert.equal(list.result.tools[0]._meta['openai/outputTemplate'], undefined);
+    assert.equal(resources.result.resources[0].uri, list.result.tools[0]._meta.ui.resourceUri);
+    assert.deepEqual(list.result.tools[0]._meta['openai/ui'].entrypoints, [{ type: 'global' }]);
     assert.match(list.result.tools[0].description, /Codex browser tab with open_in_codex/);
     const manifest = JSON.parse(readFileSync(path.join(dir, '.codex-plugin/plugin.json'), 'utf8'));
     const marketplace = JSON.parse(readFileSync(path.join(dir, '.agents/plugins/marketplace.json'), 'utf8'));
     assert.equal(marketplace.plugins[0].name, manifest.name);
     assert.equal(manifest.name, init.result.serverInfo.name);
-    assert.ok(readFileSync(path.join(dir, 'play.html'), 'utf8').includes(`name:'${list.result.tools[0].name}'`));
+    const launcher = readFileSync(path.join(dir, 'play.html'), 'utf8');
+    assert.ok(launcher.includes("request('ui/message'"));
+    assert.ok(!launcher.includes('ui/open-link'));
+    assert.ok(!launcher.includes('openExternal'));
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
 

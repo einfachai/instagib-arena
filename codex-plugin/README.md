@@ -131,7 +131,7 @@ AGENT_DEATHMATCH_ORIGIN=http://localhost:8787 AGENT_DEATHMATCH_DATA=/tmp/arena-d
 The launcher preview is `http://localhost:8790/`; the game opens in a normal
 browser tab for pointer lock. Every launcher opening issues a fresh pairing
 ticket with a three-minute expiry. The game removes it from the URL when claimed.
-For Codex, the tool returns the paired URL and instructs the assistant to open it with `open_in_codex` in an in-app browser tab. It has no attached MCP launcher card and never auto-opens an external browser. Claude Code retains its native browser launch. The HTML preview is a development diagnostic only.
+For Codex, the tool returns the paired URL and instructs the assistant to open it with `open_in_codex` in an in-app browser tab. Its global sidebar entry has a launcher button that requests the game in the Codex browser; it never auto-opens an external browser. Claude Code retains its native browser launch. The HTML preview is a development diagnostic only.
 
 ## Remove
 

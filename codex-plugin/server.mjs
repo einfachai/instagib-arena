@@ -74,6 +74,9 @@ const tool = {
   inputSchema: { type: 'object', properties: {}, additionalProperties: false },
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
   _meta: {
+    'openai/ui': { entrypoints: [{ type: 'global' }] },
+    ui: { resourceUri, visibility: ['app', 'model'] },
+    'openai/outputTemplate': resourceUri,
     'openai/toolInvocation/invoking': 'Opening Agent Deathmatch',
     'openai/toolInvocation/invoked': 'Agent Deathmatch ready'
   }
@@ -145,7 +148,7 @@ async function dispatch(method, params = {}) {
       };
     case 'ping': return {};
     case 'tools/list': return { tools: [tool] };
-    case 'resources/list': return { resources: [] };
+    case 'resources/list': return { resources: [{ uri: resourceUri, name: 'agent-deathmatch-play', title: 'Agent Deathmatch', mimeType }] };
     case 'resources/templates/list': return { resourceTemplates: [] };
     case 'prompts/list': return { prompts: [] };
     case 'tools/call':
