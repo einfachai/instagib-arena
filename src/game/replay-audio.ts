@@ -19,6 +19,7 @@ const CHAIN_LINE: Record<number, SoundClipName> = {
 
 export function makeReplaySfx(audio: SoundManager, opts: { announcer?: boolean } = {}): ReplaySfx {
   return {
+    groundImpact(x, y, z) { audio.deathImpactAt(x, y, z); },
     shot(s, star, lethal) {
       audio.replayShot(s.origin.x, s.origin.y, s.origin.z, star, star ? 0.85 : 0.9);
       // A miss (or a wall graze): the impact where the rail ended.

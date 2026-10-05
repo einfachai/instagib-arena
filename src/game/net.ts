@@ -1,3 +1,5 @@
+import { playerAgent } from '../agent-session';
+import { parseAgent, type AgentKind } from './agent';
 import type { ArenaNotice, CodexEvent, ExitReason, VisitRow, VisitStats } from './arcade';
 import { MovementCueTimeline, copyMovementCue, isMovementCue, type MovementCue } from './movement-cues';
 import type { GameMode } from './constants';
@@ -10,6 +12,7 @@ import { looksToLegacy } from './look-runtime';
 export type Vec3 = { x: number; y: number; z: number };
 
 export type RemotePlayerSnapshot = {
+  agent?: AgentKind;
   id: string;
   name: string;
   pos: Vec3;
@@ -43,6 +46,7 @@ export type RemotePlayerSnapshot = {
 export type SessionEnded = { type: 'session-ended'; stats: VisitStats; rewards?: ProgressionResp; rewardsPending?: boolean; reason: ExitReason; event?: CodexEvent; returnAfterMs: number };
 
 export type RosterEntry = {
+  agent?: AgentKind;
   visit?: VisitRow;
   actor?: 'human' | 'bot';
   id: string;
@@ -94,6 +98,7 @@ type StatePlayer = {
 // on join/leave/resume/cosmetic-change, not per tick) and merged onto the
 // dynamic snapshot in upsertRemote.
 type PlayerMeta = {
+  agent?: AgentKind;
   actor?: 'human' | 'bot';
   id: string;
   name: string;
@@ -530,11 +535,11 @@ export class NetClient {
       } else if (this.resumeToken) {
         // A held resume token means this is a RECONNECT — try to reclaim our slot;
         // the server falls back to a fresh join if the grace window has lapsed.
-        this.send({ type: 'resume', token: this.resumeToken, roomId: this.roomId, name: this.name });
+        this.send({ type: 'resume', token: this.resumeToken, roomId: this.roomId, name: this.name, agent: playerAgent });
       } else if (this.arcadeOptions) {
-        this.send({ type: 'arena', ...this.arcadeOptions });
+        this.send({ type: 'arena', ...this.arcadeOptions, agent: playerAgent });
       } else {
-        this.send({ type: 'join', name: this.name, roomId: this.roomId });
+        this.send({ type: 'join', name: this.name, roomId: this.roomId, agent: playerAgent });
       }
       this.startPing();
     };
@@ -950,6 +955,7 @@ export class NetClient {
     s.invulnMs = b.invulnMs ?? 0;
     s.ping = b.ping ?? 0;
     // Static (meta channel):
+    s.agent = parseAgent(m?.agent) ?? 'codex';
     s.name = m?.name ?? b.id;
     s.team = m?.team ?? null;
     s.hat = m?.hat ?? 'hat.none';
@@ -1323,6 +1329,7 @@ export class NetClient {
       out.push({
         id,
         name: m.name,
+        agent: m.agent,
         team: m.team,
         hat: m.hat,
         emote: m.emote,

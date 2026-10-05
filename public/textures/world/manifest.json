@@ -1,0 +1,399 @@
+{
+  "version": 1,
+  "encoder": "KTX-Software 4.4.2 / UASTC + Zstandard",
+  "sources": [
+    {
+      "id": "Metal032",
+      "url": "https://ambientcg.com/view?id=Metal032",
+      "license": "CC0-1.0",
+      "sha256": "4b8884843c490963d5734be036c35639d064e7a817eb61145322f69c6c19895a"
+    },
+    {
+      "id": "Concrete034",
+      "url": "https://ambientcg.com/view?id=Concrete034",
+      "license": "CC0-1.0",
+      "sha256": "fafd7cd3aee2b703abbb12b7810ef565ab76ac7ea3b1ea9a73b088e423e670b3"
+    }
+  ],
+  "authored": "Seams, plate bevels, fastening recesses and aligned ORM channels authored for Agent Deathmatch.",
+  "files": [
+    {
+      "file": "titanium-2048-color.ktx2",
+      "size": 2048,
+      "channel": "color",
+      "sha256": "6b6351c89fbe74b003380f977ced3799985f9c5328cfc6d58e151f4b0e4cf0e9",
+      "bytes": 2590262
+    },
+    {
+      "file": "titanium-2048-normal.ktx2",
+      "size": 2048,
+      "channel": "normal",
+      "sha256": "33410d441fef70c156de46a031fa50b6e621824563eccaa20424c9d66d5efe0f",
+      "bytes": 7051
+    },
+    {
+      "file": "titanium-2048-orm.ktx2",
+      "size": 2048,
+      "channel": "orm",
+      "sha256": "b2f5b3f83e572fe925bf5a9f80622dad497a56aeca119a018da0e4854c51c6f7",
+      "bytes": 1511487
+    },
+    {
+      "file": "titanium-1024-color.ktx2",
+      "size": 1024,
+      "channel": "color",
+      "sha256": "5249cba39c1d999acb0314448bc90655161c422c5dc390c09cb228ccb1462d18",
+      "bytes": 575379
+    },
+    {
+      "file": "titanium-1024-normal.ktx2",
+      "size": 1024,
+      "channel": "normal",
+      "sha256": "04051b91762174bd2ade4bb25dbaaab8b60a2665db96486cdb80cc0177018d40",
+      "bytes": 4709
+    },
+    {
+      "file": "titanium-1024-orm.ktx2",
+      "size": 1024,
+      "channel": "orm",
+      "sha256": "5ce20648c540ae28bb238f90b881de172b83fc667101c16b962c743f421228cb",
+      "bytes": 312930
+    },
+    {
+      "file": "ceramic-2048-color.ktx2",
+      "size": 2048,
+      "channel": "color",
+      "sha256": "7fd6f5f790c78bcf60cd418c4a0f867af9277202f3001678ce270df99cf73799",
+      "bytes": 2819455
+    },
+    {
+      "file": "ceramic-2048-normal.ktx2",
+      "size": 2048,
+      "channel": "normal",
+      "sha256": "33410d441fef70c156de46a031fa50b6e621824563eccaa20424c9d66d5efe0f",
+      "bytes": 7051
+    },
+    {
+      "file": "ceramic-2048-orm.ktx2",
+      "size": 2048,
+      "channel": "orm",
+      "sha256": "6ef07c64c0e6fee6883a6fed5b7ab9b8b05b8f270973405980957d98e4540c87",
+      "bytes": 1359414
+    },
+    {
+      "file": "ceramic-1024-color.ktx2",
+      "size": 1024,
+      "channel": "color",
+      "sha256": "eeec9e806f4588090aed870e486b455f6e50fd79cb76e1f228475b60c13c70c2",
+      "bytes": 634026
+    },
+    {
+      "file": "ceramic-1024-normal.ktx2",
+      "size": 1024,
+      "channel": "normal",
+      "sha256": "04051b91762174bd2ade4bb25dbaaab8b60a2665db96486cdb80cc0177018d40",
+      "bytes": 4709
+    },
+    {
+      "file": "ceramic-1024-orm.ktx2",
+      "size": 1024,
+      "channel": "orm",
+      "sha256": "7297f8e3227a4abcfa9710fcd1b36490b16a6f35480bef36f62e17c06c7f5b22",
+      "bytes": 290126
+    },
+    {
+      "file": "steel-2048-color.ktx2",
+      "size": 2048,
+      "channel": "color",
+      "sha256": "b68adfe56ffcb4adc49a9cdf4359d6d8d3c58080b8c4885338e28cb955ab6944",
+      "bytes": 2173487
+    },
+    {
+      "file": "steel-2048-normal.ktx2",
+      "size": 2048,
+      "channel": "normal",
+      "sha256": "33410d441fef70c156de46a031fa50b6e621824563eccaa20424c9d66d5efe0f",
+      "bytes": 7051
+    },
+    {
+      "file": "steel-2048-orm.ktx2",
+      "size": 2048,
+      "channel": "orm",
+      "sha256": "988f7bdf8612c12e2e55618ae417494694a86cb316ef54fecce181b1b0fe3745",
+      "bytes": 1311943
+    },
+    {
+      "file": "steel-1024-color.ktx2",
+      "size": 1024,
+      "channel": "color",
+      "sha256": "770fafd3dcc6d2d93d871a9143252d005dd6ccf4c6d70075c6cde2c09eacab21",
+      "bytes": 474361
+    },
+    {
+      "file": "steel-1024-normal.ktx2",
+      "size": 1024,
+      "channel": "normal",
+      "sha256": "04051b91762174bd2ade4bb25dbaaab8b60a2665db96486cdb80cc0177018d40",
+      "bytes": 4709
+    },
+    {
+      "file": "steel-1024-orm.ktx2",
+      "size": 1024,
+      "channel": "orm",
+      "sha256": "bda7762f5c85edb02c58327ef49992e574c5c7b4089521d0289d3a0254cb4809",
+      "bytes": 287558
+    },
+    {
+      "file": "grate-2048-color.ktx2",
+      "size": 2048,
+      "channel": "color",
+      "sha256": "0b4a31c30f5835b8cd18bad92a3f167862e8bcda83db541bdc342fe99e833eae",
+      "bytes": 3088574
+    },
+    {
+      "file": "grate-2048-normal.ktx2",
+      "size": 2048,
+      "channel": "normal",
+      "sha256": "d7ab847736149ab8ed97eee43272cc1a6cd4dda7b4bdbecebfe91d85fc5e28a9",
+      "bytes": 3604
+    },
+    {
+      "file": "grate-2048-orm.ktx2",
+      "size": 2048,
+      "channel": "orm",
+      "sha256": "24858536672ef075c55c5065ad285faa78578de0784c9a2e3073c63b460a49eb",
+      "bytes": 1330373
+    },
+    {
+      "file": "grate-1024-color.ktx2",
+      "size": 1024,
+      "channel": "color",
+      "sha256": "eca3d27d7a3a13dbffcf7a17712a5554c49a91710837510eedb14581f732210f",
+      "bytes": 729229
+    },
+    {
+      "file": "grate-1024-normal.ktx2",
+      "size": 1024,
+      "channel": "normal",
+      "sha256": "6b00be7b71ceb4cba17062ffc39671b8c8256eb0cd7ebd1c92ccc1887fbc5da6",
+      "bytes": 2992
+    },
+    {
+      "file": "grate-1024-orm.ktx2",
+      "size": 1024,
+      "channel": "orm",
+      "sha256": "84e18c8c293c74525300d63e025c074c73612303b16fc4fc59e99beb90e6b438",
+      "bytes": 228066
+    },
+    {
+      "file": "cargo-2048-color.ktx2",
+      "size": 2048,
+      "channel": "color",
+      "sha256": "cfe836cefa50bfb4f5e84611ae725de3f25e79344609f740c58ec46ecc9f1eba",
+      "bytes": 2810266
+    },
+    {
+      "file": "cargo-2048-normal.ktx2",
+      "size": 2048,
+      "channel": "normal",
+      "sha256": "33410d441fef70c156de46a031fa50b6e621824563eccaa20424c9d66d5efe0f",
+      "bytes": 7051
+    },
+    {
+      "file": "cargo-2048-orm.ktx2",
+      "size": 2048,
+      "channel": "orm",
+      "sha256": "cfdfa7c4ad8802b49d9135f27bd786727b6b58279f384d71a24c91859f7b306d",
+      "bytes": 1420679
+    },
+    {
+      "file": "cargo-1024-color.ktx2",
+      "size": 1024,
+      "channel": "color",
+      "sha256": "92a87be32de2d992985f8ac9ce8883845aba601db3ecb1d76e056424dbb5b269",
+      "bytes": 611864
+    },
+    {
+      "file": "cargo-1024-normal.ktx2",
+      "size": 1024,
+      "channel": "normal",
+      "sha256": "04051b91762174bd2ade4bb25dbaaab8b60a2665db96486cdb80cc0177018d40",
+      "bytes": 4709
+    },
+    {
+      "file": "cargo-1024-orm.ktx2",
+      "size": 1024,
+      "channel": "orm",
+      "sha256": "d4da3f323e424d908b5304caf91d572d5af6291c74e76ded90aca813b9686282",
+      "bytes": 293128
+    },
+    {
+      "file": "concrete-2048-color.ktx2",
+      "size": 2048,
+      "channel": "color",
+      "sha256": "1d1c034bbd739f4ef9749ad3f4757cc1e11bd0350d60fd8d36949214db04a4ee",
+      "bytes": 2179286
+    },
+    {
+      "file": "concrete-2048-normal.ktx2",
+      "size": 2048,
+      "channel": "normal",
+      "sha256": "0a4afe7cf1604b5ce796d5c9c35567f96dab8c89658ed06ca01fa72e74a78d0a",
+      "bytes": 5610
+    },
+    {
+      "file": "concrete-2048-orm.ktx2",
+      "size": 2048,
+      "channel": "orm",
+      "sha256": "3a6ea47c0b1ce4c58000895d64d534166317e7fc7f8ca479236dac9f2b8a9420",
+      "bytes": 1349063
+    },
+    {
+      "file": "concrete-1024-color.ktx2",
+      "size": 1024,
+      "channel": "color",
+      "sha256": "f990b7be43314008ed331f1bbf0bd8d253df55f33c469b1dc79e037d3d2950ed",
+      "bytes": 623705
+    },
+    {
+      "file": "concrete-1024-normal.ktx2",
+      "size": 1024,
+      "channel": "normal",
+      "sha256": "df6bd8eb056401a54dd0f430e44c54aee08d7e546e8fc557a506647fd9fb436b",
+      "bytes": 3817
+    },
+    {
+      "file": "concrete-1024-orm.ktx2",
+      "size": 1024,
+      "channel": "orm",
+      "sha256": "3550430c022b7bc7129f30c359d4ff24ecf2f7144fc002354eb8c2beb4136c4b",
+      "bytes": 298625
+    },
+    {
+      "file": "regolith-2048-color.ktx2",
+      "size": 2048,
+      "channel": "color",
+      "sha256": "0e2510250ecd3fc48d81555296ee5c0a048b4f1de5d2abf54a0d26388a044d10",
+      "bytes": 2705792
+    },
+    {
+      "file": "regolith-2048-normal.ktx2",
+      "size": 2048,
+      "channel": "normal",
+      "sha256": "7c2c1fb8e9a2b026d024d3d9314501a74349c70fe218ddf110a7bfb9aa0ee7b1",
+      "bytes": 30520
+    },
+    {
+      "file": "regolith-2048-orm.ktx2",
+      "size": 2048,
+      "channel": "orm",
+      "sha256": "a2cc9597e10da50f7361a98e17239399c7e82c8cc622a59152bc6bb50bb03494",
+      "bytes": 1309908
+    },
+    {
+      "file": "regolith-1024-color.ktx2",
+      "size": 1024,
+      "channel": "color",
+      "sha256": "ab576ceb32d525b1587816711f95687690fcf0363e2a818302d1af1bf54c1e36",
+      "bytes": 758338
+    },
+    {
+      "file": "regolith-1024-normal.ktx2",
+      "size": 1024,
+      "channel": "normal",
+      "sha256": "51ac347aada508198bc193cd2554db892de3a04c1633f2dfe92a803c0e1acb1f",
+      "bytes": 913
+    },
+    {
+      "file": "regolith-1024-orm.ktx2",
+      "size": 1024,
+      "channel": "orm",
+      "sha256": "dba853e9b964bdc2f63c0385847720ca85803292167bf3dd96f4bc89d8ca790f",
+      "bytes": 281586
+    },
+    {
+      "file": "epoxy-2048-color.ktx2",
+      "size": 2048,
+      "channel": "color",
+      "sha256": "faf3c931028c24db0dc362fb6f6c5eea35f32346d70dbafa92098f7bf1d588e1",
+      "bytes": 2565864
+    },
+    {
+      "file": "epoxy-2048-normal.ktx2",
+      "size": 2048,
+      "channel": "normal",
+      "sha256": "0a4afe7cf1604b5ce796d5c9c35567f96dab8c89658ed06ca01fa72e74a78d0a",
+      "bytes": 5610
+    },
+    {
+      "file": "epoxy-2048-orm.ktx2",
+      "size": 2048,
+      "channel": "orm",
+      "sha256": "33a92046fd458e77e51929d7d70e8b3da8fad4437ae6ad2521054e307ea6d16c",
+      "bytes": 1276531
+    },
+    {
+      "file": "epoxy-1024-color.ktx2",
+      "size": 1024,
+      "channel": "color",
+      "sha256": "941391ff3362afc57d481da54653e273a92fd8db9c1d55f2f7a4d8b344fd1a93",
+      "bytes": 717835
+    },
+    {
+      "file": "epoxy-1024-normal.ktx2",
+      "size": 1024,
+      "channel": "normal",
+      "sha256": "df6bd8eb056401a54dd0f430e44c54aee08d7e546e8fc557a506647fd9fb436b",
+      "bytes": 3817
+    },
+    {
+      "file": "epoxy-1024-orm.ktx2",
+      "size": 1024,
+      "channel": "orm",
+      "sha256": "221a7e6a737256c1a2697273a7b4b621066baf33cde514c5950e4c2552a99e01",
+      "bytes": 285079
+    },
+    {
+      "file": "wetplate-2048-color.ktx2",
+      "size": 2048,
+      "channel": "color",
+      "sha256": "c376b5353781e6ca115fda7efe605e7a5c05b5ddb771e7f7870004ae69ed94b9",
+      "bytes": 2527420
+    },
+    {
+      "file": "wetplate-2048-normal.ktx2",
+      "size": 2048,
+      "channel": "normal",
+      "sha256": "33410d441fef70c156de46a031fa50b6e621824563eccaa20424c9d66d5efe0f",
+      "bytes": 7051
+    },
+    {
+      "file": "wetplate-2048-orm.ktx2",
+      "size": 2048,
+      "channel": "orm",
+      "sha256": "5be2bb9891940909ac549cb4dd91f7919282e4af948ba116afe40fe084ed9bff",
+      "bytes": 1502659
+    },
+    {
+      "file": "wetplate-1024-color.ktx2",
+      "size": 1024,
+      "channel": "color",
+      "sha256": "a882326ea68963e5fc97a660e84286e0a57713795ba8bedb2c0a80fd194e100e",
+      "bytes": 576399
+    },
+    {
+      "file": "wetplate-1024-normal.ktx2",
+      "size": 1024,
+      "channel": "normal",
+      "sha256": "04051b91762174bd2ade4bb25dbaaab8b60a2665db96486cdb80cc0177018d40",
+      "bytes": 4709
+    },
+    {
+      "file": "wetplate-1024-orm.ktx2",
+      "size": 1024,
+      "channel": "orm",
+      "sha256": "1e9d3501c3980b82fc0e21e1c351d51842d64a0f2e8ccf44dac0bcd146d5d003",
+      "bytes": 319959
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+
+== nav ==
+causeway       nodes 2241  core 99%   walk 13696 · jump 530 · double 1553 · boost 2864 · drop 2794  build 5820ms
+reactor        nodes 2822  core 100%  walk 17872 · jump 476 · double 1536 · boost 2118 · drop 2216  build 8853ms
+containeryard  nodes 1248  core 100%  walk 7432 · jump 216 · double 770 · boost 1086 · drop 1492  build 3143ms
+derrick        nodes 1298  core 100%  walk 7912 · jump 184 · double 612 · boost 1044 · drop 1404  build 3829ms
+
+== aim (hit rate per shot; strafer = ADAD at 9 m/s with hops) ==
+-- old model --
+easy    still@12  76% (1st 0.73s)  still@22  50% (1st 0.73s)  still@35  20% (1st 0.73s)  strafe@12  12%  strafe@22   4%  strafe@35   1%
+medium  still@12  97% (1st 0.39s)  still@22  88% (1st 0.39s)  still@35  57% (1st 0.39s)  strafe@12  33%  strafe@22  22%  strafe@35   6%
+hard    still@12  96% (1st 0.25s)  still@22  98% (1st 0.25s)  still@35  80% (1st 0.25s)  strafe@12  65%  strafe@22  29%  strafe@35  13%
+-- new model --
+easy    still@12  54% (1st 1.19s)  still@22  44% (1st 1.15s)  still@35  30% (1st 1.18s)  strafe@12  18%  strafe@22   8%  strafe@35  10%
+medium  still@12  70% (1st 0.86s)  still@22  68% (1st 0.98s)  still@35  63% (1st 0.94s)  strafe@12  28%  strafe@22  15%  strafe@35  14%
+hard    still@12  87% (1st 0.65s)  still@22  89% (1st 0.75s)  still@35  88% (1st 0.73s)  strafe@12  42%  strafe@22  29%  strafe@35  34%
+
+== brawl (60s per map, 6 bots FFA) ==
+causeway       E k/m 1.0 d/m 6.0 acc 14% stuck 4.1s/m trav 5/8 mov 87% cov 31% | M k/m 3.5 d/m 4.5 acc 30% stuck 0.6s/m trav 6/6 mov 69% cov 35% | H k/m 10.0 d/m 4.0 acc 61% stuck 0.9s/m trav 2/2 mov 64% cov 27%
+reactor        E k/m 0.5 d/m 8.0 acc 7% stuck 1.4s/m trav 8/10 mov 88% cov 26% | M k/m 4.0 d/m 6.0 acc 30% stuck 0.0s/m trav 2/2 mov 63% cov 22% | H k/m 13.5 d/m 4.0 acc 60% stuck 0.4s/m trav 2/2 mov 70% cov 30%
+containeryard  E k/m 0.5 d/m 6.5 acc 6% stuck 1.0s/m trav 3/3 mov 75% cov 48% | M k/m 7.5 d/m 5.5 acc 56% stuck 0.3s/m trav 4/4 mov 72% cov 47% | H k/m 10.0 d/m 6.0 acc 48% stuck 0.2s/m trav 1/1 mov 79% cov 56%
+derrick        E k/m 2.0 d/m 9.5 acc 24% stuck 1.3s/m trav 2/2 mov 69% cov 37% | M k/m 3.0 d/m 5.5 acc 24% stuck 0.5s/m trav 0/0 mov 60% cov 47% | H k/m 12.5 d/m 2.5 acc 63% stuck 0.3s/m trav 0/0 mov 60% cov 33%
+— totals —
+traversal ok/fail by kind: walk 0/0 · jump 16/0 · double 16/2 · boost 3/3 · drop 0/0
+easy    frags/min 1.0  deaths/min 7.5  acc 13%  stuck 2.0s/min  traversals 78% of 23  moving 80%
+medium  frags/min 4.5  deaths/min 5.4  acc 35%  stuck 0.3s/min  traversals 100% of 12  moving 66%
+hard    frags/min 11.5  deaths/min 4.1  acc 57%  stuck 0.5s/min  traversals 100% of 5  moving 68%

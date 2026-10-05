@@ -1,3 +1,4 @@
+import { playerAgent } from '../agent-session';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { WornHat } from './hats';
@@ -476,7 +477,7 @@ export class CharacterPreview {
   }
 
   private buildCharacter() {
-    const ch = new Character({ colorHex: skinColorFor(this.cos.skinSeed || savedName() || 'you') });
+    const ch = new Character({ agent: playerAgent, colorHex: skinColorFor(this.cos.skinSeed || savedName() || 'you') });
     this.character = ch;
     this.applySkin();
     this.subject.add(ch.root);

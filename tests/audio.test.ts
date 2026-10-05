@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { readFile, stat } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { test } from 'node:test';
@@ -8,20 +9,28 @@ import { GENERATED_SFX_URLS } from '../src/game/sfx/generated-pack';
 import { mapSample } from '../src/game/sfx/samples';
 
 const root = resolve(import.meta.dirname, '..');
+type RecordingSource = { filename: string; path: string; sha256: string };
 const manifest = JSON.parse(await readFile(resolve(root, 'public/sounds/elevenlabs-v1/manifest.json'), 'utf8')) as {
-  files: { key: string; path: string; generation_id: string; duration: number; peak_db: number; voice_id?: string }[];
+  files: { key: string; path: string; generation_id: string | null; duration: number; peak_db: number; voice_id?: string; provider?: string; source?: RecordingSource }[];
 };
 const plan = JSON.parse(await readFile(resolve(root, 'docs/audio-generation.json'), 'utf8')) as {
   announcer: { voice_id: string };
-  effects: { key: string; type: string; category: string }[];
+  effects: { key: string; type: string; category: string; source?: RecordingSource }[];
 };
 
-test('every enabled game sound has a non-silent ElevenLabs recording', async () => {
+test('every enabled game sound has a non-silent recording with traceable provenance', async () => {
   for (const event of plan.effects) {
     const files = manifest.files.filter((file) => file.key === event.key);
     assert.ok(files.length, `Missing ${event.key}`);
     for (const file of files) {
-      assert.ok(file.generation_id, `${event.key} lacks generation provenance`);
+      if (event.type === 'file') {
+        assert.equal(file.provider, 'user-provided');
+        assert.equal(file.generation_id, null, 'Supplied files must not claim an ElevenLabs generation');
+        assert.ok(file.source, `${event.key} lacks its supplied source`);
+        assert.deepEqual(file.source, event.source);
+        const original = await readFile(resolve(root, file.source.path));
+        assert.equal(createHash('sha256').update(original).digest('hex'), file.source.sha256);
+      } else assert.ok(file.generation_id, `${event.key} lacks generation provenance`);
       assert.ok(file.duration > 0.02, `${event.key} is empty`);
       assert.ok(file.peak_db <= -3, `${event.key} exceeds its audio ceiling`);
       assert.ok((await stat(resolve(root, file.path))).size > 512, `${file.path} is empty`);

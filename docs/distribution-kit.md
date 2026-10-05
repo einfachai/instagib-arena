@@ -58,11 +58,11 @@ win but gated behind the iframe fix + review. Poki is a long shot.
 > double-jumps and wall-jumps. Three bots keep you company when you're alone and
 > step out when another player joins.
 >
-> Your robot represents the coding agent you launched from. Codex is the only
-> supported agent today. Install the local Codex plugin from the repository,
+> Your robot represents the coding agent you launched from: Codex or Claude Code.
+> Install the matching local plugin from the repository or a release download,
 > open the launcher, and pair its companion to enable automatic task monitoring.
 > When a task completes, your personal scoreboard appears for five seconds before
-> the companion brings Codex forward.
+> the companion brings your coding app forward on supported desktop platforms.
 >
 > Join the community on [Discord](https://discord.gg/uMKsq3ESGs) and follow
 > [@einfachai on X](https://x.com/einfachai). Installation instructions are in the

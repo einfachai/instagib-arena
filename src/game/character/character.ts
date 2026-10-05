@@ -1,5 +1,6 @@
+import type { AgentKind } from '../agent';
 import * as THREE from 'three';
-import { DYE_MODE, createCharacterMaterial, createCharacterWindowMaterial, getBodyGeometry, resetDeathLook, tickDyeClock, type CharacterUniforms } from './body';
+import { DYE_MODE, createCharacterMaterial, createCharacterWindowMaterial, type BodyGeometry, resetDeathLook, tickDyeClock, type CharacterUniforms } from './body';
 import type { DyeDef } from '../dyes';
 import { B, Rig, SOCKETS, REST_ABS, type SocketName } from './rig';
 import { viewPos } from '../fx/fx-settings';
@@ -45,6 +46,8 @@ function recordViewer(_r: THREE.WebGLRenderer, _s: THREE.Scene, cam: THREE.Camer
 }
 
 export class Character {
+  readonly agent: AgentKind;
+  readonly breakup: BodyGeometry;
   readonly root = new THREE.Group();
   readonly rig: Rig;
   readonly mesh: THREE.SkinnedMesh;
@@ -67,14 +70,16 @@ export class Character {
   private mode: LookMode = 'natural';
   private dye: DyeDef | null = null;
 
-  constructor(opts: { castShadow?: boolean; colorHex?: string } = {}) {
+  constructor(opts: { castShadow?: boolean; colorHex?: string; agent?: AgentKind } = {}) {
     this.root.name = 'combatant';
-    const asset = characterAssets();
+    this.agent = opts.agent ?? 'codex';
+    const asset = characterAssets(this.agent);
+    this.breakup = asset.breakup;
     const { material, uniforms } = createCharacterMaterial();
     this.material = material;
     this.uniforms = uniforms;
     this.windowMaterial = createCharacterWindowMaterial(uniforms);
-    this.model = cloneCharacterModel();
+    this.model = cloneCharacterModel(this.agent);
     this.modelContainer.name = 'android-normalization';
     this.modelContainer.matrix.copy(asset.normalization);
     this.modelContainer.matrixAutoUpdate = false;
@@ -96,7 +101,7 @@ export class Character {
     // Legacy logical bones remain a read-only facade for sockets, cape
     // collision and labs, plus an independent rigid breakup skeleton.
     this.rig = new Rig(this.root);
-    this.breakupMesh = new THREE.SkinnedMesh(getBodyGeometry().geometry, [material, this.windowMaterial]);
+    this.breakupMesh = new THREE.SkinnedMesh(this.breakup.geometry, [material, this.windowMaterial]);
     this.breakupMesh.name = 'android-rigid-breakup';
     this.breakupMesh.visible = false;
     this.breakupMesh.castShadow = this.mesh.castShadow;
@@ -139,7 +144,7 @@ export class Character {
     u.uPlayer.value.copy(codexDefault ? WHITE : this.color);
     // Visor: a hot near-white core (blooms) fading to a saturated player-
     // colour edge; the light slits use the edge colour.
-    const visorColor = codexDefault ? CODEX_BLUE : this.color;
+    const visorColor = codexDefault ? (this.agent === 'claude' ? new THREE.Color('#ff6736') : CODEX_BLUE) : this.color;
     u.uVisorCore.value.copy(visorColor).lerp(WHITE, 0.8).multiplyScalar(mode === 'highlight' ? 3.0 : 2.6);
     u.uVisorEdge.value.copy(visorColor).multiplyScalar(mode === 'highlight' ? 2.4 : 2.0);
     // Readability rim: a light tint of the skin colour, strong enough to read

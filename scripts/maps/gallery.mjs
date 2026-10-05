@@ -1,0 +1,19 @@
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+
+const maps=[['causeway','Causeway','Orbital megastructure'],['reactor','Reactor','Fusion machinery'],['containeryard','Spaceport','Cyberpunk freight terminal'],['derrick','Extraction','Off-world mining facility'],['training','Training Range','Advanced research facility']];
+const folder='design/shots/futuristic';
+const log=readFileSync(`${folder}/capture.log`,'utf8');
+const samples=[...log.matchAll(/\[performance ([\w]+)\/(high|low)\] render (\d+) FPS · mean ([\d.]+) ms · p95 ([\d.]+) ms · (\d+)×(\d+) · \d+ draws · (.+)/g)].map(([,map,quality,fps,mean,p95,width,height,gpu])=>({map,quality,combatants:map==='training'?1:8,fps:Number(fps),meanMs:Number(mean),p95Ms:Number(p95),width:Number(width),height:Number(height),gpu}));
+for (const [id] of maps) for (const quality of ['high','low']) {
+  if (samples.filter(sample=>sample.map===id&&sample.quality===quality).length!==1) throw new Error(`Expected one timing sample for ${id}/${quality}`);
+  for (const view of ['wide','surface','combat']) if (!existsSync(`${folder}/map-${id}-${quality}-${view}.jpg`)) throw new Error(`Missing capture: ${id}/${quality}/${view}`);
+}
+writeFileSync(`${folder}/results.json`,JSON.stringify({sampleDurationMs:20000,rollingMaxFrames:600,warmupExcluded:true,samples},null,2)+'\n');
+const cards=maps.map(([id,name,identity])=>`<article><h2>${name}</h2><p>${identity}</p><a href="map-${id}-high-wide.jpg" data-map="${id}"><img src="map-${id}-high-wide.jpg" alt="${name}: wide, 2K materials" loading="lazy" width="1920" height="1080"></a><small>${id==='training'?'Original drills · revision 1':`${['causeway','reactor'].includes(id)?'96×72 m · FFA/TDM':'68×58 m · Duel'} · revision 2`}</small></article>`).join('\n');
+writeFileSync(`${folder}/index.html`,`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Futuristic map review</title><style>
+body{margin:0;background:#09111c;color:#eaf4ff;font:16px system-ui;padding:32px}main{max-width:1400px;margin:auto}h1{font-size:34px;margin:0 0 8px}p{color:#a9bed1}nav{display:flex;gap:24px;flex-wrap:wrap;padding:24px 0}select{font:inherit;background:#18283a;color:inherit;border:1px solid #45617b;border-radius:8px;padding:8px}section{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,500px),1fr));gap:24px}article{background:#111f2f;border:1px solid #2b4259;border-radius:12px;overflow:hidden;padding:20px}h2{margin:0}img{display:block;width:100%;height:auto;border-radius:6px}small{display:block;color:#a9bed1;padding-top:14px}a{color:#8bdeff}label{display:flex;align-items:center;gap:10px}</style><main>
+<h1>Futuristic map review</h1><p>Five retained maps. Locally shipped PBR materials, new lighting and scenery. Select a view and quality to compare all 30 captures.</p>
+<nav><label>Quality <select id="quality"><option value="high">2K materials</option><option value="low">1K materials</option></select></label><label>View <select id="view"><option>wide</option><option>surface</option><option>combat</option></select></label><a href="results.json">Hardware measurements</a></nav>
+<section>${cards}</section><p>1080p hardware browser captures; seven bots plus the local combatant on combat maps. Training preserves its drills and has no combat bots.</p></main>
+<script>function update(){const quality=document.querySelector('#quality').value,view=document.querySelector('#view').value;for(const a of document.querySelectorAll('[data-map]')){const file='map-'+a.dataset.map+'-'+quality+'-'+view+'.jpg';a.href=file;a.querySelector('img').src=file;a.querySelector('img').alt=a.closest('article').querySelector('h2').textContent+': '+view+', '+(quality==='high'?'2K':'1K')+' materials';}}document.querySelectorAll('select').forEach(select=>select.addEventListener('change',update));</script></html>`);
+console.log(`Gallery written with ${samples.length} timing samples.`);

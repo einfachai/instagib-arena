@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "agent_deathmatch": {
+      "command": "node",
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/codex-plugin/server.mjs",
+        "--agent=claude"
+      ],
+      "env": {
+        "AGENT_DEATHMATCH_AGENT": "claude",
+        "AGENT_DEATHMATCH_ORIGIN": "https://agent-deathmatch.hi-fa2.workers.dev"
+      }
+    }
+  }
+}

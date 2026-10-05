@@ -1,6 +1,6 @@
 # Agent Deathmatch plugin
 
-The launcher opens the shared game at `https://instagib.win/play`, starts a local
+The launcher opens the shared game at `https://agent-deathmatch.hi-fa2.workers.dev/play?agent=codex`, starts a local
 companion, and pairs the browser using a single-use ticket. Press **Play** to join
 a continuous arena. A completed Codex turn ends only your visit; personal results
 wait five seconds before the companion brings Codex back to the foreground.
@@ -19,7 +19,7 @@ MCP support arrangement. A browser-only public MCP server cannot run a player's
 local CLI or activate their desktop app. Do not advertise this package as a
 zero-setup universal-directory release before resolving that requirement.
 
-Opening the installed launcher automatically pairs the browser, starts the
+Opening the installed tool prepares a paired URL, starts the
 companion, and installs a completion notification wrapper. It preserves and
 forwards the previous notification command and original payload, backs up the
 configuration, and preserves unrelated settings. Existing Codex sessions need
@@ -109,7 +109,7 @@ The companion claims it and activates Codex. Local completions use the supported
 returning app focus. Claims prevent a new Play racing native activation; a stale
 countdown cannot interrupt a later visit.
 
-The default data directory is `~/.local/share/agent-deathmatch`. `PLUGIN_DATA` or
+The default data directory is `~/.local/share/agent-deathmatch/live`. `PLUGIN_DATA` or
 `AGENT_DEATHMATCH_DATA` overrides it. Credentials/outbox files are owner-readable only.
 Use a separate data directory when switching origin; credentials belong to their
 issuing backend. Companion/helper logs stay on the execution host.
@@ -131,7 +131,7 @@ AGENT_DEATHMATCH_ORIGIN=http://localhost:8787 AGENT_DEATHMATCH_DATA=/tmp/arena-d
 The launcher preview is `http://localhost:8790/`; the game opens in a normal
 browser tab for pointer lock. Every launcher opening issues a fresh pairing
 ticket with a three-minute expiry. The game removes it from the URL when claimed.
-The launcher uses MCP Apps `ui/open-link` and embeds no game iframe.
+For Codex, the tool returns the paired URL and instructs the assistant to open it with `open_in_codex` in an in-app browser tab. It has no attached MCP launcher card and never auto-opens an external browser. Claude Code retains its native browser launch. The HTML preview is a development diagnostic only.
 
 ## Remove
 
@@ -152,3 +152,17 @@ See [implementation and validation notes](../docs/arcade.md),
 [notification configuration](https://learn.chatgpt.com/docs/config-file/config-advanced),
 [hooks](https://learn.chatgpt.com/docs/hooks), and
 [desktop commands](https://learn.chatgpt.com/docs/reference/commands).
+
+## Release downloads
+
+Run `npm run package:plugins` from the repository root to create both host ZIPs
+and SHA-256 checksums in `dist/plugins`. The manifests share version 0.5.0.
+Pushing `plugin-v0.5.0` runs validation and publishes these files to a GitHub
+Release. Future tags must match both manifest versions.
+
+Extract the Codex ZIP, then use `codex plugin marketplace add /absolute/path/to/agent-deathmatch-codex-v0.5.0`
+and `codex plugin add agent-deathmatch@agent-deathmatch-local`. The repo root also
+provides the `agent-deathmatch` marketplace for GitHub installations.
+The blue artwork and Codex robot are selected by the agent URL parameter and
+persist within that browser tab across reloads. The Claude Code package uses
+its own hooks and controller data; see [Claude Code instructions](../claude-plugin/README.md).

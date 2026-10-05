@@ -1,10 +1,11 @@
+import { agent } from './agent.mjs';
 import { readFile, writeFile, mkdir, readdir, unlink } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { homedir } from 'node:os';
 import path from 'node:path';
 
 const dataArg = process.argv.indexOf('--data');
-export const dataDir = (dataArg >= 0 ? process.argv[dataArg + 1] : undefined) || process.env.PLUGIN_DATA || process.env.AGENT_DEATHMATCH_DATA || path.join(homedir(), '.local', 'share', 'agent-deathmatch');
+export const dataDir = (dataArg >= 0 ? process.argv[dataArg + 1] : undefined) || (agent === 'codex' ? process.env.PLUGIN_DATA : undefined) || process.env.AGENT_DEATHMATCH_DATA || path.join(homedir(), '.local', 'share', 'agent-deathmatch', 'live', ...(agent === 'claude' ? ['claude'] : []));
 export const credentialsPath = process.env.AGENT_DEATHMATCH_CREDENTIALS || path.join(dataDir, 'controller.json');
 export async function loadConnection() {
   const c = JSON.parse(await readFile(credentialsPath, 'utf8'));
@@ -21,8 +22,12 @@ export async function api(connection, route, body) {
   if (!response.ok) throw new Error(`Arena companion HTTP ${response.status}`);
   return response.json();
 }
-export async function register(origin = process.env.AGENT_DEATHMATCH_ORIGIN || 'https://instagib.win') {
-  try { return await loadConnection(); } catch (error) { if (error.code !== 'ENOENT') throw error; }
+export async function register(origin = process.env.AGENT_DEATHMATCH_ORIGIN || 'https://agent-deathmatch.hi-fa2.workers.dev') {
+  try {
+    const existing = await loadConnection();
+    if (existing.origin !== new URL(origin).origin) throw new Error('Controller belongs to a different arena origin; use a separate data directory');
+    return existing;
+  } catch (error) { if (error.code !== 'ENOENT') throw error; }
   const connection = { origin: new URL(origin).origin };
   // Validate TLS policy before creating anything remotely.
   const u = new URL(connection.origin);

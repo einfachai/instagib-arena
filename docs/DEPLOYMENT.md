@@ -184,8 +184,11 @@ The checked-in configuration is under [`deploy/vps`](../deploy/vps).
 - The game runs as the dedicated `agent-deathmatch` user and binds only to
   `127.0.0.1:8787`. Caddy overwrites the forwarded client IP at the sole ingress.
 
-Temporary guest-play URL: `http://51.222.25.178/play`. Production session cookies
-require HTTPS, so account login should be used after attaching the domain.
+The public game is `https://agent-deathmatch.hi-fa2.workers.dev/play`. Cloudflare
+serves the frontend and proxies API/WebSocket requests to the authenticated
+provider-hostname ingress on this VPS. See [Cloudflare deployment](CLOUDFLARE.md)
+for the GitHub build settings and the current manual release workflow. The IP
+URL remains available for direct guest-play checks.
 
 ### Attach the domain
 

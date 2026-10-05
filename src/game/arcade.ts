@@ -8,7 +8,7 @@ export type VisitStats = CombatTotals & { visitId: string; startedAt: number; du
   currentStreak: number; human: CombatTotals; bot: CombatTotals };
 export type VisitRow = VisitStats & { id: string; name: string; actor: 'human' | 'bot' };
 export type ExitReason = 'manual' | 'disconnected' | 'idle' | CodexCategory;
-export type ArenaNotice = { type: 'arena-notice'; id: string; text: string; clip: 'codex-entered' | 'codex-alone' };
+export type ArenaNotice = { type: 'arena-notice'; id: string; text: string; clip?: 'codex-entered' | 'codex-alone' | 'agent-entered' };
 export function emptyCombat(): CombatTotals { return { kills: 0, deaths: 0, shots: 0, hits: 0, headshots: 0, bestStreak: 0 }; }
 export function newVisit(visitId: string, now: number): VisitStats {
   return { ...emptyCombat(), visitId, startedAt: now, durationMs: 0, humanDurationMs: 0, currentStreak: 0, human: emptyCombat(), bot: emptyCombat() };

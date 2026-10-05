@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import type { GroundImpactListener } from './character/gibs';
 import { DEFAULT_KILL_EFFECT, type KillEffectStyle } from './cosmetics';
 import { Character } from './character/character';
 import { characterAssets } from './character/assets';
@@ -92,7 +93,7 @@ export class CharacterAnimator {
       if (bone) this.authoredRotations.set(bone, bone.quaternion.clone());
     }
     const lower = (name: string) => /mixamorig(?:Hips|(?:Left|Right)(?:UpLeg|Leg|Foot|Toe))/.test(name);
-    for (const [id, clip] of characterAssets().clips) {
+    for (const [id, clip] of characterAssets(character.agent).clips) {
       const movement = this.holdGun && !id.startsWith('emote.') && id !== 'rig.tpose' && id !== 'idle.relaxed';
       const action = this.mixer.clipAction(movement ? new THREE.AnimationClip(id, clip.duration, clip.tracks.filter((t) => lower(t.name))) : clip);
       action.play(); action.setEffectiveWeight(0);
@@ -102,7 +103,7 @@ export class CharacterAnimator {
         upper.play().setEffectiveWeight(0); this.upperActions.set(id, upper);
       }
     }
-    const aim = characterAssets().clips.get('idle.armed')!;
+    const aim = characterAssets(character.agent).clips.get('idle.armed')!;
     this.upperAim = this.holdGun ? this.mixer.clipAction(new THREE.AnimationClip('aim.upper', aim.duration, aim.tracks.filter((t) => !lower(t.name)))) : null;
     this.upperAim?.play();
     this.character.root.rotation.order = 'YXZ';
@@ -130,8 +131,9 @@ export class CharacterAnimator {
     this.pose(0, 0, 0, 0, 0);
   }
   notifyFire(): void { this.recoil = 1; }
+  set onDeathGroundImpact(listener: GroundImpactListener | null) { this.gibs.onGroundImpact = listener; }
   die(floor?: GibFloor, style: KillEffectStyle = DEFAULT_KILL_EFFECT): boolean {
-    if (!this.gibs.active) this.gibs.start(this.velocity.x, this.velocity.y, this.velocity.z, floor ?? (this.grounded ? { y: this.prev.y } : null), style);
+    if (!this.gibs.active) this.gibs.start(this.velocity.x, this.velocity.y, this.velocity.z, floor === undefined ? (this.grounded ? { y: this.prev.y } : null) : floor, style);
     return true;
   }
   isDying(): boolean { return this.gibs.active; }

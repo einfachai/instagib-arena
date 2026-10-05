@@ -20,6 +20,7 @@ export type SkyMode = 'lab' | 'dusk' | 'space' | 'night' | 'interior';
 
 export type SkyParams = {
   mode: SkyMode;
+  planet?: { dir: [number,number,number]; size: number; color: number };
   top: number; // zenith
   horizon: number;
   mid?: number; // dusk: band above the horizon
@@ -52,6 +53,9 @@ const ACES_INPUT_INV = ACES_INPUT.clone().invert();
 const ACES_OUTPUT_INV = ACES_OUTPUT.clone().invert();
 
 export type SkyUniforms = {
+  uPlanetDir: { value: THREE.Vector3 };
+  uPlanetColor: { value: THREE.Color };
+  uPlanetSize: { value: number };
   uTop: { value: THREE.Color };
   uMid: { value: THREE.Color };
   uHorizon: { value: THREE.Color };
@@ -85,6 +89,9 @@ void main() {
 `;
 
 const FRAG = /* glsl */ `
+uniform vec3 uPlanetDir;
+uniform vec3 uPlanetColor;
+uniform float uPlanetSize;
 uniform vec3 uTop;
 uniform vec3 uMid;
 uniform vec3 uHorizon;
@@ -208,6 +215,18 @@ void main() {
   col = uTop;
 #endif
 
+  if (uPlanetSize > 0.0) {
+    float pd=dot(d,uPlanetDir);
+    float edge=smoothstep(cos(uPlanetSize),cos(uPlanetSize*.995),pd);
+    vec3 delta=(d-uPlanetDir*pd)/sin(uPlanetSize);
+    float depth=sqrt(max(0.0,1.0-dot(delta,delta)));
+    float terrain=fbm(delta*5.0+vec3(2.0));
+    float clouds=smoothstep(.57,.72,fbm(delta*14.0+vec3(7.0)));
+    vec3 planet=mix(uPlanetColor*.55,uPlanetColor,terrain);
+    planet=mix(planet,vec3(.72,.79,.84),clouds*.65);
+    float lit=max(.07,dot(normalize(delta+uPlanetDir*depth),uSunDir));
+    col=mix(col,planet*lit+uPlanetColor*pow(1.0-depth,3.0)*.3,edge);
+  }
   col = clamp(col, 0.0, 0.9);
   if (uInvTonemap > 0.5) {
     vec3 lin = mix(
@@ -234,6 +253,9 @@ void main() {
 export function createSkyMesh(): THREE.Mesh {
   const geo = new THREE.SphereGeometry(500, 32, 15);
   const uniforms: SkyUniforms = {
+    uPlanetDir: {value:new THREE.Vector3(0,1,0)},
+    uPlanetColor: {value:display(0x789caf)},
+    uPlanetSize: {value:0},
     uTop: { value: display(0x2f6fb8) },
     uMid: { value: display(0x6a8ab8) },
     uHorizon: { value: display(0xc8dcec) },
@@ -295,6 +317,9 @@ export function applySky(sky: THREE.Mesh, p: SkyParams, sunDir: THREE.Vector3): 
   u.uSunGlow.value = p.sunGlow ?? 1;
   u.uBand.value = p.band ?? 0.22;
   u.uStars.value = p.stars ?? 0;
+  u.uPlanetDir.value.set(...(p.planet?.dir ?? [0,1,0])).normalize();
+  u.uPlanetColor.value.setHex(p.planet?.color ?? 0, THREE.LinearSRGBColorSpace);
+  u.uPlanetSize.value=p.planet?.size ?? 0;
 }
 
 export function setSkyDetail(sky: THREE.Mesh, high: boolean): void {

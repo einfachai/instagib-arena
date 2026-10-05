@@ -1,0 +1,15 @@
+{
+  "files": [
+    {
+      "key": "gameplay-music",
+      "name": "Action Music · Kiravale",
+      "url": "/sounds/music/kiravale-action-music-598107.mp3",
+      "filename": "kiravale-action-music-598107.mp3",
+      "duration": 109.632,
+      "bytes": 3508224,
+      "sha256": "6276a420f17ae724c14753a0c92b02ebb3180a0f23fea751f8fe5430f771d4c3",
+      "provider": "user-provided",
+      "loopable": true
+    }
+  ]
+}

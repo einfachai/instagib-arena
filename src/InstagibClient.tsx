@@ -1,3 +1,4 @@
+import { agentLabel } from './agent-session';
 import { beginArena, endArena, integrationState, pairBrowser } from './codex-integration';
 import { VisitResults } from './ui/VisitResults';
 import { BrandLogo } from './ui/BrandLogo';
@@ -71,13 +72,8 @@ import {
   AIR_JUMPS,
   DASH_COOLDOWN,
   DEFAULT_GAME_MODE,
-  mergeKeybinds,
-  DEFAULT_VIEWMODEL_OFFSET,
   HIT_MARKER_DURATION_SEC,
   HIT_MARKER_KILL_DURATION_SEC,
-  M_YAW_DEG,
-  MAX_SENSITIVITY,
-  MIN_SENSITIVITY,
   RAIL_COOLDOWN,
   TOAST_FADE_SEC,
   WEEKLY_CHALLENGE_MAP,
@@ -117,7 +113,8 @@ import { PlayerCard } from './ui/player-card';
 import { buildCardPayload } from './ui/player-card-data';
 import { SettingsModal, type SettingsTab } from './settings/SettingsModal';
 import { keyLabel } from './settings/keys';
-import { DEFAULT_CROSSHAIR, DEFAULT_SETTINGS, clampOutlineWidth, decodeCrosshair, encodeCrosshair, sanitizeHex } from './settings/codec';
+import { loadSettings, saveSettings, SETTINGS_KEY } from './settings/storage';
+import { DEFAULT_SETTINGS, clampOutlineWidth, decodeCrosshair, encodeCrosshair, sanitizeHex } from './settings/codec';
 
 // (The reduced-effects toggle defaults to the OS "reduce motion" preference —
 // prefersReducedMotion() is shared with the deck chrome in src/deck-core.ts.)
@@ -149,55 +146,6 @@ function defaultServerUrl(): string {
   return `${proto}://${window.location.host}/ws/instagib`;
 }
 
-const SETTINGS_KEY = 'instagib-settings-v2';
-
-function loadSettings(): Settings {
-  if (typeof window === 'undefined') return DEFAULT_SETTINGS;
-  try {
-    const raw = window.localStorage.getItem(SETTINGS_KEY);
-    if (!raw) return DEFAULT_SETTINGS;
-    const parsed = JSON.parse(raw) as Partial<Settings>;
-    const merged: Settings = {
-      ...DEFAULT_SETTINGS,
-      ...parsed,
-      // Nested objects need an explicit merge so newly-added fields survive.
-      crosshair: { ...DEFAULT_CROSSHAIR, ...(parsed.crosshair ?? {}) },
-      keybinds: mergeKeybinds(parsed.keybinds),
-      viewmodelOffset: { ...DEFAULT_VIEWMODEL_OFFSET, ...(parsed.viewmodelOffset ?? {}) },
-    };
-    // Migrate legacy sensitivity: the old model stored radians/pixel (~0.0022).
-    // Anything below the new minimum is a legacy value → convert to the
-    // Source-style sens number so people keep roughly the same feel.
-    if (typeof parsed.sensitivity === 'number' && parsed.sensitivity < MIN_SENSITIVITY) {
-      merged.sensitivity = Math.min(
-        MAX_SENSITIVITY,
-        parsed.sensitivity / (M_YAW_DEG * (Math.PI / 180)),
-      );
-    }
-    return merged;
-  } catch {
-    return DEFAULT_SETTINGS;
-  }
-}
-
-// Auto-generated placeholder name (see the mount effect). Matches the shape we
-// create so we can avoid persisting it.
-const AUTO_NAME_RE = /^Player-[0-9A-Z]{4}$/;
-
-function saveSettings(s: Settings) {
-  if (typeof window === 'undefined') return;
-  try {
-    // Don't persist the auto-generated name (#21): if we did, every tab on this
-    // machine would load the same "Player-XXXX", making the scoreboard/killfeed
-    // ambiguous when testing with two tabs. Each tab regenerates its own until
-    // the user types a real one (which is then persisted normally).
-    const toSave = AUTO_NAME_RE.test(s.playerName) ? { ...s, playerName: '' } : s;
-    window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(toSave));
-  } catch {
-    // ignore
-  }
-}
-
 // Optional-chained setters tolerate stale Game instances surviving a Fast
 // Refresh, so a missing newly-added method never crashes the component.
 // Player preferences only. Map / bots / multiplayer are driven by the match
@@ -217,6 +165,8 @@ function applySettingsToGame(game: Game, s: Settings) {
   game.setViewmodelMotion?.(s.viewmodelMotion);
   game.setMasterVolume?.(s.volume);
   game.setSfxVolume?.(s.sfxVolume);
+  game.setMusicVolume?.(s.musicVolume);
+  game.setMusicEnabled?.(s.musicEnabled);
   game.setAnnouncerVolume?.(s.announcerVolume);
   game.setAnnouncerEnabled?.(s.announcerEnabled);
   game.setAnnouncerPack?.(s.announcerPack);
@@ -878,6 +828,9 @@ function GameView({
   );
   const showInter = online && loadGone && nextMap !== null && nextMap.id !== interDoneId;
   const interShot = useLevelshot(showInter && nextMap ? mapIdByName(nextMap.name) : null, settings.lowSpec);
+  useEffect(() => {
+    gameRef.current?.setArenaReady(loadGone && !showInter && !settingsOpen && !joinError && !disconnected && !onlineResults && !rankedResult && !visitSession);
+  }, [loadGone, showInter, settingsOpen, joinError, disconnected, onlineResults, rankedResult, visitSession]);
   // Warm the levelshots of the ballot while the vote runs, so the interstitial
   // opens on a finished image.
   const voteKey = hud.vote ? hud.vote.options.join(',') : '';
@@ -3436,7 +3389,7 @@ function Lobby({
   const lobbyCount = online ? rooms.length : 0;
   const onlineCount = presence?.online ?? 0;
 
-  const [integrationLabel, setIntegrationLabel] = useState('Codex integration unpaired');
+  const [integrationLabel, setIntegrationLabel] = useState(`${agentLabel} integration unpaired`);
   useEffect(() => {
     let active = true;
     const update = async () => {
@@ -3444,8 +3397,8 @@ function Lobby({
         const state = await integrationState();
         if (!active) return;
         const providers = state?.integration?.providers;
-        setIntegrationLabel(!state ? 'Codex integration unpaired' : Object.values(providers ?? {}).some(v => v !== 'healthy') ? 'Codex integration degraded · Play remains available' : 'Codex integration connected');
-      } catch { if (active) setIntegrationLabel('Codex integration degraded · Play remains available'); }
+        setIntegrationLabel(!state ? `${agentLabel} integration unpaired` : Object.values(providers ?? {}).some(v => v !== 'healthy') ? `${agentLabel} integration degraded · Play remains available` : `${agentLabel} integration connected`);
+      } catch { if (active) setIntegrationLabel(`${agentLabel} integration degraded · Play remains available`); }
     };
     void update(); const timer = setInterval(() => void update(), 10_000);
     return () => { active = false; clearInterval(timer); };
@@ -3559,8 +3512,8 @@ function Lobby({
                 <select id='codex-exit-policy' className='mt-2 w-full rounded border border-white/20 bg-slate-900 p-2 text-white'
                   value={settings.codexExitPolicy === 'attention' ? 'attention' : 'completion'}
                   onChange={e => onChangeSettings({ ...settings, codexExitPolicy: e.target.value === 'attention' ? 'attention' : 'completion' })}>
-                  <option value='completion'>A Codex task completes</option>
-                  <option value='attention'>Codex completes or needs attention</option>
+                  <option value='completion'>A {agentLabel} task completes</option>
+                  <option value='attention'>{agentLabel} completes or needs attention</option>
                 </select>
                 <p className='mt-2 text-xs text-white/50'>{integrationLabel}</p>
               </div>

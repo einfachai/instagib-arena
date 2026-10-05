@@ -1,7 +1,12 @@
+import { gameplayMusicActive } from './music/activity';
+import { LocalDeathImpact } from './death-impact';
+import { setMapMeshAssetQuality, whenMapAssetsReady } from './world/assets';
 import type { ArenaNotice } from './arcade';
 import type { SessionEnded } from './net';
 import type { MovementCue } from './movement-cues';
 import * as THREE from 'three';
+import { playerAgent } from '../agent-session';
+import { parseAgent } from './agent';
 import { equipViewmodelArms, updateViewmodelArms } from './viewmodel-arms';
 import type { ProgressionResp } from '../app-types';
 import { SoundManager, type AnnouncerPackId, type SoundClipName } from './audio';
@@ -76,7 +81,7 @@ import { applyScopePose, projectScopeSight } from './scope-pose';
 import { buildMapMesh, DEFAULT_MAP, MAPS, mapById, rayAabb, setMapBuildQuality, type ArenaMap } from './map';
 import { BANNER_MEDALS, MEDAL_LABELS, MedalTracker, medalSting } from './medals';
 import { FOOTSTEP_STRIDE, MotionTracker } from './sfx/motion-tracker';
-import { floorBelow, setCharacterFxQuality, setGibFloorProbe } from './character/gibs';
+import { floorBelow, probeGibFloor, setCharacterFxQuality, setGibFloorProbe } from './character/gibs';
 import { CharacterOutline, OutlineStyle } from './character/outline';
 import type { Character } from './character/character';
 import {
@@ -318,6 +323,10 @@ export class Game {
   private medals = new MedalTracker();
   private effects = new EffectsManager();
   private audio = new SoundManager();
+  private localDeathImpact: LocalDeathImpact | null = null;
+  private readonly onLiveDeathImpact = (x: number, y: number, z: number) => {
+    if (!this.disposed && !this.replay) this.audio.deathImpactAt(x, y, z);
+  };
   // Other combatants' movement sounds (footsteps / jumps / landings), derived
   // from their observed motion — bots in simStep, remotes in syncRemotePlayers.
   private readonly motionSfx = new MotionTracker((kind, x, y, z, s) =>
@@ -336,12 +345,20 @@ export class Game {
   // <0 = uncapped (MessageChannel tight loop — renders past vsync for the lowest
   // input latency, at high CPU cost). See scheduleFrame().
   private fpsLimit = 0;
+  private photoFrameTimes: number[] = [];
+  private photoPose: {yaw:number;pitch:number;pos:{x:number;y:number;z:number}} | null = null;
   private photoMode = false; // dev: see constructor
   private netDebugOn = false; // F3 net-debug overlay
   private frameTimeout: ReturnType<typeof setTimeout> | null = null;
   private fpsChannel: MessageChannel | null = null;
   private tickFn: ((now: number) => void) | null = null;
   private disposed = false;
+  private started = false;
+  private arenaReady = false;
+  private musicFocused = document.hasFocus();
+  private musicBlur = () => { this.musicFocused = false; this.syncMusicActivity(); };
+  private musicFocus = () => { this.musicFocused = true; this.syncMusicActivity(); };
+  private musicVisibility = () => this.syncMusicActivity();
   private resizeHandler: () => void;
   private elapsed = 0;
   private lastSpawnLine = -999; // elapsed-seconds of the last deploy/encouragement line
@@ -670,7 +687,7 @@ export class Game {
     // over `this` kept every finished match's whole Game alive (Play Again leak).
     this.canvas.addEventListener('webglcontextlost', this.onContextLost);
     this.canvas.addEventListener('webglcontextrestored', this.onContextRestored);
-    this.mapMesh = buildMapMesh(this.map);
+    this.mapMesh = buildMapMesh(this.map,{lowSpec:this.lowSpec});
     applyMapShadowFlags(this.mapMesh, this.map);
     this.scene.add(this.mapMesh);
     this.effects.warm(this.scene); // FX lights present before the first compile
@@ -700,6 +717,7 @@ export class Game {
         if (!locked && this.chatOpen) this.closeChat();
         this.emitHud();
         if (locked) this.audio.resume();
+        this.syncMusicActivity();
       },
       () => {
         // Pointer lock was refused (no gesture / unsupported / touch). Surface a
@@ -721,6 +739,9 @@ export class Game {
     this.resizeHandler = () => this.handleResize();
     window.addEventListener('resize', this.resizeHandler);
     window.addEventListener('blur', this.resetScope);
+    window.addEventListener('blur', this.musicBlur);
+    window.addEventListener('focus', this.musicFocus);
+    document.addEventListener('visibilitychange', this.musicVisibility);
     window.addEventListener('keydown', this.tauntKeyHandler);
     this.handleResize();
     this.emitHud();
@@ -733,6 +754,7 @@ export class Game {
     if (this.matchOver || this.vote || this.replay || this.replaySegments.length) return;
     this.input.requestLock();
     this.audio.resume();
+    if (this.musicActivity(true)) this.audio.playMusicFromGesture();
   }
 
   setSensitivity(s: number) {
@@ -838,6 +860,7 @@ export class Game {
     this.audio.setLowSpec(this.lowSpec); // shorter reverb, cheaper panning, fewer voices
     this.postFx.setWorldQuality(this.lowSpec); // sky drops its procedural detail on the low tier
     setCharacterFxQuality({ lowSpec: this.lowSpec }); // fewer gib chunks
+    setMapMeshAssetQuality(this.mapMesh, this.lowSpec);
     setMapBuildQuality(this.lowSpec); // lighter dressing from the next map build
     this.applyPostFx();
   }
@@ -904,6 +927,28 @@ export class Game {
     this.audio.setVolume(v);
   }
 
+  setArenaReady(on: boolean) {
+    this.arenaReady = on;
+    this.syncMusicActivity();
+  }
+
+  private musicActivity(locked = this.locked) {
+    return gameplayMusicActive({
+      started: this.started, arenaReady: this.arenaReady, locked,
+      focused: this.musicFocused, hidden: document.hidden,
+      spectator: this.spectator, matchOver: this.matchOver, voting: !!this.vote,
+      postMatchReplay: !!this.replay || this.replaySegments.length > 0 || !!this.pom,
+      networkReady: !this.wantMultiplayer || this.netJoined, photoMode: this.photoMode,
+    });
+  }
+
+  private syncMusicActivity() {
+    this.audio.setMusicActive(!this.disposed && this.musicActivity());
+  }
+
+  setMusicVolume(v: number) { this.audio.setMusicVolume(v); }
+  setMusicEnabled(on: boolean) { this.audio.setMusicEnabled(on); }
+
   setSfxVolume(v: number) {
     this.audio.setSfxVolume(v);
   }
@@ -927,6 +972,18 @@ export class Game {
 
   setTraining(on: boolean) {
     this.training = on;
+    this.syncTrainingRange();
+  }
+
+  private syncTrainingRange() {
+    const active = this.started && this.training && !this.net && mapIdOf(this.map) === 'training';
+    if (!active) {
+      this.trainingRange?.dispose(this.scene);
+      this.trainingRange = null;
+    } else if (!this.trainingRange) {
+      this.trainingRange = new TrainingRange(this.scene, this.map, TRAINING_LAYOUT);
+      this.trainingTeleport({ pos: TRAINING_LAYOUT.hub.spawn, yaw: TRAINING_LAYOUT.hub.yaw });
+    }
   }
 
   setBotsEnabled(enabled: boolean) {
@@ -1326,7 +1383,7 @@ export class Game {
     this.viewmodelMotion.cancelInspect(true);
     let body = this.tauntBody;
     if (!body) {
-      body = new RemotePlayer('local-taunt', this.playerName, this.scene, this.botModel);
+      body = new RemotePlayer('local-taunt', this.playerName, this.scene, this.botModel, playerAgent);
       body.hidePlate();
       body.setLocalShown(false);
       this.tauntBody = body;
@@ -1353,6 +1410,7 @@ export class Game {
     const p = this.player.pos;
     return {
       id: 'local-taunt',
+      agent: playerAgent,
       name: this.playerName,
       pos: { x: p.x, y: p.y, z: p.z },
       yaw: this.player.yaw,
@@ -1694,10 +1752,13 @@ export class Game {
   // can't be created on the same canvas, so we rebuild scene contents instead).
   setMap(map: ArenaMap) {
     if (map === this.map) return;
+    this.trainingRange?.dispose(this.scene);
+    this.trainingRange = null;
+    this.localDeathImpact?.reset();
     this.map = map;
     this.scene.remove(this.mapMesh);
     disposeGroup(this.mapMesh);
-    this.mapMesh = buildMapMesh(map);
+    this.mapMesh = buildMapMesh(map,{lowSpec:this.lowSpec});
     applyMapShadowFlags(this.mapMesh, map);
     this.scene.add(this.mapMesh);
     this.applyWorldStyle(); // re-tint the freshly-built materials
@@ -1735,6 +1796,7 @@ export class Game {
       }
       this.applyEnemyStyle();
     }
+    this.syncTrainingRange();
     this.emitHud();
   }
 
@@ -1840,20 +1902,25 @@ export class Game {
       model = null;
     }
     if (this.disposed) return;
+    await this.mapAssetsReady();
+    if (this.disposed) return;
     this.botModel = model;
+    await this.audio.preloadDeathImpact();
+    if (this.disposed) return;
+    if (model) this.localDeathImpact ??= new LocalDeathImpact(playerAgent, this.onLiveDeathImpact);
     this.buildViewmodel();
     this.applyBotsState();
     this.applyMultiplayerState();
     // Training mode: a target-practice range (no bots, no return fire).
-    if (this.training && !this.net && !this.trainingRange) {
-      this.trainingRange = new TrainingRange(this.scene, this.map, TRAINING_LAYOUT);
-      this.trainingTeleport({ pos: TRAINING_LAYOUT.hub.spawn, yaw: TRAINING_LAYOUT.hub.yaw });
-    }
+    this.started = true;
+    this.syncTrainingRange();
     this.emitHud();
   }
 
   dispose() {
     this.disposed = true;
+    this.localDeathImpact?.dispose();
+    this.localDeathImpact = null;
     setGibFloorProbe(null);
     if (this.rafHandle !== null) cancelAnimationFrame(this.rafHandle);
     this.rafHandle = null;
@@ -1869,6 +1936,9 @@ export class Game {
     this.input.detach();
     this.scope.dispose();
     window.removeEventListener('blur', this.resetScope);
+    window.removeEventListener('blur', this.musicBlur);
+    window.removeEventListener('focus', this.musicFocus);
+    document.removeEventListener('visibilitychange', this.musicVisibility);
     window.removeEventListener('resize', this.resizeHandler);
     window.removeEventListener('keydown', this.tauntKeyHandler);
     this.tauntBody?.dispose(this.scene);
@@ -2039,7 +2109,7 @@ export class Game {
     this.matchOver = true; this.matchSubmitted = true; this.killcam = null; this.pom = null;
     this.audio.replayEnd(); this.audio.stopAmbience();
     if (document.pointerLockElement) document.exitPointerLock();
-    if (session.event) this.audio.announce(session.reason === 'completion' ? 'codex-complete' : 'codex-attention', session.stats.visitId);
+    if (session.event && playerAgent === 'codex') this.audio.announce(session.reason === 'completion' ? 'codex-complete' : 'codex-attention', session.stats.visitId);
     this.onNetEvent({ type: 'session-ended', session }); this.emitHud();
   }
 
@@ -2047,7 +2117,7 @@ export class Game {
     if (this.arenaNoticeIds.has(notice.id)) return;
     this.arenaNoticeIds.add(notice.id);
     if (this.arenaNoticeIds.size > 256) this.arenaNoticeIds.delete(this.arenaNoticeIds.values().next().value!);
-    this.audio.announce(notice.clip, notice.id);
+    if (notice.clip) this.audio.announce(notice.clip, notice.id);
     this.banner = { id: this.nextEventId++, tier: 'special', title: notice.text, subtitle: '', remaining: 3, total: 3 };
   }
 
@@ -2208,6 +2278,8 @@ export class Game {
 
   private handleVoteResult(r: { mapId: string; resumeAtClient: number; spawn?: { x: number; y: number; z: number } }) {
     this.vote = null;
+    this.arenaReady = false;
+    this.audio.resetMusic();
     this.audio.startAmbience(); // next match: the (new) map's bed fades back in
     // Spectators just follow the new map — no local respawn, stat reset, or lock.
     if (this.spectator) {
@@ -2352,6 +2424,39 @@ export class Game {
     }
   }
 
+  // Dev-only photo entry points. The real simulation and renderer keep running.
+  setPhotoView(yaw: number, pitch: number, pos: {x:number;y:number;z:number}) {
+    if (!import.meta.env.DEV || !this.photoMode) return;
+    this.photoPose={yaw,pitch,pos};
+    this.killcam=null;
+    this.setPlayerView(yaw,pitch,pos);
+  }
+  releasePhotoView() {
+    if (!import.meta.env.DEV || !this.photoMode) return;
+    this.photoPose=null;
+    this.killcam=null;
+    this.player.resetMotion();
+  }
+  photoMovementStatus() {
+    const p=this.player.pos;
+    return `position ${p.x.toFixed(2)}, ${p.y.toFixed(2)}, ${p.z.toFixed(2)} m · ${this.player.onGround?'grounded':'airborne'} · boost ${this.player.boostInRange?'in range':'out of range'} · cooldown ${this.player.boostCooldown.toFixed(1)} s`;
+  }
+  async mapAssetsReady() {
+    let mesh: THREE.Group;
+    do { mesh=this.mapMesh; await whenMapAssetsReady(mesh); } while(!this.disposed && mesh!==this.mapMesh);
+    this.photoFrameTimes.length=0;
+  }
+  photoAssetStatus() { return this.mapMesh.userData.assetsStatus ?? 'fallback'; }
+  photoDiagnostics() {
+    const gl=this.renderer.getContext();
+    const ext=gl.getExtension('WEBGL_debug_renderer_info');
+    const gpu=ext?String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)):'WebGL2';
+    const sorted=[...this.photoFrameTimes].sort((a,b)=>a-b);
+    const mean=sorted.reduce((a,b)=>a+b,0)/Math.max(1,sorted.length);
+    const timing=sorted.length?`mean ${mean.toFixed(2)} ms · p95 ${sorted[Math.floor(sorted.length*.95)].toFixed(2)} ms`:'warming up';
+    return `render ${this.fps} FPS · ${timing} · ${this.canvas.width}×${this.canvas.height} · ${this.renderer.info.render.calls} draws · ${gpu}`;
+  }
+
   setFpsLimit(n: number) {
     this.fpsLimit = Number.isFinite(n) ? Math.trunc(n) : 0;
   }
@@ -2379,8 +2484,11 @@ export class Game {
   private onContextRestored: () => void = () => {};
 
   private frame(now: number) {
+    this.syncMusicActivity();
     this.scopeDt = Math.max(0, (now - this.lastTime) / 1000);
+    if(this.photoMode) { this.photoFrameTimes.push(this.scopeDt*1000); if(this.photoFrameTimes.length>600)this.photoFrameTimes.shift(); }
     const dt = Math.min(0.1, this.scopeDt);
+    this.localDeathImpact?.update(dt);
     this.lastTime = now;
     // Apply mouse look once per RENDERED frame, before stepping the sim, so
     // aim is as smooth as the display refresh (not quantized to the 64Hz sim)
@@ -2435,6 +2543,9 @@ export class Game {
     // Skip GL work while the WebGL context is lost (GPU reset / driver hiccup)
     // — rendering to a dead context spams errors and freezes black. The sim
     // keeps ticking so we resume cleanly once the context is restored.
+    if (this.photoMode && this.photoPose) {
+      const {yaw,pitch,pos}=this.photoPose; this.killcam=null; this.setPlayerView(yaw,pitch,pos);
+    }
     if (!this.contextLost) this.render();
     // Throttle HUD delivery to ~20Hz so React isn't re-rendering ~14 overlay
     // components every animation frame (the 3D render stays full-rate). Event
@@ -2453,7 +2564,7 @@ export class Game {
     const fn = this.tickFn;
     if (this.disposed || !fn) return;
     let limit = this.fpsLimit;
-    if (this.photoMode && typeof document !== 'undefined' && document.hidden) limit = -1;
+    if (this.photoMode && typeof document !== 'undefined' && document.hidden) limit = 5;
     if (limit < 0) {
       // Uncapped: re-run ASAP via a MessageChannel — beats setTimeout's ~4ms
       // clamp, so it can render well past the display refresh.
@@ -2509,19 +2620,19 @@ export class Game {
       // Upgrade a fallback "pill" to the real model once the GLB is ready — the
       // socket can connect (setMultiplayer) before start()'s awaited model load
       // finishes, so early remotes are created modelless. Recreate them in place.
-      if (rp && this.botModel && !rp.hasModel()) {
+      if (rp && this.botModel && (!rp.hasModel() || rp.agent !== (parseAgent(snap.agent) ?? 'codex'))) {
         const px = rp.group.position.x;
         const py = rp.group.position.y;
         const pz = rp.group.position.z;
         rp.dispose(this.scene);
-        rp = new RemotePlayer(id, snap.name, this.scene, this.botModel);
+        rp = new RemotePlayer(id, snap.name, this.scene, this.botModel, parseAgent(snap.agent) ?? 'codex');
         rp.group.position.set(px, py, pz);
         rp.team = snap.team;
         this.applyRemoteColor(rp);
         this.remotePlayers.set(id, rp);
       }
       if (!rp) {
-        rp = new RemotePlayer(id, snap.name, this.scene, this.botModel);
+        rp = new RemotePlayer(id, snap.name, this.scene, this.botModel, parseAgent(snap.agent) ?? 'codex');
         rp.group.position.set(snap.pos.x, snap.pos.y, snap.pos.z);
         rp.team = snap.team;
         this.applyRemoteColor(rp);
@@ -2530,6 +2641,7 @@ export class Game {
         rp.team = snap.team;
         this.applyRemoteColor(rp);
       }
+      rp.onDeathGroundImpact = this.onLiveDeathImpact;
       for (const cue of snap.cues ?? []) this.recorder.logMovement(id, cue);
       const respawned = rp.apply(snap, dt);
       if (respawned && !this.reducedEffects) {
@@ -2589,6 +2701,7 @@ export class Game {
     // show "you" in third person.
     this.recorder.ensureProfile({
       id: 'you',
+      agent: playerAgent,
       name: this.playerName,
       kind: 'local',
       hat: this.localHat,
@@ -2612,6 +2725,7 @@ export class Game {
       this.recorder.ensureProfile({
         id,
         name: rp.name,
+        agent: rp.agent,
         kind: 'remote',
         hat: snap?.hat ?? 'hat.none',
         unusual: snap?.unusual ?? 'unusual.none',
@@ -2861,6 +2975,7 @@ export class Game {
       if (!dead) enemies.push({ id: 'player', pos: this.player.pos, team: this.localTeam, invuln: this.localRespawnInvuln > 0 });
       for (const b of this.bots.bots) {
         b.onMovementCue ??= (cue) => this.recorder.logMovement(b.state.id, cue);
+        b.onDeathGroundImpact = this.onLiveDeathImpact;
         if (b.state.alive) enemies.push({ id: b.state.id, pos: b.state.pos, team: b.getTeam() });
       }
       const intents = this.bots.step(dt, this.map, enemies, this.inCountdown);
@@ -3380,9 +3495,17 @@ export class Game {
 
   // Local (single-player vs bots) death + respawn. Mirrors the multiplayer
   // victim branch of handleNetKill but for a bot killer.
+  private startLocalDeathImpact(pos: { x: number; y: number; z: number }, style: KillEffectStyle) {
+    this.localDeathImpact?.die({
+      pos, velocity: { ...this.player.vel }, yaw: this.player.yaw,
+      pitch: this.player.pitch, grounded: this.player.onGround,
+    }, probeGibFloor(pos.x, pos.y, pos.z) ?? null, style);
+  }
+
   private handleLocalDeath(killerName: string, killerId: string) {
     if (this.killcam) return;
     const deathPos = { ...this.player.pos };
+    this.startLocalDeathImpact(deathPos, this.botFinisher(killerId));
     // Respawn away from where we died AND from every live bot (not just one).
     const avoid = [this.player.pos];
     if (this.bots) for (const b of this.bots.bots) if (b.state.alive) avoid.push(b.state.pos);
@@ -3634,7 +3757,7 @@ export class Game {
         this.effects.spawnMuzzleFlash(this.scene, new THREE.Vector3(at.x, at.y, at.z)),
       starViewmodel: true,
       plates: 'small',
-      acquireActor: (id, name) => this.acquireReplayActor(id, name),
+      acquireActor: (id, name, agent) => this.acquireReplayActor(id, name, agent),
       releaseActor: (actor) => this.releaseReplayActor(actor),
       // The killer's recorded finisher (their Look) decides the burst.
       spawnKillEffect: (at, headshot, _killerId, finisher) => this.spawnKillEffect(at, headshot, finisher),
@@ -3686,11 +3809,11 @@ export class Game {
 
   // A parked replay body for `id` (same name, same model tier), back in the
   // scene — or null, and the replay builds one.
-  private acquireReplayActor(id: string, name: string): RemotePlayer | null {
+  private acquireReplayActor(id: string, name: string, agent: import('./agent').AgentKind = 'codex'): RemotePlayer | null {
     const a = this.replayActorPool.get(id);
     if (!a) return null;
     this.replayActorPool.delete(id);
-    if (a.name !== name || a.hasModel() !== !!this.botModel) {
+    if (a.name !== name || a.agent !== agent || a.hasModel() !== !!this.botModel) {
       a.dispose(this.scene);
       return null;
     }
@@ -3909,6 +4032,7 @@ export class Game {
     } else if (iAmVictim) {
       // Capture deathPos for the killcam BEFORE teleporting to respawn.
       const deathPos = { ...this.player.pos };
+      this.startLocalDeathImpact(ev.victimPos, finisher);
       // Snap the player data to the server-picked respawn. The camera
       // stays at deathPos during the killcam — see render().
       this.player.pos = {
@@ -4121,12 +4245,14 @@ export class Game {
   }
 
   private emitHud() {
+    this.syncMusicActivity();
     const speed = Math.hypot(this.player.vel.x, this.player.vel.z);
     const pct = (hit: number, fired: number): number | null =>
       fired > 0 ? (hit / fired) * 100 : null;
     const scores: PlayerScore[] = [
       {
         id: 'you',
+        agent: playerAgent,
         name: this.playerName,
         isLocal: true,
         frags: this.playerFrags,
@@ -4189,6 +4315,7 @@ export class Game {
       for (const r of this.net.roster()) {
         scores.push({
           id: r.id,
+          agent: r.agent,
           name: r.name,
           isLocal: false,
           frags: r.frags,

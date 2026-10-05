@@ -1,0 +1,14 @@
+{
+  "name": "agent-deathmatch",
+  "version": "0.5.0",
+  "description": "Play a Claude robot deathmatch while Claude Code works; return when your task finishes.",
+  "author": {
+    "name": "Agent Deathmatch"
+  },
+  "homepage": "https://agent-deathmatch.hi-fa2.workers.dev",
+  "repository": "https://github.com/einfachai/instagib-arena",
+  "hooks": "./claude-plugin/hooks/hooks.json",
+  "skills": [
+    "./claude-plugin/skills/"
+  ]
+}

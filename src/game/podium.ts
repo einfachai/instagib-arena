@@ -46,6 +46,7 @@ const RISE_DELAY = [0.75, 0.45, 0.15];
 const LOOK_SLOTS = ['hat', 'face', 'back'] as const;
 
 export type PodiumWinner = {
+  agent?: import('./agent').AgentKind;
   place: number; // 1-based
   name: string;
   score: number;
@@ -657,7 +658,7 @@ export class PodiumScene {
       group.position.set(0, slot.h, 0);
       group.rotation.y = Math.PI; // the combatant faces -Z; turn to face the camera (+Z)
 
-      const character = new Character({ colorHex: skinColorFor(w.name) });
+      const character = new Character({ agent: w.agent, colorHex: skinColorFor(w.name) });
       character.wearDye(dyeById(w.looks?.dye?.d), skinColorFor(w.name));
       group.add(character.root);
       const anim = new CharacterAnimator(character, { driveYaw: false, holdGun: false });

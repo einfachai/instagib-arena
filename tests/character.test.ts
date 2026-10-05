@@ -391,3 +391,32 @@ test('first-person full arms reach from fixed shoulders and retain both grips th
   assert(new THREE.Vector3(0,.037,-.917).applyMatrix4(vm.group.matrix).z < -.5, 'Muzzle is behind the camera');
   vm.dispose(); assert(!mesh.parent);
 });
+
+
+test('Claude characters retain their own geometry through animations and breakup alongside Codex', () => {
+  const codex = new Character({ agent: 'codex' });
+  const claude = new Character({ agent: 'claude' });
+  assert.equal(characterAssets('claude').manifest.model, '/models/claude-android/model.glb');
+  assert.notEqual(claude.mesh.geometry, codex.mesh.geometry);
+  assert.notEqual(claude.breakup.geometry, codex.breakup.geometry);
+  assert.equal(claude.breakupMesh.geometry, claude.breakup.geometry);
+  assert.equal(claude.canonicalBones.size, codex.canonicalBones.size);
+  const anim = new CharacterAnimator(claude);
+  anim.updateStatic(0.5);
+  claude.root.updateMatrixWorld(true);
+  assert(claude.canonicalBones.get('mixamorigHead')!.matrixWorld.elements.every(Number.isFinite));
+  const bounds = new THREE.Box3().setFromObject(characterAssets('claude').scene);
+  bounds.applyMatrix4(characterAssets('claude').normalization);
+  assert(Math.abs(bounds.max.y - bounds.min.y - 1.8) < 0.01);
+  claude.beginBreakup(); assert(claude.breakupMesh.visible); assert(!claude.modelContainer.visible);
+  claude.endBreakup(); assert(!claude.breakupMesh.visible); assert(claude.modelContainer.visible);
+  anim.dispose(); codex.dispose(); claude.dispose();
+});
+
+test('replay v5 round trips both robots while older recordings default to Codex', () => {
+  const profile = (id: string, agent: 'codex' | 'claude') => ({ id, agent, name: id, kind: 'remote' as const, hat: 'hat.none', unusual: 'unusual.none', nameColor: 'name.default', team: null });
+  const data: ReplayData = { version: 5, hz: 20, mapId: 'arena', durationMs: 1000, localId: 'c', won: false,
+    profiles: [profile('c', 'claude'), profile('x', 'codex')], frames: [{ t: 0, poses: { c: { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, visible: true } } }], kills: [], shots: [], taunts: [], movement: [] };
+  assert.deepEqual(decodeReplay(encodeReplay(data)).profiles.map(p => p.agent), ['claude', 'codex']);
+  assert.deepEqual(decodeReplay(encodeReplay({ ...data, version: 4 })).profiles.map(p => p.agent), ['codex', 'codex']);
+});

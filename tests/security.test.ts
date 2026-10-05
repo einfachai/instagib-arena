@@ -303,8 +303,8 @@ test('movement accepts safe spawns and rejects wall crossings and ceiling escape
     const arena = ARENA_NET[id];
     for (const spawn of arena.spawns) assert.equal(validPlayerMove(id, spawn, spawn), true, `${id}: ${JSON.stringify(spawn)}`);
   }
-  // Causeway's west pylon (x −13.75…−11.25, z 3.5…6) stands between these two floor spots.
-  assert.equal(validPlayerMove('causeway', { x: -15, y: 0.05, z: 5 }, { x: -10, y: 0.05, z: 5 }), false);
+  // Revision 2's hangar cargo module (x 11…15, z −10…−6) separates these floor spots.
+  assert.equal(validPlayerMove('causeway', { x: 9, y: 0.05, z: -8 }, { x: 17, y: 0.05, z: -8 }), false);
   assert.equal(validPlayerMove('causeway', { x: 0, y: 0.05, z: 0 }, { x: 0, y: 50, z: 0 }), false);
 });
 test('replay uploads require auth before parsing the body', async () => {
@@ -394,15 +394,15 @@ test('game server blocks shots through walls and still awards clear-line hits', 
     const current = state.players.find((p: any) => p.id === id);
     assert.ok(Math.abs(current.x - tx) < 0.05 && Math.abs(current.z - tz) < 0.05 && current.y < 0.2, `${id} ended at ${JSON.stringify(current)}`);
   }
-  await Promise.all([move(a, aid, -15, 5), move(b, bid, -10, 5)]);
+  await Promise.all([move(a, aid, 9, -8), move(b, bid, 17, -8)]);
   await pause(Math.max(0, aj.resumeAt - Date.now()) + 100);
-  a.ws.send(JSON.stringify({ type: 'shoot', ox: -15, oy: 1.65, oz: 5, dx: 1, dy: 0, dz: 0, maxDist: 220, renderTime: Date.now() }));
+  a.ws.send(JSON.stringify({ type: 'shoot', ox: 9, oy: 1.65, oz: -8, dx: 1, dy: 0, dz: 0, maxDist: 220, renderTime: Date.now() }));
   const beam = await b.wait('beam');
-  assert.ok(beam.ex <= -13.74); // stopped by the pylon face
+  assert.ok(beam.ex <= 11.01); // stopped by the cargo module face
   assert.equal(b.messages.some((m) => m.type === 'kill'), false);
-  await move(b, bid, -15, 9);
+  await move(b, bid, 9, -13);
   await pause(1200);
-  a.ws.send(JSON.stringify({ type: 'shoot', ox: -15, oy: 1.65, oz: 5, dx: 0, dy: 0, dz: 1, maxDist: 220, renderTime: Date.now() }));
+  a.ws.send(JSON.stringify({ type: 'shoot', ox: 9, oy: 1.65, oz: -8, dx: 0, dy: 0, dz: -1, maxDist: 220, renderTime: Date.now() }));
   const kill = await a.wait('kill');
   assert.equal(kill.killerId, aid);
   assert.equal(kill.victimId, bid);

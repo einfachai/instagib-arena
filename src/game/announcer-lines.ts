@@ -5,6 +5,7 @@ import type { AnnouncerPackId, SoundClipName } from './audio';
 export type AnnouncerLineSet = Partial<Record<SoundClipName, string[]>>;
 
 const ARENA_LINES: AnnouncerLineSet = {
+  'agent-entered': ['Another agent user entered the arena.'],
   'codex-entered': ['Codex user entered the arena.'],
   'codex-alone': ['All other Codex users left the arena.'],
   'codex-complete': ['Your Codex task is complete. Back to work.'],

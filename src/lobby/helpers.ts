@@ -43,7 +43,7 @@ export function useMapShot(mapId: string, render = false, lowSpec = false): stri
     let alive = true;
     const run = async () => {
       backdropMod ??= await import('../menu/menu-backdrop');
-      const hit = backdropMod.cachedLevelshot(mapId);
+      const hit = backdropMod.cachedLevelshot(mapId,lowSpec);
       if (hit) return hit;
       return render ? backdropMod.renderLevelshot(mapId, { lowSpec }) : null;
     };

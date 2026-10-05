@@ -1,3 +1,4 @@
+import { disposeMapAssets } from './world/assets';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
@@ -80,6 +81,8 @@ export function createRenderer(canvas: HTMLCanvasElement): THREE.WebGLRenderer {
   const w = canvas.clientWidth || window.innerWidth;
   const h = canvas.clientHeight || window.innerHeight;
   renderer.setSize(w, h, false);
+  const dispose = renderer.dispose.bind(renderer);
+  renderer.dispose = () => { disposeMapAssets(renderer); dispose(); };
   return renderer;
 }
 
@@ -107,6 +110,8 @@ export type ArenaLighting = {
 };
 const lightingByScene = new WeakMap<THREE.Scene, ArenaLighting>();
 const rendererByScene = new WeakMap<THREE.Scene, THREE.WebGLRenderer>();
+
+export function getSceneRenderer(scene: THREE.Scene) { return rendererByScene.get(scene); }
 
 export function getArenaLighting(scene: THREE.Scene): ArenaLighting | undefined {
   return lightingByScene.get(scene);

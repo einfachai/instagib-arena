@@ -1,3 +1,4 @@
+import { setMapMeshAssetQuality, whenMapAssetsReady } from './world/assets';
 // ── Standalone full-run replay viewer ────────────────────────────────────────
 //
 // Plays back a downloaded weekly-challenge run end-to-end, first-person through
@@ -9,13 +10,14 @@
 
 import * as THREE from 'three';
 import { loadBotModel } from './bots';
-import { buildMapMesh, mapById } from './map';
+import { buildMapMesh, replayMap } from './map';
 import { EffectsManager } from './effects';
 import { ReplayPlayer, type ReplaySource } from './replay';
 import { createCamera, createRenderer, createScene } from './renderer';
 import type { ReplayData } from './replay-codec';
 import { SoundManager, type AnnouncerPackId } from './audio';
 import { makeReplaySfx } from './replay-audio';
+import { floorBelow, setGibFloorProbe } from './character/gibs';
 import { spawnEffectById } from './cosmetics';
 import type { Vec3 } from './types';
 
@@ -50,7 +52,7 @@ export class ReplayViewer {
   private renderer: THREE.WebGLRenderer;
   private scene: THREE.Scene;
   private camera: THREE.PerspectiveCamera;
-  private mapMesh: THREE.Object3D | null = null;
+  private mapMesh: THREE.Group | null = null;
   private effects = new EffectsManager();
   private audio = new SoundManager();
   private tmpDir = new THREE.Vector3();
@@ -68,6 +70,7 @@ export class ReplayViewer {
   private endT = 0;
   private disposed = false;
   private ready = false;
+  private lowSpec = false;
   private lastEmit = -1;
   private resizeHandler: () => void;
   private up = new THREE.Vector3(0, 1, 0);
@@ -99,6 +102,7 @@ export class ReplayViewer {
 
   // Render-resolution pixel ratio, mirroring Game.setQuality/applyPixelRatio.
   private applyQuality(resolutionScale: number, lowSpec: boolean) {
+    this.lowSpec=lowSpec;
     const scale = Number.isFinite(resolutionScale) ? Math.max(0.4, Math.min(2, resolutionScale)) : 1;
     const dpr = window.devicePixelRatio || 1;
     const cap = lowSpec ? 1 : 2;
@@ -109,7 +113,8 @@ export class ReplayViewer {
   // Async for API stability (the combatant is built in code now, so the model
   // token resolves immediately). Safe to call once.
   async start() {
-    const arena = mapById(this.data.mapId);
+    const arena = replayMap(this.data.mapId, this.data.mapRevision ?? 1);
+    if (!arena) throw new RetiredReplayLayoutError();
     this.audio.setMap(this.data.mapId);
     // The replay's sound set (shots, frags + finishers, other runners' footsteps).
     // Best-effort: with no audio context the rewatch is simply silent.
@@ -120,11 +125,14 @@ export class ReplayViewer {
       }
       this.audio.resume();
       this.audio.replayBegin(1, 0.25);
+      void this.audio.preloadDeathImpact();
     });
-    this.mapMesh = buildMapMesh(arena);
+    this.mapMesh = buildMapMesh(arena,{lowSpec:this.lowSpec});
+    setGibFloorProbe((x, y, z) => floorBelow(arena.boxes, x, y, z));
     this.scene.add(this.mapMesh);
+    setMapMeshAssetQuality(this.mapMesh, this.lowSpec);
 
-    const botModel = await loadBotModel().catch(() => null);
+    const [botModel] = await Promise.all([loadBotModel().catch(() => null), whenMapAssetsReady(this.mapMesh)]);
     if (this.disposed) return;
 
     const frames = this.data.frames;
@@ -188,6 +196,7 @@ export class ReplayViewer {
     if (this.raf) cancelAnimationFrame(this.raf);
     window.removeEventListener('resize', this.resizeHandler);
     this.player?.dispose();
+    setGibFloorProbe(null);
     this.player = null;
     this.audio.replayEnd(0.05);
     this.audio.dispose();
@@ -297,4 +306,8 @@ function disposeObject(obj: THREE.Object3D) {
     if (Array.isArray(mat)) mat.forEach((m) => m.dispose());
     else if (mat) (mat as THREE.Material).dispose();
   });
+}
+
+export class RetiredReplayLayoutError extends Error {
+  constructor() { super('This recording uses a retired map layout. Its file and statistics are preserved.'); this.name='RetiredReplayLayoutError'; }
 }

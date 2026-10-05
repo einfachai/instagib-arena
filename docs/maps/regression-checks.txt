@@ -1,0 +1,45 @@
+✔ visit clock excludes dropped time and counters exceed the snapshot range (167.501ms)
+[loop-lag] tick fired 60ms late (event loop stalled) — clients:0 rooms:0
+✔ 0→1→2→3→2→1→0 has exactly three bots only when alone; visits stay independent (538.335667ms)
+✔ simultaneous joins respect eight human slots and fullest-arena matchmaking (295.677792ms)
+✔ buffered movement tolerates a short delivery burst while a sustained flood still closes (661.285459ms)
+[loop-lag] tick fired 58ms late (event loop stalled) — clients:5 rooms:2
+✔ transport pongs keep a throttled browser connected without application timers (37102.879125ms)
+✔ reconnect resumes the same visit, pauses playtime, and removes solo bots atomically (1831.243417ms)
+✔ a solo reconnect restores bots and the same visit without an arrival or leaving callout (1213.5845ms)
+✔ authoritative bots move, shoot and despawn during firing without phantom kills (2927.409291ms)
+✔ paired events are isolated, scoped, deduplicated and cancel pending matchmaking (248.216208ms)
+✔ mixed settlement is atomic, capped and exactly once; bot combat never changes career data (83.585708ms)
+✔ five-second desktop return is scoped to its ended visit and SSH events only end the paired player (5309.582208ms)
+[loop-lag] tick fired 73ms late (event loop stalled) — clients:1 rooms:1
+✔ empty arenas stop bot simulation and are reaped after the existing grace period (35099.603583ms)
+✔ a completion during pairing cancels the attempted visit without carrying historical events into re-entry (82.303625ms)
+✔ completion with no observed attempt catches Play racing the companion state lookup (76.904209ms)
+[loop-lag] tick fired 121000ms late (event loop stalled) — clients:4 rooms:1
+✔ an idle arcade visit delivers frozen personal results before the socket closes (4408.301375ms)
+✔ mixed plugin identities reach the authoritative roster and survive resume (232.275541ms)
+✔ congested pose uploads are discarded and the current pose resumes after the queue drains (77.029167ms)
+✔ duplicate connects and a late close from an old socket cannot replace the current connection (1.11975ms)
+✔ right mouse scopes without boosting; left mouse still fires during scope (12.208666ms)
+✔ mouse and alternate scope key release independently (16.424875ms)
+✔ blur, chat and pointer unlock clear held scope and do not resume it (2.278084ms)
+✔ mouse input is ignored in menus/chat and context menu is suppressed (0.803666ms)
+✔ boost moves to E, remains rebindable and migrates saved binds without conflicts (0.954ms)
+✔ detaching removes scope input listeners (0.432375ms)
+✔ scope takes exactly 0.5s in / 0.25s out at 30fps (8.317833ms)
+✔ scope takes exactly 0.5s in / 0.25s out at 60fps (0.477125ms)
+✔ scope takes exactly 0.5s in / 0.25s out at 120fps (0.519375ms)
+✔ scope takes exactly 0.5s in / 0.25s out at 144fps (0.456041ms)
+✔ quick release and re-press reverse continuously without a new clock (1.656458ms)
+✔ interruptions reset every output; invalid deltas cannot corrupt the clock (3.303834ms)
+✔ weapon remains opaque through the approach; reticle arrives during the handoff (0.377834ms)
+✔ authored sight aligns at the eye regardless of custom hip offsets and camera/world transforms (76.848292ms)
+✔ special models use a stable fallback and phase zero preserves the hip pose (2.031708ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 93583.63625

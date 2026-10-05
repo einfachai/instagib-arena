@@ -24,12 +24,16 @@
     "serve": "npm run build && npm run start",
     "lint": "eslint .",
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.server.json --noEmit",
+    "test:audio": "node --import tsx --test tests/audio.test.ts tests/audio-player.test.mjs tests/music.test.ts tests/death-impact.test.ts",
     "test:security": "node --import tsx --test tests/security.test.ts",
-    "test:arcade": "node --import tsx --test tests/arcade.test.ts tests/net-transport.test.ts tests/codex-integration.test.ts tests/codex-adapters.test.mjs tests/codex-setup.test.mjs tests/audio.test.ts tests/audio-player.test.mjs tests/shot-timing.test.ts",
+    "test:arcade": "node --import tsx --test tests/arcade.test.ts tests/net-transport.test.ts tests/codex-integration.test.ts tests/codex-adapters.test.mjs tests/codex-setup.test.mjs tests/audio.test.ts tests/audio-player.test.mjs tests/music.test.ts tests/shot-timing.test.ts",
+    "package:plugins": "python3 scripts/package-plugins.py",
+    "test:plugins": "node --import tsx --test tests/agent-plugins.test.mjs tests/codex-adapters.test.mjs tests/codex-setup.test.mjs",
     "typecheck:worker": "tsc -p tsconfig.worker.json",
     "test:worker": "node --import tsx --test tests/cloudflare-worker.test.ts",
     "build:cloudflare": "npm run typecheck:worker && npm run test:worker && npm run build",
-    "deploy:cloudflare": "wrangler deploy"
+    "deploy:cloudflare": "wrangler deploy",
+    "test": "node --import tsx --test tests/*.test.ts tests/*.test.mjs"
   },
   "dependencies": {
     "better-sqlite3": "12.11.1",

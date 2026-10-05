@@ -1,3 +1,5 @@
+import { playerAgent } from '../agent-session';
+import type { AgentKind } from './agent';
 import * as THREE from 'three';
 import { Character } from './character/character';
 import { CharacterAnimator } from './character-anim';
@@ -23,11 +25,11 @@ const geometries = new Map<string, ArmAsset>();
 const rigs = new WeakMap<THREE.Group, ArmRig>();
 // The supporting shoulder leads slightly forward to reach the fore-end during inspection.
 const SHOULDERS = [new THREE.Vector3(-0.25, -0.24, 0.04), new THREE.Vector3(0.25, -0.24, 0.12)];
-function armGeometry(finish?: RailgunFinish): ArmAsset {
-  const key = finish?.model ?? 'r01';
+function armGeometry(finish?: RailgunFinish, agent: AgentKind = playerAgent): ArmAsset {
+  const key = `${agent}:${finish?.model ?? 'r01'}`;
   const cached = geometries.get(key);
   if (cached) return cached;
-  const ch = new Character({ castShadow: false });
+  const ch = new Character({ castShadow: false, agent });
   const gun = attachRailgun(ch, finish), anim = new CharacterAnimator(ch);
   anim.updateStatic(0);
   ch.root.updateMatrixWorld(true);

@@ -99,8 +99,8 @@ test('0→1→2→3→2→1→0 has exactly three bots only when alone; visits s
   await delay(180); a.clear();
   const { p: b } = await peer(); const bj = await b.arena(); assert.equal(bj.roomId, aj.roomId); assert.equal(bj.mapId, aj.mapId);
   const two = await a.next('visit-stats', m => m.players.length === 2);
-  const entered = await a.next('arena-notice', m => m.clip === 'codex-entered');
-  assert.equal(entered.text, 'Codex user entered the arena.');
+  const entered = await a.next('arena-notice', m => m.clip === 'agent-entered');
+  assert.equal(entered.text, 'Another agent user entered the arena.');
   assert.equal((await b.next('arena-notice')).id, entered.id);
   assert.ok(two.players.every((p: any) => p.actor === 'human'));
   const incumbent = two.players.find((p: any) => p.id === aw.clientId);
@@ -116,7 +116,7 @@ test('0→1→2→3→2→1→0 has exactly three bots only when alone; visits s
   a.clear(); await b.leave();
   const back = await a.next('visit-stats', m => m.players.filter((p: any) => p.actor === 'bot').length === 3);
   assert.equal(back.players.find((p: any) => p.id === aw.clientId).visitId, aj.visitId);
-  const notice = await a.next('arena-notice', m => m.clip === 'codex-alone'); assert.equal(notice.text, 'All other Codex users left the arena.');
+  const notice = await a.next('arena-notice', m => m.text === 'All other agent users left the arena.'); assert.equal(notice.text, 'All other agent users left the arena.');
   const ended = await a.leave(); assert.equal(ended.stats.visitId, aj.visitId); assert.equal(ended.reason, 'manual');
   assert.equal(game.liveCounts().inMatch, 0);
   a.clear(); const again = await a.arena(); assert.notEqual(again.visitId, aj.visitId);
@@ -315,4 +315,21 @@ test('an idle arcade visit delivers frozen personal results before the socket cl
     assert.ok(!p.messages.some(m => m.type === 'error'));
     assert.equal(game.liveCounts().inMatch, 0);
   } finally { Date.now = actualNow; p.ws.terminate(); }
+});
+
+
+test('mixed plugin identities reach the authoritative roster and survive resume', async () => {
+  const { p: codex } = await peer();
+  await codex.arena({ agent: 'codex' });
+  const { p: claude, welcome } = await peer();
+  const joined = await claude.arena({ agent: 'claude' });
+  const meta = await codex.next('meta', m => m.players.some((p: any) => p.id === welcome.clientId && p.agent === 'claude'));
+  assert.equal(meta.players.find((p: any) => p.id === welcome.clientId).agent, 'claude');
+  claude.ws.terminate();
+  await delay(100);
+  const { p: resumed, welcome: newWelcome } = await peer();
+  resumed.send({ type: 'resume', token: welcome.resumeToken, roomId: joined.roomId, agent: 'codex' });
+  await resumed.next('joined');
+  const roster = await codex.next('meta', m => m.players.some((p: any) => p.id === newWelcome.clientId && p.agent === 'claude'));
+  assert.equal(roster.players.find((p: any) => p.id === newWelcome.clientId).agent, 'claude');
 });

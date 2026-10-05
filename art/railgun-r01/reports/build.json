@@ -1,0 +1,63 @@
+{
+  "version": 2,
+  "name": "R-01",
+  "source": "User supplied Railgun R-01 Technical Design Sheet.png",
+  "duration": 1.2,
+  "clip": "shot_cycle",
+  "forward": "-Z",
+  "up": "+Y",
+  "lods": {
+    "high": {
+      "triangles": 7400,
+      "runtimeMeshes": 3,
+      "baseDrawCalls": 4,
+      "bytes": 706104
+    },
+    "low": {
+      "triangles": 1868,
+      "runtimeMeshes": 3,
+      "baseDrawCalls": 4,
+      "bytes": 164324
+    }
+  },
+  "anchors": {
+    "muzzle": [
+      0,
+      0.037,
+      -0.917
+    ],
+    "grip": [
+      0,
+      -0.12,
+      0.128
+    ],
+    "support": [
+      0,
+      -0.038,
+      -0.37
+    ],
+    "tracker": [
+      -0.061,
+      -0.041,
+      -0.246
+    ],
+    "sight": [
+      0,
+      0.17,
+      -0.1885
+    ]
+  },
+  "atlas": {
+    "width": 2048,
+    "height": 2048,
+    "maps": [
+      "detail.png",
+      "normal.png",
+      "roughness.png"
+    ],
+    "authoring": [
+      "height.png"
+    ],
+    "note": "2048px atlas retained for close-view fidelity after user quality review."
+  }
+}

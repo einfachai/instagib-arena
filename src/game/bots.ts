@@ -1,5 +1,6 @@
 import type { MovementCue } from './movement-cues';
 import * as THREE from 'three';
+import type { GroundImpactListener } from './character/gibs';
 import { preloadCharacterAssets } from './character/assets';
 import {
   BOT_HEADSHOT_THRESHOLD,
@@ -160,6 +161,9 @@ export class Bot {
   // overlays such as the enemy outline.
   get body(): Character | null {
     return this.character;
+  }
+  set onDeathGroundImpact(listener: GroundImpactListener | null) {
+    if (this.anim) this.anim.onDeathGroundImpact = listener;
   }
   private highlight: THREE.Color | null = null; // viewer's enemy-highlight colour
   private teamLook: string | null = null; // TDM team colour (overrides highlight)

@@ -1,3 +1,4 @@
+import type { AgentKind } from '../agent';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { clone } from 'three/addons/utils/SkeletonUtils.js';
@@ -8,23 +9,32 @@ import { installBreakupGeometry, type BodyGeometry } from './body';
 
 export const CODEX_PALETTE = { white: '#e7ebf0', blue: '#96d9ff', lavender: '#a0a4d6', graphite: '#252d38' } as const;
 export type ClipEntry = { id: string; url: string; duration: number; loop: boolean; movement: boolean };
-export type CharacterAssets = { scene: THREE.Group; clips: ReadonlyMap<string, THREE.AnimationClip>; manifest: { version: number; model: string; clips: ClipEntry[] }; normalization: THREE.Matrix4; rest: ReadonlyMap<string, THREE.Matrix4> };
-let assets: CharacterAssets | null = null;
-let pending: Promise<CharacterAssets> | null = null;
+export type CharacterAssets = { scene: THREE.Group; clips: ReadonlyMap<string, THREE.AnimationClip>; manifest: { version: number; model: string; clips: ClipEntry[] }; normalization: THREE.Matrix4; rest: ReadonlyMap<string, THREE.Matrix4>; breakup: BodyGeometry };
+const assets = new Map<AgentKind, CharacterAssets>();
+const pending = new Map<AgentKind, Promise<CharacterAssets>>();
+const clipLoads = new Map<string, ReturnType<GLTFLoader['loadAsync']>>();
 
 // One download/cache for all game, preview, replay, lab and menu consumers.
 // A rejected load is retryable; no half-created character escapes the preload.
-export function preloadCharacterAssets(): Promise<CharacterAssets> {
-  if (assets) return preloadR01Assets().then(() => assets!);
-  if (pending) return pending;
-  pending = Promise.all([loadAssets(), preloadR01Assets()]).then(([loaded]) => loaded).catch((error: unknown) => { pending = null; throw error; });
-  return pending;
+export async function preloadCharacterAssets(): Promise<CharacterAssets> {
+  await Promise.all([loadVariant('codex'), loadVariant('claude'), preloadR01Assets()]);
+  return characterAssets();
 }
-export function characterAssets(): CharacterAssets {
-  if (!assets) throw new Error('Preload the Codex Android assets before creating characters.');
-  return assets;
+function loadVariant(agent: AgentKind): Promise<CharacterAssets> {
+  const ready = assets.get(agent);
+  if (ready) return Promise.resolve(ready);
+  const loading = pending.get(agent);
+  if (loading) return loading;
+  const task = loadAssets(agent).catch((error: unknown) => { pending.delete(agent); throw error; });
+  pending.set(agent, task);
+  return task;
 }
-export function cloneCharacterModel(): THREE.Group { return clone(characterAssets().scene) as THREE.Group; }
+export function characterAssets(agent: AgentKind = 'codex'): CharacterAssets {
+  const asset = assets.get(agent);
+  if (!asset) throw new Error(`Preload the ${agent} Android assets before creating characters.`);
+  return asset;
+}
+export function cloneCharacterModel(agent: AgentKind = 'codex'): THREE.Group { return clone(characterAssets(agent).scene) as THREE.Group; }
 
 const logicalBones = [
   'Hips', 'Hips', 'Spine', 'Spine2', 'Neck', 'Head',
@@ -45,14 +55,14 @@ function logicalIndex(name: string): number {
   return B.head;
 }
 
-async function loadAssets(): Promise<CharacterAssets> {
+async function loadAssets(agent: AgentKind): Promise<CharacterAssets> {
   const loader = new GLTFLoader();
-  const response = await fetch('/models/codex-android/manifest.json');
+  const response = await fetch(`/models/${agent}-android/manifest.json`);
   if (!response.ok) throw new Error('Could not load the character animation manifest.');
   const manifest = await response.json() as CharacterAssets['manifest'];
   const [model, clipFiles] = await Promise.all([
     loader.loadAsync(manifest.model),
-    Promise.all(manifest.clips.map(async (entry) => ({ entry, gltf: await loader.loadAsync(entry.url) }))),
+    Promise.all(manifest.clips.map(async (entry) => ({ entry, gltf: await loadClip(loader, entry.url) }))),
   ]);
   const scene = model.scene;
   scene.updateMatrixWorld(true);
@@ -106,7 +116,7 @@ async function loadAssets(): Promise<CharacterAssets> {
   for (const g of geometryParts) g.dispose();
   const template = meshes[0];
   const body = new THREE.SkinnedMesh(merged, new THREE.MeshStandardMaterial());
-  body.name = 'codex-android-body'; body.bindMode = template.bindMode;
+  body.name = `${agent}-android-body`; body.bindMode = template.bindMode;
   scene.add(body); body.bind(template.skeleton, template.bindMatrix.clone());
   for (const mesh of meshes) {
     mesh.removeFromParent(); mesh.geometry.dispose();
@@ -116,7 +126,7 @@ async function loadAssets(): Promise<CharacterAssets> {
   merged.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, 0.9, 0), 2.2);
   const clips = new Map<string, THREE.AnimationClip>();
   for (const { entry, gltf } of clipFiles) {
-    const clip = gltf.animations[0];
+    const clip = gltf.animations[0]?.clone();
     if (!clip) throw new Error('No baked motion in ' + entry.id);
     clip.name = entry.id;
     // Object transforms remain canonical, and the game owns world position.
@@ -130,9 +140,20 @@ async function loadAssets(): Promise<CharacterAssets> {
     tpose.tracks.push(new THREE.VectorKeyframeTrack(o.name + '.position', [0, 3], [...o.position.toArray(), ...o.position.toArray()]));
   });
   clips.set(tpose.name, tpose);
-  installBreakupGeometry(buildBreakupGeometry(body, normalization));
-  assets = { scene, clips, manifest, normalization, rest };
-  return assets;
+  const breakup = buildBreakupGeometry(body, normalization);
+  if (agent === 'codex') installBreakupGeometry(breakup);
+  const asset = { scene, clips, manifest, normalization, rest, breakup };
+  assets.set(agent, asset);
+  return asset;
+}
+
+function loadClip(loader: GLTFLoader, url: string) {
+  let task = clipLoads.get(url);
+  if (!task) {
+    task = loader.loadAsync(url).catch((error: unknown) => { clipLoads.delete(url); throw error; });
+    clipLoads.set(url, task);
+  }
+  return task;
 }
 
 // Authored breakup ownership is the nearest existing limb segment. At death

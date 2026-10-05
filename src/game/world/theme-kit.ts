@@ -60,6 +60,7 @@ export type DressStyle = {
   beams?: { spacing: number; w: number; d: number }; // ceiling ribs (closed maps)
   collars?: { h: number; d: number }; // pillar base + capital
   edges?: { h: number; d: number; hazard?: boolean }; // band on platform / cover top edges
+  panels?: { spacing: number; vents: boolean; conduits: boolean };
 };
 
 // Floor paint: min/max in world space (min[1] = the surface it sits on).
@@ -70,6 +71,7 @@ export type SkyProp = { min: V3; max: V3; color?: number; beacon?: number };
 
 export type WorldTheme = {
   id: ThemeId;
+  assets?: Record<SurfaceKind, { material: string; tile: number }>;
   // Procedural surface set, one recipe per slot (textures.ts builders).
   textures: Record<SurfaceKind, Recipe>;
   openSky: boolean; // don't draw the ceiling (render-only; it still collides)
@@ -252,4 +254,3 @@ export function dashes(x: number, z0: number, z1: number, len: number, gap: numb
   }
   return out;
 }
-

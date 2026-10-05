@@ -7,8 +7,6 @@ import type { MapBox } from './maps/kit';
 import { CAUSEWAY } from './maps/causeway';
 import { CONTAINERYARD } from './maps/containeryard';
 import { DERRICK } from './maps/derrick';
-import { LOUNGE } from './maps/lounge';
-import { NUKETOWN } from './maps/nuketown';
 import { REACTOR } from './maps/reactor';
 import { TRAINING } from './maps/training';
 
@@ -16,6 +14,7 @@ export type { MapBox };
 
 export type ArenaMap = {
   name: string;
+  revision?: number; // omitted by custom/dev maps = original layout
   boxes: MapBox[];
   // Offline start position (solo vs bots / practice). Online spawns come
   // from `spawns` (arena-data.ts reads them for the server).
@@ -32,7 +31,7 @@ export type ArenaMap = {
   accent?: number;
 };
 
-export { CAUSEWAY, CONTAINERYARD, DERRICK, LOUNGE, NUKETOWN, REACTOR, TRAINING };
+export { CAUSEWAY, CONTAINERYARD, DERRICK, REACTOR, TRAINING };
 
 // Selectable map registry — the competitive pool plus the single-player
 // practice range. The large maps carry FFA/TDM; the duel maps carry 1v1.
@@ -40,11 +39,9 @@ export const MAPS: ReadonlyArray<{ id: string; label: string; map: ArenaMap }> =
   // larger FFA / TDM maps
   { id: 'causeway', label: 'Causeway (FFA/TDM)', map: CAUSEWAY },
   { id: 'reactor', label: 'Reactor (FFA/TDM)', map: REACTOR },
-  { id: 'lounge', label: 'Lounge (FFA/TDM)', map: LOUNGE },
-  { id: 'nuketown', label: 'Nuketown (FFA/TDM)', map: NUKETOWN },
   // 1v1 duel maps
-  { id: 'containeryard', label: 'Container Yard (1v1)', map: CONTAINERYARD },
-  { id: 'derrick', label: 'Derrick (1v1)', map: DERRICK },
+  { id: 'containeryard', label: 'Spaceport (1v1)', map: CONTAINERYARD },
+  { id: 'derrick', label: 'Extraction (1v1)', map: DERRICK },
   // practice
   { id: 'training', label: 'Training Range', map: TRAINING },
 ];
@@ -53,4 +50,10 @@ export const DEFAULT_MAP: ArenaMap = CAUSEWAY;
 
 export function mapById(id: string): ArenaMap {
   return MAPS.find((m) => m.id === id)?.map ?? DEFAULT_MAP;
+}
+
+// Never substitute another arena when a replay's layout has been retired.
+export function replayMap(id: string, revision = 1): ArenaMap | null {
+  const map = MAPS.find((m) => m.id === id)?.map;
+  return map && (map.revision ?? 1) === revision ? map : null;
 }

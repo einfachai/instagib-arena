@@ -15,7 +15,7 @@ export function useLevelshots(mapIds: readonly string[]): Record<string, string>
         const m = await import('../menu/menu-backdrop');
         for (const id of ids) {
           if (!alive) return;
-          const url = m.cachedLevelshot(id) ?? (await m.renderLevelshot(id, { lowSpec: true }));
+          const url = m.cachedLevelshot(id,true) ?? (await m.renderLevelshot(id, { lowSpec: true }));
           if (alive && url) setShots((s) => (s[id] === url ? s : { ...s, [id]: url }));
         }
       } catch {
@@ -40,7 +40,7 @@ export function useLevelshot(mapId: string | null, lowSpec: boolean): string | n
     let alive = true;
     import('../menu/menu-backdrop')
       .then((m) => {
-        const hit = m.cachedLevelshot(mapId);
+        const hit = m.cachedLevelshot(mapId,lowSpec);
         if (hit) return hit;
         return m.renderLevelshot(mapId, { lowSpec });
       })

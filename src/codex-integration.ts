@@ -1,3 +1,4 @@
+import { agentLabel } from './agent-session';
 import type { ExitPolicy } from './game/arcade';
 
 const KEY = 'agent-deathmatch-controller';
@@ -8,10 +9,11 @@ export async function pairBrowser() {
     const params = new URLSearchParams(window.location.hash.slice(1));
     const ticket = params.get('pair');
     if (!ticket) return;
+    window.sessionStorage.removeItem(KEY);
     // Remove one-time credentials from history before making any other request.
     window.history.replaceState(null, '', window.location.pathname + window.location.search);
     const response = await fetch('/api/arena/claim', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ticket }) });
-    if (!response.ok) throw new Error('Pairing expired. Open Arena again from Codex.');
+    if (!response.ok) throw new Error(`Pairing expired. Open Arena again from ${agentLabel}.`);
     const { token } = await response.json();
     window.sessionStorage.setItem(KEY, token);
   })();
@@ -24,7 +26,7 @@ async function request(route: string, body?: object) {
   const response = await fetch(`/api/arena${route}`, { method: body ? 'POST' : 'GET',
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
     ...(body ? { body: JSON.stringify(body) } : {}), signal: AbortSignal.timeout(5000) });
-  if (!response.ok) throw new Error(`Codex integration HTTP ${response.status}`);
+  if (!response.ok) throw new Error(`${agentLabel} integration HTTP ${response.status}`);
   return response.json();
 }
 function createAttemptId() {
@@ -44,14 +46,14 @@ export async function beginArena(policy: ExitPolicy) {
   if (token) {
     try { await request('/begin', { attemptId, policy, requestedAt }); }
     catch (error) {
-      if (error instanceof Error && error.message.endsWith('409')) throw new Error('This Codex controller already has an active visit.');
+      if (error instanceof Error && error.message.endsWith('409')) throw new Error(`This ${agentLabel} controller already has an active visit.`);
       return { attemptId, controllerToken: undefined };
     }
   }
   return { attemptId, controllerToken: token };
 }
 export async function integrationState() { await pairBrowser(); return request('/state'); }
-export async function returnToCodex(visitId: string) {
+export async function returnToAgent(visitId: string) {
   const result = await request('/handoff', { visitId });
   if (!result) throw new Error('Desktop companion unpaired');
   const deadline = performance.now() + 10_000;

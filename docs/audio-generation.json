@@ -1,8 +1,8 @@
 {
-  "provider": "ElevenLabs MCP",
+  "provider": "ElevenLabs MCP and user-provided audio",
   "flow": {
     "flow_id": "BqtTzkB2pZXfG9quZbsY",
-    "name": "Agent Deathmatch — ElevenLabs Audio",
+    "name": "Agent Deathmatch \u2014 ElevenLabs Audio",
     "url": "https://elevenlabs.io/app/flows/BqtTzkB2pZXfG9quZbsY"
   },
   "announcer": {
@@ -204,19 +204,22 @@
     {
       "key": "rail-fire",
       "category": "weapon",
-      "type": "sfx",
-      "model": "eleven_text_to_sound_v2",
-      "prompt": "A powerful futuristic railgun fires once: hard electric crack, metallic punch, deep bass thump, brief sizzling energy tail One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
-      "duration": 0.9,
-      "maxDuration": 0.22,
+      "type": "file",
+      "provider": "user-provided",
+      "source": {
+        "filename": "freesound_community-sci-fi-energy-gun-39409.mp3",
+        "path": "art/audio/sources/freesound_community-sci-fi-energy-gun-39409.mp3",
+        "sha256": "534d1e1e69ed10468956da304883020f8220770f48846b7e9411484bd2ecc576"
+      },
+      "duration": 1.8,
+      "maxDuration": 0.61,
       "variants": 1,
       "processing": {
-        "trimStartMs": 180,
-        "highpassHz": 180,
-        "decayMs": 55,
+        "sourceStartMs": 190,
+        "sourceEndMs": 800,
         "fadeInMs": 0.25,
         "fadeOutMs": 12,
-        "rmsDb": -21,
+        "rmsDb": -18,
         "peakDb": -8
       }
     },
@@ -384,43 +387,49 @@
     {
       "key": "jump",
       "category": "movement",
-      "type": "sfx",
-      "model": "eleven_text_to_sound_v2",
-      "prompt": "One athletic shoe pushing off a firm floor, with a quick textured rubber sole scuff and light fabric movement. Crisp natural dry close-miked Foley, immediate start and a soft short tail, isolated on silence.",
-      "duration": 1,
-      "maxDuration": 0.32,
+      "type": "file",
+      "provider": "user-provided",
+      "source": {
+        "filename": "dragon-studio-simple-whoosh-382724.mp3",
+        "path": "art/audio/sources/dragon-studio-simple-whoosh-382724.mp3",
+        "sha256": "c2efd9d902a59bf9ec5019035d7deadd17762136896b6e3cb6dd99ea50997a30"
+      },
+      "duration": 0.5747,
+      "maxDuration": 0.326,
       "variants": 1,
-      "prompt_influence": 0.65,
       "loop": false,
       "processing": {
-        "highpassHz": 170,
-        "lowpassHz": 6500,
+        "sourceStartMs": 95,
+        "sourceEndMs": 420,
+        "trimSilence": false,
         "fadeInMs": 2,
-        "fadeOutMs": 25,
+        "fadeOutMs": 12,
         "rmsDb": -25,
-        "peakDb": -9,
-        "trimStartMs": 110
+        "peakDb": -9
       }
     },
     {
       "key": "airjump",
       "category": "movement",
-      "type": "sfx",
-      "model": "eleven_text_to_sound_v2",
-      "prompt": "One short forceful air whoosh through a wide nozzle, a continuous textured fwoosh with a full airy body and a smooth falling tail. Dry close-up recording, immediate start, isolated on silence. No pop, whistle or pitched note.",
-      "duration": 1,
-      "maxDuration": 0.34,
+      "type": "file",
+      "provider": "user-provided",
+      "source": {
+        "filename": "dragon-studio-whoosh-cinematic-376875.mp3",
+        "path": "art/audio/sources/dragon-studio-whoosh-cinematic-376875.mp3",
+        "sha256": "ea7eefa6fee1f6f8e08f595b0db5bfa1d941aa8a6c1a8f07a2a4dd02c588bfe4"
+      },
+      "duration": 2.1159,
+      "maxDuration": 0.85,
       "variants": 1,
-      "prompt_influence": 0.65,
       "loop": false,
       "processing": {
-        "highpassHz": 170,
-        "lowpassHz": 6500,
-        "fadeInMs": 3,
-        "fadeOutMs": 40,
+        "sourceStartMs": 800,
+        "sourceEndMs": 1650,
+        "trimSilence": false,
+        "fadeInMs": 2,
+        "fadeOutMs": 12,
         "rmsDb": -24,
-        "peakDb": -9,
-        "trimStartMs": 25
+        "peakDb": -9
       }
     },
     {
@@ -1125,6 +1134,42 @@
       "maxDuration": 6,
       "voice_id": "cPoqAvGWCPfCfyPMwe4z",
       "prompt": "[deep voice] [confidently] Your Codex task is complete. [forcefully] Back to work."
+    },
+    {
+      "key": "agent-entered",
+      "category": "announcer",
+      "type": "tts",
+      "model": "eleven_v3",
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "text": "Another agent user entered the arena.",
+      "prompt": "[deep voice] [confidently] Another agent user entered the arena.",
+      "variants": 1,
+      "maxDuration": 7,
+      "generation_id": "QKCBSPudtTAOodxcVy5F",
+      "flow_id": "uCosbkXovVcW6Su7mlNW"
+    },
+    {
+      "key": "death-impact",
+      "category": "weapon",
+      "type": "file",
+      "provider": "user-provided",
+      "source": {
+        "filename": "dragon-studio-heavy-object-falling-515261.mp3",
+        "path": "art/audio/sources/dragon-studio-heavy-object-falling-515261.mp3",
+        "sha256": "9bd539a79bde2d6d76c57f8c3662e31df3ea9ca88ab91ceca54d63c89b4d6303"
+      },
+      "duration": 3.792,
+      "maxDuration": 2.67,
+      "variants": 1,
+      "processing": {
+        "sourceStartMs": 280,
+        "sourceEndMs": 2950,
+        "trimSilence": false,
+        "fadeInMs": 0.25,
+        "fadeOutMs": 12,
+        "rmsDb": -18,
+        "peakDb": -8
+      }
     }
   ],
   "arcade_announcements": {
@@ -1171,7 +1216,7 @@
   ],
   "announcer_flow": {
     "flow_id": "uCosbkXovVcW6Su7mlNW",
-    "name": "Agent Deathmatch — Victor Announcer",
+    "name": "Agent Deathmatch \u2014 Victor Announcer",
     "url": "https://elevenlabs.io/app/flows/uCosbkXovVcW6Su7mlNW"
   },
   "arcade_announcements_history": [
@@ -1215,7 +1260,7 @@
     {
       "flow": {
         "flow_id": "AxtuoM6DwEYxzF88pJ5n",
-        "name": "Agent Deathmatch — Refined Interface Cues",
+        "name": "Agent Deathmatch \u2014 Refined Interface Cues",
         "url": "https://elevenlabs.io/app/flows/AxtuoM6DwEYxzF88pJ5n"
       },
       "keys": [
@@ -1261,7 +1306,7 @@
     {
       "flow": {
         "flow_id": "VXercKicesQJLsUy1ZpS",
-        "name": "Agent Deathmatch — Refined Movement Cues",
+        "name": "Agent Deathmatch \u2014 Refined Movement Cues",
         "url": "https://elevenlabs.io/app/flows/VXercKicesQJLsUy1ZpS"
       },
       "keys": [
@@ -1316,7 +1361,7 @@
     {
       "flow": {
         "flow_id": "VXercKicesQJLsUy1ZpS",
-        "name": "Agent Deathmatch — Refined Movement Cues",
+        "name": "Agent Deathmatch \u2014 Refined Movement Cues",
         "url": "https://elevenlabs.io/app/flows/VXercKicesQJLsUy1ZpS"
       },
       "keys": [
@@ -1451,5 +1496,222 @@
         }
       }
     }
-  ]
+  ],
+  "source_revisions": [
+    {
+      "date": "2026-10-05",
+      "key": "rail-fire",
+      "operation": "replace_from_user_file",
+      "source": {
+        "filename": "freesound_community-sci-fi-energy-gun-39409.mp3",
+        "path": "art/audio/sources/freesound_community-sci-fi-energy-gun-39409.mp3",
+        "sha256": "534d1e1e69ed10468956da304883020f8220770f48846b7e9411484bd2ecc576"
+      },
+      "path": "public/sounds/elevenlabs-v1/weapon/energy-gun-39409/rail-fire_1.mp3",
+      "previous_generation_id": "zpOnjMOklkElXPA0UYfh",
+      "previous_path": "public/sounds/elevenlabs-v1/weapon/crack/rail-fire_1.mp3",
+      "previous_spec": {
+        "key": "rail-fire",
+        "category": "weapon",
+        "type": "sfx",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "A powerful futuristic railgun fires once: hard electric crack, metallic punch, deep bass thump, brief sizzling energy tail One isolated game sound, immediate attack, compact natural decay, dry studio recording on silence. No speech, voices, music or background ambience.",
+        "duration": 0.9,
+        "maxDuration": 0.22,
+        "variants": 1,
+        "processing": {
+          "trimStartMs": 180,
+          "highpassHz": 180,
+          "decayMs": 55,
+          "fadeInMs": 0.25,
+          "fadeOutMs": 12,
+          "rmsDb": -21,
+          "peakDb": -8
+        }
+      },
+      "selected_spec": {
+        "key": "rail-fire",
+        "category": "weapon",
+        "type": "file",
+        "provider": "user-provided",
+        "source": {
+          "filename": "freesound_community-sci-fi-energy-gun-39409.mp3",
+          "path": "art/audio/sources/freesound_community-sci-fi-energy-gun-39409.mp3",
+          "sha256": "534d1e1e69ed10468956da304883020f8220770f48846b7e9411484bd2ecc576"
+        },
+        "duration": 1.8,
+        "maxDuration": 0.61,
+        "variants": 1,
+        "processing": {
+          "sourceStartMs": 190,
+          "sourceEndMs": 800,
+          "fadeInMs": 0.25,
+          "fadeOutMs": 12,
+          "rmsDb": -18,
+          "peakDb": -8
+        }
+      }
+    },
+    {
+      "date": "2026-10-05",
+      "key": "death-impact",
+      "operation": "add_from_user_file",
+      "source": {
+        "filename": "dragon-studio-heavy-object-falling-515261.mp3",
+        "path": "art/audio/sources/dragon-studio-heavy-object-falling-515261.mp3",
+        "sha256": "9bd539a79bde2d6d76c57f8c3662e31df3ea9ca88ab91ceca54d63c89b4d6303"
+      },
+      "path": "public/sounds/elevenlabs-v1/weapon/death-impact/death-impact_1.mp3",
+      "selected_spec": {
+        "key": "death-impact",
+        "category": "weapon",
+        "type": "file",
+        "provider": "user-provided",
+        "source": {
+          "filename": "dragon-studio-heavy-object-falling-515261.mp3",
+          "path": "art/audio/sources/dragon-studio-heavy-object-falling-515261.mp3",
+          "sha256": "9bd539a79bde2d6d76c57f8c3662e31df3ea9ca88ab91ceca54d63c89b4d6303"
+        },
+        "duration": 3.792,
+        "maxDuration": 2.67,
+        "variants": 1,
+        "processing": {
+          "sourceStartMs": 280,
+          "sourceEndMs": 2950,
+          "trimSilence": false,
+          "fadeInMs": 0.25,
+          "fadeOutMs": 12,
+          "rmsDb": -18,
+          "peakDb": -8
+        }
+      }
+    },
+    {
+      "date": "2026-10-05",
+      "key": "jump",
+      "operation": "replace_from_user_file",
+      "source": {
+        "filename": "dragon-studio-simple-whoosh-382724.mp3",
+        "path": "art/audio/sources/dragon-studio-simple-whoosh-382724.mp3",
+        "sha256": "c2efd9d902a59bf9ec5019035d7deadd17762136896b6e3cb6dd99ea50997a30"
+      },
+      "path": "public/sounds/elevenlabs-v1/movement/whoosh-382724-376875/jump_1.mp3",
+      "previous_generation_id": "GJGgFPk03ntQiULx3Wo8",
+      "previous_path": "public/sounds/elevenlabs-v1/movement/jump-foley/jump_1.mp3",
+      "previous_spec": {
+        "key": "jump",
+        "category": "movement",
+        "type": "sfx",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "One athletic shoe pushing off a firm floor, with a quick textured rubber sole scuff and light fabric movement. Crisp natural dry close-miked Foley, immediate start and a soft short tail, isolated on silence.",
+        "duration": 1,
+        "maxDuration": 0.32,
+        "variants": 1,
+        "prompt_influence": 0.65,
+        "loop": false,
+        "processing": {
+          "highpassHz": 170,
+          "lowpassHz": 6500,
+          "fadeInMs": 2,
+          "fadeOutMs": 25,
+          "rmsDb": -25,
+          "peakDb": -9,
+          "trimStartMs": 110
+        }
+      },
+      "selected_spec": {
+        "key": "jump",
+        "category": "movement",
+        "type": "file",
+        "provider": "user-provided",
+        "source": {
+          "filename": "dragon-studio-simple-whoosh-382724.mp3",
+          "path": "art/audio/sources/dragon-studio-simple-whoosh-382724.mp3",
+          "sha256": "c2efd9d902a59bf9ec5019035d7deadd17762136896b6e3cb6dd99ea50997a30"
+        },
+        "duration": 0.5747,
+        "maxDuration": 0.326,
+        "variants": 1,
+        "loop": false,
+        "processing": {
+          "sourceStartMs": 95,
+          "sourceEndMs": 420,
+          "trimSilence": false,
+          "fadeInMs": 2,
+          "fadeOutMs": 12,
+          "rmsDb": -25,
+          "peakDb": -9
+        }
+      }
+    },
+    {
+      "date": "2026-10-05",
+      "key": "airjump",
+      "operation": "replace_from_user_file",
+      "source": {
+        "filename": "dragon-studio-whoosh-cinematic-376875.mp3",
+        "path": "art/audio/sources/dragon-studio-whoosh-cinematic-376875.mp3",
+        "sha256": "ea7eefa6fee1f6f8e08f595b0db5bfa1d941aa8a6c1a8f07a2a4dd02c588bfe4"
+      },
+      "path": "public/sounds/elevenlabs-v1/movement/whoosh-382724-376875/airjump_1.mp3",
+      "previous_generation_id": "pVHVsVfGICmgWl8f64Wa",
+      "previous_path": "public/sounds/elevenlabs-v1/movement/jump-foley/airjump_1.mp3",
+      "previous_spec": {
+        "key": "airjump",
+        "category": "movement",
+        "type": "sfx",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "One short forceful air whoosh through a wide nozzle, a continuous textured fwoosh with a full airy body and a smooth falling tail. Dry close-up recording, immediate start, isolated on silence. No pop, whistle or pitched note.",
+        "duration": 1,
+        "maxDuration": 0.34,
+        "variants": 1,
+        "prompt_influence": 0.65,
+        "loop": false,
+        "processing": {
+          "highpassHz": 170,
+          "lowpassHz": 6500,
+          "fadeInMs": 3,
+          "fadeOutMs": 40,
+          "rmsDb": -24,
+          "peakDb": -9,
+          "trimStartMs": 25
+        }
+      },
+      "selected_spec": {
+        "key": "airjump",
+        "category": "movement",
+        "type": "file",
+        "provider": "user-provided",
+        "source": {
+          "filename": "dragon-studio-whoosh-cinematic-376875.mp3",
+          "path": "art/audio/sources/dragon-studio-whoosh-cinematic-376875.mp3",
+          "sha256": "ea7eefa6fee1f6f8e08f595b0db5bfa1d941aa8a6c1a8f07a2a4dd02c588bfe4"
+        },
+        "duration": 2.1159,
+        "maxDuration": 0.85,
+        "variants": 1,
+        "loop": false,
+        "processing": {
+          "sourceStartMs": 800,
+          "sourceEndMs": 1650,
+          "trimSilence": false,
+          "fadeInMs": 2,
+          "fadeOutMs": 12,
+          "rmsDb": -24,
+          "peakDb": -9
+        }
+      }
+    }
+  ],
+  "claude_integration_pending_recordings": {
+    "reason": "Connected ElevenLabs account rejected synthesis: free-tier access disabled.",
+    "model": "eleven_v3",
+    "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+    "lines": [
+      "You are the last agent user in the arena.",
+      "Your Claude Code task is complete. Back to work.",
+      "Claude Code needs your attention."
+    ],
+    "flow_id": "uCosbkXovVcW6Su7mlNW"
+  }
 }

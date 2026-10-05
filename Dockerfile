@@ -1,4 +1,4 @@
-# Instagib Arena — multi-stage image.
+# Agent Deathmatch — multi-stage image.
 #
 # Build stage: install everything (incl. dev deps) and produce the client
 # bundle in dist/. Runtime stage: a lean image with only production deps
@@ -28,7 +28,8 @@ RUN npm ci --omit=dev && npm cache clean --force \
     && rm -rf /usr/local/lib/node_modules/npm /opt/yarn* \
     && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/yarn /usr/local/bin/yarnpkg
 # Built client, the server, and the shared game modules the server imports at
-# runtime (src/game/{constants,arena-data,types}.ts). tsconfig* lets tsx resolve
+# runtime, including bot-brain, bot-nav, collision, maps and visit reward math.
+# tsconfig* lets tsx resolve
 # the project's module settings.
 COPY --from=build /app/dist ./dist
 COPY server ./server

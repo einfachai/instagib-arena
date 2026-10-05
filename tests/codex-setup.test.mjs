@@ -22,9 +22,10 @@ test('the plugin relocates without developer paths and completes an MCP handshak
     const [init, list, resources] = output.trim().split('\n').map(JSON.parse);
     assert.equal(init.result.serverInfo.name, 'agent-deathmatch');
     assert.equal(list.result.tools[0].name, 'open_agent_deathmatch');
-    const resource = resources.result.resources[0];
-    assert.equal(resource.uri, 'ui://agent-deathmatch/launcher-v4.html');
-    assert.equal(list.result.tools[0]._meta.ui.resourceUri, resource.uri);
+    assert.deepEqual(resources.result.resources, []);
+    assert.equal(list.result.tools[0]._meta.ui, undefined);
+    assert.equal(list.result.tools[0]._meta['openai/outputTemplate'], undefined);
+    assert.match(list.result.tools[0].description, /Codex browser tab with open_in_codex/);
     const manifest = JSON.parse(readFileSync(path.join(dir, '.codex-plugin/plugin.json'), 'utf8'));
     const marketplace = JSON.parse(readFileSync(path.join(dir, '.agents/plugins/marketplace.json'), 'utf8'));
     assert.equal(marketplace.plugins[0].name, manifest.name);

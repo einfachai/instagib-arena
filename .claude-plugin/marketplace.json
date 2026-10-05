@@ -1,0 +1,14 @@
+{
+  "name": "agent-deathmatch",
+  "owner": {
+    "name": "Agent Deathmatch"
+  },
+  "plugins": [
+    {
+      "name": "agent-deathmatch",
+      "source": "./",
+      "description": "Play while Claude Code works."
+    }
+  ],
+  "description": "Agent Deathmatch for Claude Code"
+}

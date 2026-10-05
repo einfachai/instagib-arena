@@ -1,5 +1,5 @@
 {
-  "provider": "ElevenLabs MCP",
+  "provider": "ElevenLabs MCP and user-provided audio",
   "flow_id": "BqtTzkB2pZXfG9quZbsY",
   "files": [
     {
@@ -1025,40 +1025,88 @@
       "flow_id": "VXercKicesQJLsUy1ZpS"
     },
     {
+      "key": "rail-fire",
+      "variant": 1,
+      "generation_id": null,
+      "path": "public/sounds/elevenlabs-v1/weapon/energy-gun-39409/rail-fire_1.mp3",
+      "duration": 0.61,
+      "peak_db": -8.0,
+      "rms_db": -19.12,
+      "voice_id": null,
+      "model_id": null,
+      "flow_id": null,
+      "provider": "user-provided",
+      "source": {
+        "filename": "freesound_community-sci-fi-energy-gun-39409.mp3",
+        "path": "art/audio/sources/freesound_community-sci-fi-energy-gun-39409.mp3",
+        "sha256": "534d1e1e69ed10468956da304883020f8220770f48846b7e9411484bd2ecc576"
+      }
+    },
+    {
+      "key": "agent-entered",
+      "variant": 1,
+      "generation_id": "QKCBSPudtTAOodxcVy5F",
+      "path": "public/sounds/elevenlabs-v1/announcer/victor/agent-entered_1.mp3",
+      "duration": 3.1571,
+      "peak_db": -3.0,
+      "rms_db": -19.88,
+      "voice_id": "cPoqAvGWCPfCfyPMwe4z",
+      "model_id": "eleven_v3",
+      "flow_id": "uCosbkXovVcW6Su7mlNW"
+    },
+    {
+      "key": "death-impact",
+      "variant": 1,
+      "generation_id": null,
+      "path": "public/sounds/elevenlabs-v1/weapon/death-impact/death-impact_1.mp3",
+      "duration": 2.67,
+      "peak_db": -8.0,
+      "rms_db": -19.0,
+      "voice_id": null,
+      "model_id": null,
+      "flow_id": null,
+      "provider": "user-provided",
+      "source": {
+        "filename": "dragon-studio-heavy-object-falling-515261.mp3",
+        "path": "art/audio/sources/dragon-studio-heavy-object-falling-515261.mp3",
+        "sha256": "9bd539a79bde2d6d76c57f8c3662e31df3ea9ca88ab91ceca54d63c89b4d6303"
+      }
+    },
+    {
       "key": "jump",
       "variant": 1,
-      "generation_id": "GJGgFPk03ntQiULx3Wo8",
-      "path": "public/sounds/elevenlabs-v1/movement/jump-foley/jump_1.mp3",
-      "duration": 0.1595,
-      "peak_db": -9.0,
-      "rms_db": -27.72,
+      "generation_id": null,
+      "path": "public/sounds/elevenlabs-v1/movement/whoosh-382724-376875/jump_1.mp3",
+      "duration": 0.325,
+      "peak_db": -10.39,
+      "rms_db": -25.0,
       "voice_id": null,
-      "model_id": "eleven_text_to_sound_v2",
-      "flow_id": "VXercKicesQJLsUy1ZpS"
+      "model_id": null,
+      "flow_id": null,
+      "provider": "user-provided",
+      "source": {
+        "filename": "dragon-studio-simple-whoosh-382724.mp3",
+        "path": "art/audio/sources/dragon-studio-simple-whoosh-382724.mp3",
+        "sha256": "c2efd9d902a59bf9ec5019035d7deadd17762136896b6e3cb6dd99ea50997a30"
+      }
     },
     {
       "key": "airjump",
       "variant": 1,
-      "generation_id": "pVHVsVfGICmgWl8f64Wa",
-      "path": "public/sounds/elevenlabs-v1/movement/jump-foley/airjump_1.mp3",
-      "duration": 0.2794,
+      "generation_id": null,
+      "path": "public/sounds/elevenlabs-v1/movement/whoosh-382724-376875/airjump_1.mp3",
+      "duration": 0.85,
       "peak_db": -9.0,
-      "rms_db": -29.78,
+      "rms_db": -27.31,
       "voice_id": null,
-      "model_id": "eleven_text_to_sound_v2",
-      "flow_id": "VXercKicesQJLsUy1ZpS"
-    },
-    {
-      "key": "rail-fire",
-      "variant": 1,
-      "generation_id": "zpOnjMOklkElXPA0UYfh",
-      "path": "public/sounds/elevenlabs-v1/weapon/crack/rail-fire_1.mp3",
-      "duration": 0.22,
-      "peak_db": -8.0,
-      "rms_db": -25.94,
-      "voice_id": null,
-      "model_id": "eleven_text_to_sound_v2",
-      "flow_id": "BqtTzkB2pZXfG9quZbsY"
+      "model_id": null,
+      "flow_id": null,
+      "provider": "user-provided",
+      "source": {
+        "filename": "dragon-studio-whoosh-cinematic-376875.mp3",
+        "path": "art/audio/sources/dragon-studio-whoosh-cinematic-376875.mp3",
+        "sha256": "ea7eefa6fee1f6f8e08f595b0db5bfa1d941aa8a6c1a8f07a2a4dd02c588bfe4"
+      }
     }
   ],
   "announcer": {

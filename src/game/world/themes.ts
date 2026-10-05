@@ -3,8 +3,6 @@
 import { VOID } from './looks/causeway';
 import { NIGHTPORT } from './looks/containeryard';
 import { RUSTDUSK } from './looks/derrick';
-import { LOUNGE } from './looks/lounge';
-import { DUSK } from './looks/nuketown';
 import { REACTOR } from './looks/reactor';
 import { LAB } from './looks/training';
 import type { WorldTheme } from './theme-kit';
@@ -14,8 +12,6 @@ export * from './theme-kit';
 const BY_MAP: Record<string, WorldTheme> = {
   causeway: VOID,
   reactor: REACTOR,
-  lounge: LOUNGE,
-  nuketown: DUSK,
   containeryard: NIGHTPORT,
   derrick: RUSTDUSK,
   training: LAB,

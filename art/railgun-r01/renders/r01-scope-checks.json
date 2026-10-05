@@ -1,0 +1,118 @@
+[
+  {
+    "name": "photo mode enables real game input",
+    "pass": true
+  },
+  {
+    "name": "weapon stays visible while rising",
+    "pass": true
+  },
+  {
+    "name": "camera begins zooming during approach",
+    "pass": true
+  },
+  {
+    "name": "firing remains available during approach",
+    "pass": true
+  },
+  {
+    "name": "early release reverses before fully scoped",
+    "pass": true
+  },
+  {
+    "name": "RMB shows the optic and hides the first-person model",
+    "pass": true
+  },
+  {
+    "name": "camera zoom reaches 55 degrees",
+    "pass": true
+  },
+  {
+    "name": "zoom sensitivity follows FOV",
+    "pass": true
+  },
+  {
+    "name": "regular crosshair is hidden",
+    "pass": true
+  },
+  {
+    "name": "left mouse fires while scoped",
+    "pass": true
+  },
+  {
+    "name": "scope displays real recharge",
+    "pass": true
+  },
+  {
+    "name": "blocked shot does not restart recharge",
+    "pass": true
+  },
+  {
+    "name": "automatic recharge returns to ready",
+    "pass": true
+  },
+  {
+    "name": "release restores the weapon and FOV",
+    "pass": true
+  },
+  {
+    "name": "blur cannot leave the optic stuck",
+    "pass": true
+  },
+  {
+    "name": "reduced effects retains the scope and zoom",
+    "pass": true
+  },
+  {
+    "name": "reduced effects disables peripheral blur",
+    "pass": true
+  },
+  {
+    "name": "hidden viewmodel still transitions zoom",
+    "pass": true
+  },
+  {
+    "name": "low spec transition skips blur",
+    "pass": true
+  },
+  {
+    "name": "a wide saved zoom setting never zooms out",
+    "pass": true
+  },
+  {
+    "name": "custom offsets cannot misalign the sight",
+    "pass": true
+  },
+  {
+    "name": "movement remains available while aiming",
+    "pass": true
+  },
+  {
+    "name": "weapon replacement clears scope phase immediately",
+    "pass": true
+  },
+  {
+    "name": "special cosmetic reaches the same centered scope",
+    "pass": true
+  },
+  {
+    "name": "spectator entry clears the local scope",
+    "pass": true
+  },
+  {
+    "name": "chat entry clears the local scope",
+    "pass": true
+  },
+  {
+    "name": "death clears the local scope",
+    "pass": true
+  },
+  {
+    "name": "respawn restores hip view with a clean scope phase",
+    "pass": true
+  },
+  {
+    "name": "scope can enter normally after respawn",
+    "pass": true
+  }
+]

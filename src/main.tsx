@@ -20,6 +20,7 @@ const RewardsLab = lazy(() => withCharacterAssets(() => import('./ui/RewardsLab'
 const GunLab = lazy(() => withCharacterAssets(() => import('./game/gun/GunLab')));
 const FxLab = lazy(() => withCharacterAssets(() => import('./game/fx/FxLab')));
 const CustomGunLab = lazy(() => withCharacterAssets(() => import('./game/gun/custom/CustomGunLab')));
+const MapPhoto = import.meta.env.DEV ? lazy(() => withCharacterAssets(() => import('./game/MapPhoto'))) : null;
 const AdminDashboard = lazy(() => import('./AdminDashboard'));
 
 class AssetBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
@@ -58,6 +59,7 @@ createRoot(document.getElementById('root')!).render(
   <AssetBoundary>
   <BrowserRouter>
     <Routes>
+      {MapPhoto && <Route path="/mapphoto" element={<Suspense fallback={<Loading />}><MapPhoto /></Suspense>} />}
       <Route path="/" element={<Landing />} />
       <Route
         path="/play"

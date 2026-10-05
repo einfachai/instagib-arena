@@ -46,7 +46,7 @@ const TABS: ReadonlyArray<{ id: SettingsTab; label: string; blurb: string; icon:
   { id: 'controls', label: 'Controls', blurb: 'Mouse, field of view and key bindings.', icon: <IconControls /> },
   { id: 'crosshair', label: 'Crosshair', blurb: 'Shape, color and outline, with a live preview.', icon: <IconCrosshair /> },
   { id: 'video', label: 'Video', blurb: 'Frame rate, quality, post-processing and the weapon viewmodel.', icon: <IconVideo /> },
-  { id: 'audio', label: 'Audio', blurb: 'Volumes, UI sounds and the announcer.', icon: <IconAudio /> },
+  { id: 'audio', label: 'Audio', blurb: 'Music, volumes, UI sounds and the announcer.', icon: <IconAudio /> },
   { id: 'accessibility', label: 'Accessibility', blurb: 'Reduce motion, hide chat and make enemies easier to see.', icon: <IconAccess /> },
   { id: 'profile', label: 'Profile', blurb: 'Your name, server and settings backup.', icon: <IconProfile /> },
 ];
@@ -60,7 +60,7 @@ const TAB_KEYS: Record<SettingsTab, ReadonlyArray<keyof Settings>> = {
     'shadows', 'antialias', 'vignette', 'hideViewmodel', 'viewmodelMotion', 'viewmodelOffset', 'worldColor',
     'worldBrightness',
   ],
-  audio: ['volume', 'sfxVolume', 'uiSounds', 'announcerEnabled', 'announcerVolume', 'announcerPack', 'captions'],
+  audio: ['volume', 'sfxVolume', 'musicEnabled', 'musicVolume', 'uiSounds', 'announcerEnabled', 'announcerVolume', 'announcerPack', 'captions'],
   accessibility: ['reducedEffects', 'hideChat', 'enemyBright', 'enemyColor', 'enemyOutline', 'enemyOutlineColor', 'enemyOutlineWidth'],
   profile: [],
 };
@@ -415,6 +415,15 @@ export function SettingsModal({
     },
 
     /* ── Audio ── */
+    {
+      id: 'music',
+      tab: 'audio',
+      title: 'Music',
+      rows: [
+        row('music-on', 'music background song', <ToggleRow label='Music' hint='Loop background music during gameplay.' value={settings.musicEnabled} def={D.musicEnabled} onChange={(v) => set({ musicEnabled: v })} />),
+        row('music-volume', 'music background volume', <SliderRow label='Music volume' value={settings.musicVolume} min={0} max={1} step={0.01} def={D.musicVolume} format={pct} onChange={(v) => set({ musicVolume: v })} />),
+      ],
+    },
     {
       id: 'volume',
       tab: 'audio',

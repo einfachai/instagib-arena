@@ -5,6 +5,23 @@ existing VPS. Browsers use one HTTPS `workers.dev` origin for assets, login
 cookies, API requests, and the game WebSocket. The VPS runs the game simulation
 and keeps its existing SQLite database.
 
+## What a push currently does
+
+GitHub CI validates pushes to `main` and pull requests. It runs type checks,
+the frontend build, the complete test suite, lint, the dependency audit, and
+a Wrangler deployment dry run. It does not publish the Worker or update the VPS.
+
+The live Worker is currently published with Wrangler using the authenticated
+Cloudflare account. To enable automatic frontend deployments, connect this
+repository in Workers Builds and use `main` with the settings below. That
+connection deploys only the frontend and proxy. Backend changes also require
+building and activating a VPS release under `/opt/agent-deathmatch/releases`;
+keep the frontend and server on the same tested source revision.
+
+Commit and push changes to `main`, let CI pass, then deploy both components.
+A push alone is not a complete game deployment until deployment automation for
+both components has been configured. See [VPS release operations](DEPLOYMENT.md#operations-and-later-releases).
+
 ## GitHub build settings
 
 In Cloudflare **Workers & Pages → Create application → Import a repository**,
@@ -14,7 +31,7 @@ be connected under **Settings → Builds → Connect**.
 | Setting | Value |
 | --- | --- |
 | Worker name | `agent-deathmatch` (must match `wrangler.jsonc`) |
-| Production branch | `codex/cloudflare-github` |
+| Production branch | `main` |
 | Root directory | Repository root |
 | Build command | `npm run build:cloudflare` |
 | Deploy command | `npm run deploy:cloudflare` |
@@ -24,10 +41,9 @@ Cloudflare installs the locked npm dependencies before building. The build runs
 the Worker type check and proxy tests, then generates the frontend in `dist`.
 Wrangler uploads the Worker and its static assets together. Pushes to the
 production branch automatically build and deploy. Disable other branch builds
-until a separate preview backend is available. After merging the deployment
-branch into `main`, change the Cloudflare production branch to `main`.
+until a separate preview backend is available.
 
-The result is `https://agent-deathmatch.<account-subdomain>.workers.dev/play`.
+The live URL is `https://agent-deathmatch.hi-fa2.workers.dev/play`.
 No purchased domain is required. Models, fonts, and the Victor audio recordings
 are versioned under `public` and travel with each GitHub build. Generated ZIPs,
 local credentials, runtime databases, and `.wrangler` state are excluded.

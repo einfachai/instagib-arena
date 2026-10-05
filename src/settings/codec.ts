@@ -56,6 +56,8 @@ export const DEFAULT_SETTINGS: Settings = {
   viewmodelMotion: 1,
   volume: DEFAULT_VOLUME,
   sfxVolume: 1,
+  musicEnabled: true,
+  musicVolume: 0.3,
   uiSounds: true,
   announcerVolume: 1,
   announcerEnabled: true,
@@ -185,6 +187,14 @@ export function encodeSettings(s: Settings): string {
   return `IGS-${b64}`;
 }
 
+export function musicSettings(parsed: Partial<Settings>): Pick<Settings, 'musicEnabled' | 'musicVolume'> {
+  return {
+    musicEnabled: typeof parsed.musicEnabled === 'boolean' ? parsed.musicEnabled : DEFAULT_SETTINGS.musicEnabled,
+    musicVolume: typeof parsed.musicVolume === 'number' && Number.isFinite(parsed.musicVolume)
+      ? Math.max(0, Math.min(1, parsed.musicVolume)) : DEFAULT_SETTINGS.musicVolume,
+  };
+}
+
 export function decodeSettings(code: string): Settings | null {
   try {
     const body = code.trim().replace(/^IGS-/i, '').replace(/-/g, '+').replace(/_/g, '/');
@@ -194,6 +204,7 @@ export function decodeSettings(code: string): Settings | null {
     return {
       ...DEFAULT_SETTINGS,
       ...parsed,
+      ...musicSettings(parsed),
       enemyOutline: !!(parsed.enemyOutline ?? DEFAULT_SETTINGS.enemyOutline),
       enemyOutlineColor: sanitizeHex(parsed.enemyOutlineColor, DEFAULT_SETTINGS.enemyOutlineColor),
       enemyOutlineWidth: clampOutlineWidth(parsed.enemyOutlineWidth ?? DEFAULT_SETTINGS.enemyOutlineWidth),

@@ -96,7 +96,34 @@ export class CloudMonitor {
   }
 }
 
-export function handoffCommand(event, platform = process.platform) {
+export function normalizeClaudeHook(payload, now = Date.now(), nonce = String(now)) {
+  if (!payload || payload.agent_id || payload.subagent || payload.parent_thread_id) return null;
+  const taskId = id(payload.session_id);
+  if (!taskId) return null;
+  let category;
+  if (payload.hook_event_name === 'Stop' && !payload.stop_hook_active) category = 'completion';
+  if (payload.hook_event_name === 'Notification' && payload.notification_type === 'permission_prompt') category = 'approval-required';
+  if (payload.hook_event_name === 'PreToolUse' && payload.tool_name === 'AskUserQuestion') category = 'input-required';
+  if (!category) return null;
+  return { eventId: `claude:${taskId}:${nonce}:${category}`, source: 'local', taskId, category, occurredAt: now };
+}
+
+export function handoffCommand(event, platform = process.platform, host = 'codex', target = 'claude') {
+  if (host === 'claude') {
+    if (platform === 'darwin') {
+      const bundles = { terminal: 'com.apple.Terminal', iterm: 'com.googlecode.iterm2', vscode: 'com.microsoft.VSCode',
+        wezterm: 'com.github.wez.wezterm', ghostty: 'com.mitchellh.ghostty', claude: 'com.anthropic.claudefordesktop' };
+      if (!bundles[target]) throw new Error('Unsupported Claude return app');
+      return ['open', ['-b', bundles[target]]];
+    }
+    if (platform === 'win32') {
+      const title = target === 'vscode' ? 'Visual Studio Code' : target === 'claude' ? 'Claude' : 'Windows Terminal';
+      return ['powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', `$app = New-Object -ComObject WScript.Shell; if (-not $app.AppActivate('${title}')) { exit 1 }`]];
+    }
+    // Linux desktop environments have no universal window activation API.
+    // Report failure and keep the manual-return action available.
+    throw new Error('Automatic Claude return is unavailable on this desktop');
+  }
   const localLink = event?.source === 'local' && /^codex:\/\/threads\/[\w-]+$/.test(event.taskLink ?? '') ? event.taskLink : null;
   if (platform === 'darwin') return ['open', localLink ? [localLink] : ['-b', 'com.openai.codex']];
   if (platform === 'win32') return ['cmd.exe', ['/d', '/c', 'start', '', localLink ?? 'codex://']];

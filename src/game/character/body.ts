@@ -1203,10 +1203,12 @@ export type BodySamples = {
 };
 
 let samples: BodySamples | null = null;
+const variantSamples = new WeakMap<BodyGeometry, BodySamples>();
 
-export function getBodySamples(): BodySamples {
-  if (samples) return samples;
-  const g = getBodyGeometry().geometry;
+export function getBodySamples(body?: BodyGeometry): BodySamples {
+  const ready = body ? variantSamples.get(body) : samples;
+  if (ready) return ready;
+  const g = (body ?? getBodyGeometry()).geometry;
   const pos = g.getAttribute('position') as THREE.BufferAttribute;
   const skin = g.getAttribute('skinIndex') as THREE.BufferAttribute;
   const mat = g.getAttribute('aMat') as THREE.BufferAttribute;
@@ -1261,6 +1263,7 @@ export function getBodySamples(): BodySamples {
     const tb = out.bone[i]; out.bone[i] = out.bone[j]; out.bone[j] = tb;
     const tk = out.kind[i]; out.kind[i] = out.kind[j]; out.kind[j] = tk;
   }
-  samples = out;
+  if (body) variantSamples.set(body, out);
+  else samples = out;
   return out;
 }

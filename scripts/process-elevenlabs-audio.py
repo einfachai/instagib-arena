@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""Download completed MCP takes, trim latency, balance levels, and save game MP3s.
+"""Import completed MCP takes or supplied recordings, trim and balance game MP3s.
 
-Input is a private JSON export of MCP media results, never credentials. This
-script starts no generation. Requires ffmpeg and NumPy; writes public audio and
-an audit of selected generation IDs, durations, peaks, and RMS levels.
+Input describes completed MCP media or archived local sources. This script
+starts no generation. Requires ffmpeg and NumPy; writes public audio and an
+audit of selected generation IDs or source hashes, durations, peaks and RMS.
 """
 import argparse
 import concurrent.futures
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -40,12 +41,19 @@ def command(args, **kwargs):
 def prepare(media, spec, cache):
     if spec.get("type") == "tts" and media.get("voice", {}).get("voice_id") != spec.get("voice_id"):
         raise ValueError(f"Wrong announcer voice for {spec['key']}")
-    gid = media["generation_id"]
-    raw = cache / f"{gid}.mp3"
-    if not raw.exists():
-        request = urllib.request.Request(media.get("master_url") or media["url"])
-        with urllib.request.urlopen(request, timeout=60) as response:
-            raw.write_bytes(response.read())
+    if media.get("source"):
+        source = media["source"]
+        raw = ROOT / source["path"]
+        gid = source["sha256"]
+        if hashlib.sha256(raw.read_bytes()).hexdigest() != gid:
+            raise ValueError(f"Source recording changed for {spec['key']}")
+    else:
+        gid = media["generation_id"]
+        raw = cache / f"{gid}.mp3"
+        if not raw.exists():
+            request = urllib.request.Request(media.get("master_url") or media["url"])
+            with urllib.request.urlopen(request, timeout=60) as response:
+                raw.write_bytes(response.read())
     processing = spec.get("processing", {})
     filters = ["highpass=f=75", "equalizer=f=125:t=q:w=0.7:g=2"] if spec["category"] == "announcer" else []
     for setting, effect in [("highpassHz", "highpass"), ("lowpassHz", "lowpass")]:
@@ -65,13 +73,22 @@ def prepare(media, spec, cache):
     loop = spec.get("loop", False)
     leading = 0
     if not loop:
+        # Explicit source coordinates select a shot before automatic silence
+        # trimming; trimStartMs below still refers to the already-trimmed take.
+        if "sourceStartMs" in processing or "sourceEndMs" in processing:
+            source_start = float(processing.get("sourceStartMs", 0))
+            source_end = float(processing.get("sourceEndMs", len(samples) / SR * 1000))
+            if not (math.isfinite(source_start) and math.isfinite(source_end) and
+                    0 <= source_start < source_end <= len(samples) / SR * 1000):
+                raise ValueError(f"Invalid source range for {spec['key']}")
+            samples = samples[int(SR * source_start / 1000):int(SR * source_end / 1000)]
         # Block RMS avoids trimming quiet consonants and ignores encoder noise.
         block = 220
         frames = len(samples) // block
         energy = np.sqrt(np.mean(samples[:frames * block].reshape(frames, block, 2) ** 2, axis=(1, 2)))
         threshold = max(0.0005, float(energy.max()) * (0.018 if spec["category"] == "announcer" else 0.025))
         active = np.flatnonzero(energy > threshold)
-        if len(active):
+        if len(active) and processing.get("trimSilence", True):
             leading = max(0, int(active[0]) * block - int(SR * 0.012))
             end = min(len(samples), (int(active[-1]) + 1) * block + int(SR * 0.04))
             samples = samples[leading:end]
@@ -130,7 +147,7 @@ def write_runtime_pack(files):
             urls.setdefault(file["key"], []).append("/" + file["path"].removeprefix("public/"))
     if urls:
         (ROOT / "src/game/sfx/generated-pack.ts").write_text(
-            "// Generated with ElevenLabs MCP. Prompts and provenance: docs/audio-generation.json.\n"
+            "// Selected local recordings. Sources and provenance: docs/audio-generation.json.\n"
             "// Speech is kept separate so every callout uses one recorded announcer.\n"
             "export const GENERATED_SFX_URLS = " + json.dumps(urls, indent=2) + " as const;\n\n"
             "export type GeneratedSfxName = keyof typeof GENERATED_SFX_URLS;\n"
@@ -181,12 +198,15 @@ def main():
                 path = dest / f"{spec['key']}_{i}.mp3"
                 command(["ffmpeg", "-v", "error", "-y", "-f", "f32le", "-ar", str(SR), "-ac", "2",
                          "-i", "pipe:0", "-c:a", "libmp3lame", "-b:a", "128k", str(path)], input=samples.astype("<f4").tobytes())
-                selected.append({"key": spec["key"], "variant": i, "generation_id": media["generation_id"],
+                record = {"key": spec["key"], "variant": i, "generation_id": media.get("generation_id"),
                                  "path": str(path.relative_to(ROOT)), "duration": round(len(samples) / SR, 4),
                                  "peak_db": round(20 * math.log10(float(np.max(np.abs(samples)))), 2),
                                  "rms_db": round(20 * math.log10(float(np.sqrt(np.mean(samples ** 2)))), 2),
                                  "voice_id": media.get("voice", {}).get("voice_id"),
-                                 "model_id": media.get("model_id"), "flow_id": data.get("flow_id")})
+                                 "model_id": media.get("model_id"), "flow_id": data.get("flow_id")}
+                if media.get("source"):
+                    record.update({"provider": "user-provided", "source": media["source"]})
+                selected.append(record)
             print(f"Saved {spec['key']}: {count} recording(s)")
     audit = ROOT / "public/sounds/elevenlabs-v1/manifest.json"
     audit.parent.mkdir(parents=True, exist_ok=True)
@@ -197,6 +217,9 @@ def main():
     manifest["files"] = [file for file in manifest["files"] if file["key"] not in replaced] + selected
     if data.get("announcer"):
         manifest["announcer"] = data["announcer"]
+    manifest["provider"] = ("ElevenLabs MCP and user-provided audio"
+                            if any(file.get("source") for file in manifest["files"])
+                            else "ElevenLabs MCP")
     audit.write_text(json.dumps(manifest, indent=2) + "\n")
     write_runtime_pack(manifest["files"])
     print(f"Saved {len(selected)} assets covering {len(set(x['key'] for x in selected))} events")

@@ -1,0 +1,13 @@
+{
+  "revision": 1,
+  "blend_sha256": "70036750c2dba20d25289daedeb043b4c5a957947da6860d29d8ca8b52be5dce",
+  "blend_bytes": 35899941,
+  "review_stills": 22,
+  "turntable_frames": 36,
+  "turntable_sha256": "8dd0ffc4f0400e318ebb267b18da2d6b6068d296f320290b4859a01c0de2af9e",
+  "all_renders_newer_than_model": true,
+  "renderers": {
+    "shaded_views": "Eevee",
+    "pose_checks": "Workbench"
+  }
+}

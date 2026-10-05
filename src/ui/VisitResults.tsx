@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import type { SessionEnded } from '../game/net';
-import { returnToCodex } from '../codex-integration';
+import { agentLabel } from '../agent-session';
+import { returnToAgent } from '../codex-integration';
 import { DeckButton } from '../deck';
 import type { ProgressionResp } from '../app-types';
 import './visit-results.css';
@@ -8,8 +9,8 @@ import { BrandLogo } from './BrandLogo';
 
 const duration = (ms: number) => `${Math.floor(ms / 60000)}:${String(Math.floor(ms / 1000) % 60).padStart(2, '0')}`;
 const REASONS = { manual: 'Visit finished', disconnected: 'Connection ended', idle: 'Visit ended for inactivity',
-  completion: 'Your Codex task is complete. Back to work.', 'approval-required': 'Codex needs your approval.',
-  'input-required': 'Codex needs your input.', 'terminal-error': 'Codex needs your attention.' };
+  completion: `Your ${agentLabel} task is complete. Back to work.`, 'approval-required': `${agentLabel} needs your approval.`,
+  'input-required': `${agentLabel} needs your input.`, 'terminal-error': `${agentLabel} needs your attention.` };
 
 export function VisitResults({ session, rewards, onMenu, reducedEffects = false }: { session: SessionEnded; rewards?: ProgressionResp | null; onMenu: () => void; reducedEffects?: boolean }) {
   const [seconds, setSeconds] = useState(5);
@@ -24,7 +25,7 @@ export function VisitResults({ session, rewards, onMenu, reducedEffects = false 
     const start = performance.now();
     const interval = setInterval(() => setSeconds(Math.max(0, Math.ceil((5000 - (performance.now() - start)) / 1000))), 100);
     const timeout = setTimeout(() => {
-      void returnToCodex(session.stats.visitId).then(() => {
+      void returnToAgent(session.stats.visitId).then(() => {
         if (active) onMenuRef.current();
       }).catch(() => { if (active) setHandoffFailed(true); });
     }, 5000);
@@ -88,8 +89,8 @@ export function VisitResults({ session, rewards, onMenu, reducedEffects = false 
         <footer className='visit-debrief__footer'>
           {taskExit ? <div className='visit-debrief__return' aria-live='polite'>
             <strong>{handoffFailed ? '!' : String(seconds).padStart(2, '0')}</strong>
-            <div><span>{handoffFailed ? 'Desktop return unavailable' : seconds > 0 ? 'Returning to Codex' : 'Switching to Codex…'}</span>
-              <p>{handoffFailed ? 'Switch back to Codex when ready.' : 'Your agent is ready for you.'}</p></div>
+            <div><span>{handoffFailed ? 'Desktop return unavailable' : seconds > 0 ? `Returning to ${agentLabel}` : `Switching to ${agentLabel}…`}</span>
+              <p>{handoffFailed ? `Switch back to ${agentLabel} when ready.` : 'Your agent is ready for you.'}</p></div>
             {!handoffFailed && <div className='visit-debrief__countdown' aria-hidden='true' style={{ '--remaining': seconds / 5 } as CSSProperties} />}
           </div> : <p className='visit-debrief__ready'><span aria-hidden='true'>●</span> Visit ended <span>/</span> Re-enter when you’re ready</p>}
           <div className='visit-debrief__actions'>

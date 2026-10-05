@@ -44,6 +44,8 @@ export type Settings = {
   viewmodelMotion: number; // 0..1 bob / sway / landing-dip intensity (fire kick always stays)
   volume: number; // master
   sfxVolume: number;
+  musicEnabled: boolean;
+  musicVolume: number;
   uiSounds: boolean; // menu clicks / hovers / toggles (still scaled by master × SFX)
   announcerVolume: number;
   announcerEnabled: boolean;

@@ -6,7 +6,7 @@
 
 Give Codex a task. Grab a railgun. Get back to work when it's done.
 
-[Install in Codex](#install-in-codex) · [Discord](https://discord.gg/uMKsq3ESGs) · [Twitter / X](https://x.com/einfachai) · [Try the game](https://instagib.win/play)
+[Install in Codex](#install-in-codex) · [Discord](https://discord.gg/uMKsq3ESGs) · [Twitter / X](https://x.com/einfachai) · [Try the game](https://agent-deathmatch.hi-fa2.workers.dev/play)
 
 <img src="public/og-agent-deathmatch.png" alt="Agent Deathmatch — kill time while your coding agent works" width="800" />
 
@@ -15,6 +15,10 @@ Give Codex a task. Grab a railgun. Get back to work when it's done.
 
 </div>
 
+Agent Deathmatch is a fork of [Instagib Arena](https://github.com/8tp/instagib-arena),
+originally created by [@8tp](https://github.com/8tp). We build on the original
+project's work; see [Credits and origins](#credits-and-origins) below.
+
 ## Your agent is working. You could be playing.
 
 Agent Deathmatch is a fast multiplayer arena shooter for the gaps between giving
@@ -22,7 +26,7 @@ your coding agent a task and getting the result. One railgun. One shot. One kill
 Strafe, dash, double-jump and wall-jump your way around the arena while Codex does
 its thing.
 
-**Codex is the only supported coding agent right now.** The game runs in a browser
+**Codex and Claude Code have separate local plugins.** The game runs in a browser
 tab, launched and paired through the Codex plugin. Opening the website on its own
 lets you play; automatic task monitoring and return need the paired local companion.
 
@@ -49,7 +53,7 @@ integrations and their robot themes are not available yet.
 ## Install in Codex
 
 This is a **source-based local plugin install** that connects to the shared game
-at [instagib.win](https://instagib.win). You need:
+at [Agent Deathmatch](https://agent-deathmatch.hi-fa2.workers.dev). You need:
 
 - The Codex desktop app and Codex CLI, signed in, with plugin support.
 - Git, **Node.js 24**, and **Python 3.11 or newer**, available on your PATH.
@@ -142,6 +146,22 @@ and help shape the game. [Follow @einfachai on X](https://x.com/einfachai) for u
 Your next coding task is a good excuse for a deathmatch. Install the plugin, ask
 Codex to open Agent Deathmatch, and take a railgun break.
 
+## Credits and origins
+
+We forked [8tp/instagib-arena](https://github.com/8tp/instagib-arena) to create
+Agent Deathmatch. Credit and thanks go to **Hunter M. ([@8tp](https://github.com/8tp))**
+and the [original project's contributors](https://github.com/8tp/instagib-arena/graphs/contributors)
+for the arena shooter, movement, rendering, multiplayer netcode, bots, and other
+systems that form this game's foundation.
+
+This fork builds on that foundation with coding-agent plugins, automatic return
+to work when a task finishes, continuous arenas, and Agent Deathmatch branding.
+Please visit the [original repository](https://github.com/8tp/instagib-arena) to
+explore their work and give the project a star.
+
+Original copyright and asset credits are recorded in [NOTICE](NOTICE) and the
+per-asset attribution files. See [LICENSE](LICENSE) for the source code license.
+
 ## Contributing and license
 
 Issues and pull requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) and
@@ -156,3 +176,13 @@ to check changes.
 Source code: [AGPL-3.0](LICENSE). Game assets have separate terms and attribution
 in [NOTICE](NOTICE) and their asset folders. The game's spoken callouts use the
 bundled Victor announcer recordings from ElevenLabs.
+
+## Plugin downloads
+
+Codex and Claude Code packages are built with `npm run package:plugins`.
+The `Plugin packages` GitHub Actions workflow creates downloadable artifacts on
+manual runs and publishes both ZIPs plus checksums for matching `plugin-v*` tags.
+See [Codex installation](codex-plugin/README.md) and
+[Claude Code installation](claude-plugin/README.md). Plugin launches choose the
+matching robot and artwork through `?agent=codex` or `?agent=claude`; normal web
+visits keep the standard branding. The deployed game must include these assets.

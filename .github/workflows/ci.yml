@@ -23,8 +23,7 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm run build:cloudflare
-      - run: npm run test:security
-      - run: npm run test:arcade
+      - run: npm test
       - run: npm audit --audit-level=low
       - run: npx wrangler deploy --dry-run
       - run: npm run lint

@@ -1,0 +1,20 @@
+{
+  "name": "agent-deathmatch",
+  "interface": {
+    "displayName": "Agent Deathmatch"
+  },
+  "plugins": [
+    {
+      "name": "agent-deathmatch",
+      "source": {
+        "source": "local",
+        "path": "./codex-plugin"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

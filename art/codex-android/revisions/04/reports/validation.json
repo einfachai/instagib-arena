@@ -1,0 +1,644 @@
+{
+  "reopened": true,
+  "rig_matches_source": true,
+  "bones": 65,
+  "actions": 45,
+  "weighted_meshes": 817,
+  "packed_reference": true,
+  "materials_persisted": true,
+  "all_vertices_have_normalized_weights": true,
+  "finite_pose_bounds": true,
+  "head_shoulder_clear": true,
+  "pose_checks": [
+    {
+      "clip": "idle.relaxed",
+      "frame": 0,
+      "fraction": 0,
+      "bounds": [
+        [
+          -0.3484324514865875,
+          -0.23057681322097778,
+          0.0020103545393794775
+        ],
+        [
+          0.33817580342292786,
+          0.15702538192272186,
+          1.8355087041854858
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "idle.relaxed",
+      "frame": 149,
+      "fraction": 0.25,
+      "bounds": [
+        [
+          -0.3407678008079529,
+          -0.2335098385810852,
+          0.002000504406169057
+        ],
+        [
+          0.3249674141407013,
+          0.17750878632068634,
+          1.8327823877334595
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "idle.relaxed",
+      "frame": 298,
+      "fraction": 0.5,
+      "bounds": [
+        [
+          -0.3688296377658844,
+          -0.23320922255516052,
+          0.0019999765790998936
+        ],
+        [
+          0.386678010225296,
+          0.1642933487892151,
+          1.845287561416626
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "idle.relaxed",
+      "frame": 446,
+      "fraction": 0.75,
+      "bounds": [
+        [
+          -0.3636007606983185,
+          -0.24318936467170715,
+          0.00200096913613379
+        ],
+        [
+          0.36111176013946533,
+          0.15902520716190338,
+          1.8306849002838135
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "idle.relaxed",
+      "frame": 595,
+      "fraction": 1,
+      "bounds": [
+        [
+          -0.3484323024749756,
+          -0.2305767834186554,
+          0.002010276773944497
+        ],
+        [
+          0.33817610144615173,
+          0.15702542662620544,
+          1.8355087041854858
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "idle.armed",
+      "frame": 0,
+      "fraction": 0,
+      "bounds": [
+        [
+          -0.384438157081604,
+          -0.5297990441322327,
+          0.012388139963150024
+        ],
+        [
+          0.23530280590057373,
+          0.26541846990585327,
+          1.7460176944732666
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "idle.armed",
+      "frame": 32,
+      "fraction": 0.25,
+      "bounds": [
+        [
+          -0.3861803412437439,
+          -0.531169593334198,
+          0.01255972869694233
+        ],
+        [
+          0.23640745878219604,
+          0.26405346393585205,
+          1.7452377080917358
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "idle.armed",
+      "frame": 63,
+      "fraction": 0.5,
+      "bounds": [
+        [
+          -0.3891841769218445,
+          -0.5335518717765808,
+          0.012771670706570148
+        ],
+        [
+          0.2300640046596527,
+          0.26168471574783325,
+          1.738637924194336
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "idle.armed",
+      "frame": 94,
+      "fraction": 0.75,
+      "bounds": [
+        [
+          -0.3879924714565277,
+          -0.5326109528541565,
+          0.012663999572396278
+        ],
+        [
+          0.22886961698532104,
+          0.26262161135673523,
+          1.7374595403671265
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "idle.armed",
+      "frame": 126,
+      "fraction": 1,
+      "bounds": [
+        [
+          -0.38443735241889954,
+          -0.5297985672950745,
+          0.012389378622174263
+        ],
+        [
+          0.23533004522323608,
+          0.2654182016849518,
+          1.746012806892395
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "sprint.forward",
+      "frame": 0,
+      "fraction": 0,
+      "bounds": [
+        [
+          -0.38321566581726074,
+          -0.4986635744571686,
+          0.08461553603410721
+        ],
+        [
+          0.38191771507263184,
+          0.32967469096183777,
+          1.7189154624938965
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "sprint.forward",
+      "frame": 8,
+      "fraction": 0.25,
+      "bounds": [
+        [
+          -0.2651163935661316,
+          -0.5709076523780823,
+          0.09118379652500153
+        ],
+        [
+          0.608967661857605,
+          0.755003035068512,
+          1.7055097818374634
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "sprint.forward",
+      "frame": 15,
+      "fraction": 0.5,
+      "bounds": [
+        [
+          -0.35884276032447815,
+          -0.512228786945343,
+          0.05616317316889763
+        ],
+        [
+          0.34384605288505554,
+          0.38474008440971375,
+          1.692779779434204
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "sprint.forward",
+      "frame": 22,
+      "fraction": 0.75,
+      "bounds": [
+        [
+          -0.38887327909469604,
+          -0.5434420704841614,
+          0.1124110072851181
+        ],
+        [
+          0.28016307950019836,
+          0.7522469162940979,
+          1.708477258682251
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "sprint.forward",
+      "frame": 30,
+      "fraction": 1,
+      "bounds": [
+        [
+          -0.38321250677108765,
+          -0.49866846203804016,
+          0.08461345732212067
+        ],
+        [
+          0.3819403052330017,
+          0.32967501878738403,
+          1.7189124822616577
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "jump.rifle",
+      "frame": 0,
+      "fraction": 0,
+      "bounds": [
+        [
+          -0.32671669125556946,
+          -0.6816250681877136,
+          0.00200142920948565
+        ],
+        [
+          0.23133429884910583,
+          0.2441958636045456,
+          1.7515807151794434
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "jump.rifle",
+      "frame": 34,
+      "fraction": 0.25,
+      "bounds": [
+        [
+          -0.5926664471626282,
+          -0.5728798508644104,
+          0.23108132183551788
+        ],
+        [
+          0.1517750471830368,
+          0.24898721277713776,
+          1.4086973667144775
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "jump.rifle",
+      "frame": 68,
+      "fraction": 0.5,
+      "bounds": [
+        [
+          -0.46760013699531555,
+          -0.5731698870658875,
+          0.28786733746528625
+        ],
+        [
+          0.17671699821949005,
+          0.3990379571914673,
+          1.8719756603240967
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "jump.rifle",
+      "frame": 101,
+      "fraction": 0.75,
+      "bounds": [
+        [
+          -0.44013357162475586,
+          -0.6711001992225647,
+          0.16847476363182068
+        ],
+        [
+          0.17988769710063934,
+          0.16733743250370026,
+          1.6535897254943848
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "jump.rifle",
+      "frame": 135,
+      "fraction": 1,
+      "bounds": [
+        [
+          -0.3266885578632355,
+          -0.6814841032028198,
+          0.0020009418949484825
+        ],
+        [
+          0.23069526255130768,
+          0.24426177144050598,
+          1.7515803575515747
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "dash.right",
+      "frame": 0,
+      "fraction": 0,
+      "bounds": [
+        [
+          -0.4416268765926361,
+          -0.5745835304260254,
+          0.11614139378070831
+        ],
+        [
+          0.3014250099658966,
+          0.543721616268158,
+          1.708069920539856
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "dash.right",
+      "frame": 6,
+      "fraction": 0.25,
+      "bounds": [
+        [
+          -0.457161545753479,
+          -0.5200991034507751,
+          0.09979715943336487
+        ],
+        [
+          0.45543166995048523,
+          0.5766269564628601,
+          1.7046568393707275
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "dash.right",
+      "frame": 11,
+      "fraction": 0.5,
+      "bounds": [
+        [
+          -0.39569762349128723,
+          -0.5183412432670593,
+          0.0356447733938694
+        ],
+        [
+          0.480298787355423,
+          0.5647347569465637,
+          1.7277365922927856
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "dash.right",
+      "frame": 16,
+      "fraction": 0.75,
+      "bounds": [
+        [
+          -0.2930935323238373,
+          -0.5589188933372498,
+          0.004372741561383009
+        ],
+        [
+          0.5446157455444336,
+          0.5308406352996826,
+          1.7596920728683472
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "dash.right",
+      "frame": 22,
+      "fraction": 1,
+      "bounds": [
+        [
+          -0.45363849401474,
+          -0.6140155792236328,
+          0.05216111242771149
+        ],
+        [
+          0.4818176031112671,
+          0.5109574794769287,
+          1.8081426620483398
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "emote.placeholder",
+      "frame": 0,
+      "fraction": 0,
+      "bounds": [
+        [
+          -0.3332495391368866,
+          -0.17258617281913757,
+          0.00201080902479589
+        ],
+        [
+          0.35140907764434814,
+          0.19943585991859436,
+          1.8157471418380737
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "emote.placeholder",
+      "frame": 128,
+      "fraction": 0.25,
+      "bounds": [
+        [
+          -0.3564104735851288,
+          -0.4392399787902832,
+          0.002006047870963812
+        ],
+        [
+          0.3137854337692261,
+          0.5118368268013,
+          1.801224946975708
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "emote.placeholder",
+      "frame": 256,
+      "fraction": 0.5,
+      "bounds": [
+        [
+          -0.5170348882675171,
+          -0.20400725305080414,
+          0.0020076269283890724
+        ],
+        [
+          0.5020190477371216,
+          0.21816614270210266,
+          1.785036563873291
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "emote.placeholder",
+      "frame": 384,
+      "fraction": 0.75,
+      "bounds": [
+        [
+          -0.3778066039085388,
+          -0.23258568346500397,
+          0.0020104555878788233
+        ],
+        [
+          0.3550654947757721,
+          0.17754292488098145,
+          1.8135942220687866
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "clip": "emote.placeholder",
+      "frame": 512,
+      "fraction": 1,
+      "bounds": [
+        [
+          -0.33324915170669556,
+          -0.17258590459823608,
+          0.0020112006459385157
+        ],
+        [
+          0.35140901803970337,
+          0.19943591952323914,
+          1.8157474994659424
+        ]
+      ],
+      "headShoulderTriangleIntersections": {
+        "Left": 0,
+        "Right": 0
+      }
+    }
+  ]
+}

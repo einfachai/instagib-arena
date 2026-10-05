@@ -1,0 +1,71 @@
+{
+  "provider": "user-provided",
+  "specs": [
+    {
+      "key": "jump",
+      "category": "movement",
+      "type": "file",
+      "provider": "user-provided",
+      "source": {
+        "filename": "dragon-studio-simple-whoosh-382724.mp3",
+        "path": "art/audio/sources/dragon-studio-simple-whoosh-382724.mp3",
+        "sha256": "c2efd9d902a59bf9ec5019035d7deadd17762136896b6e3cb6dd99ea50997a30"
+      },
+      "duration": 0.5747,
+      "maxDuration": 0.326,
+      "variants": 1,
+      "loop": false,
+      "processing": {
+        "sourceStartMs": 95,
+        "sourceEndMs": 420,
+        "trimSilence": false,
+        "fadeInMs": 2,
+        "fadeOutMs": 12,
+        "rmsDb": -25,
+        "peakDb": -9
+      }
+    },
+    {
+      "key": "airjump",
+      "category": "movement",
+      "type": "file",
+      "provider": "user-provided",
+      "source": {
+        "filename": "dragon-studio-whoosh-cinematic-376875.mp3",
+        "path": "art/audio/sources/dragon-studio-whoosh-cinematic-376875.mp3",
+        "sha256": "ea7eefa6fee1f6f8e08f595b0db5bfa1d941aa8a6c1a8f07a2a4dd02c588bfe4"
+      },
+      "duration": 2.1159,
+      "maxDuration": 0.85,
+      "variants": 1,
+      "loop": false,
+      "processing": {
+        "sourceStartMs": 800,
+        "sourceEndMs": 1650,
+        "trimSilence": false,
+        "fadeInMs": 2,
+        "fadeOutMs": 12,
+        "rmsDb": -24,
+        "peakDb": -9
+      }
+    }
+  ],
+  "media": [
+    {
+      "key": "jump",
+      "source": {
+        "filename": "dragon-studio-simple-whoosh-382724.mp3",
+        "path": "art/audio/sources/dragon-studio-simple-whoosh-382724.mp3",
+        "sha256": "c2efd9d902a59bf9ec5019035d7deadd17762136896b6e3cb6dd99ea50997a30"
+      }
+    },
+    {
+      "key": "airjump",
+      "source": {
+        "filename": "dragon-studio-whoosh-cinematic-376875.mp3",
+        "path": "art/audio/sources/dragon-studio-whoosh-cinematic-376875.mp3",
+        "sha256": "ea7eefa6fee1f6f8e08f595b0db5bfa1d941aa8a6c1a8f07a2a4dd02c588bfe4"
+      }
+    }
+  ]
+}

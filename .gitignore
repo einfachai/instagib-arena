@@ -41,3 +41,18 @@ design/shots/**/*.png
 design/sounds/
 # Third-party reference previews (Ratz workshop) — local critique only, never committed.
 design/refs/ratz/*.jpg
+
+# Raw authoring binaries stay local; source scripts and audio provenance are versioned.
+art/**
+!art/**/
+!art/**/*.md
+!art/**/*.txt
+!art/**/*.py
+!art/**/*.json
+!art/**/*.sh
+!art/**/*.js
+!art/**/*.ts
+!art/**/*.svg
+!art/**/*.yaml
+!art/**/*.yml
+!art/audio/sources/*.mp3

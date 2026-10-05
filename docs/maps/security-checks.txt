@@ -1,0 +1,33 @@
+✔ origin allow-list checks scheme and configured origin (2998.948583ms)
+✔ direct requests ignore forged proxy and Cloudflare headers (0.785792ms)
+✔ trusted proxy hops resolve from the right and do not trust a forged first hop (0.440209ms)
+✔ Railway uses its overwritten X-Real-IP instead of the extra XFF edge or a Cloudflare header (9.153417ms)
+✔ rate limiter bounds key cardinality and restores expired windows (0.577542ms)
+✔ session tokens are hashed, expire, revoke and cap concurrent sessions (58.299584ms)
+✔ legacy sessions migrate once and keep the existing browser token usable (1145.129041ms)
+✔ configured admins must already exist; public registration grants no admin role (259.367ms)
+✔ API rejects cross-origin writes and never caches personalized data (25.806916ms)
+✔ malformed and oversized HTTP bodies fail without stack traces (19.384625ms)
+✔ metrics token cannot mutate admin state (79.281209ms)
+✔ reward claims enforce owner, expiry, once-only grants and atomic rollback (4.626375ms)
+✔ redeem codes enforce account uniqueness, global uses and shared IP failure limit (3.203ms)
+✔ market and trades preserve ownership and reject repeat transfers (5.742833ms)
+✔ daily cases are once per UTC day; staff items stay bound (4.731916ms)
+✔ equipment rejects prototype keys before reading or mutating a loadout (80.681875ms)
+✔ replay actor IDs are data keys on a dictionary with no prototype (5.027583ms)
+✔ replay decoder rejects hostile counts and truncated data; normal runs survive (1.650833ms)
+✔ every arena exposes the same walls to server collision checks (0.369417ms)
+✔ movement accepts safe spawns and rejects wall crossings and ceiling escapes (3.231583ms)
+✔ replay uploads require auth before parsing the body (6.252417ms)
+✔ malformed WS cookies and JSON cannot break the connection handler (70.642ms)
+✔ position uploads cannot replace the assigned spawn with an arbitrary first pose (211.247208ms)
+✔ game server blocks shots through walls and still awards clear-line hits (5377.456666ms)
+✔ auth attempts share limits even when callers rotate forged forwarding headers (1299.427333ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12253.432083

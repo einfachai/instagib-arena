@@ -25,6 +25,8 @@ before(async () => {
   globalThis.ProgressEvent = class extends Event {
     constructor(type: string, init: ProgressEventInit = {}) { super(type); Object.assign(this, init); }
   } as typeof ProgressEvent;
+  // Node skips the browser-only eager loader; use the same model registry for this fixture.
+  await import('../src/game/gun/custom/index');
   await preloadR01Assets(async () => new THREE.DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1));
 });
 const meshes = (root: THREE.Object3D) => { const out: THREE.Mesh[] = []; root.traverse((o) => { if (o instanceof THREE.Mesh) out.push(o); }); return out; };

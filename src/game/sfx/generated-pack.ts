@@ -1,11 +1,11 @@
-// Generated with ElevenLabs MCP. Prompts and provenance: docs/audio-generation.json.
+// Selected local recordings. Sources and provenance: docs/audio-generation.json.
 // Speech is kept separate so every callout uses one recorded announcer.
 export const GENERATED_SFX_URLS = {
   "rail-fire": [
-    "/sounds/elevenlabs-v1/weapon/crack/rail-fire_1.mp3"
+    "/sounds/elevenlabs-v1/weapon/energy-gun-39409/rail-fire_1.mp3"
   ],
   "airjump": [
-    "/sounds/elevenlabs-v1/movement/jump-foley/airjump_1.mp3"
+    "/sounds/elevenlabs-v1/movement/whoosh-382724-376875/airjump_1.mp3"
   ],
   "ambience-causeway": [
     "/sounds/elevenlabs-v1/ambience/ambience-causeway_1.mp3"
@@ -39,6 +39,9 @@ export const GENERATED_SFX_URLS = {
   ],
   "death": [
     "/sounds/elevenlabs-v1/weapon/death_1.mp3"
+  ],
+  "death-impact": [
+    "/sounds/elevenlabs-v1/weapon/death-impact/death-impact_1.mp3"
   ],
   "finisher-confetti": [
     "/sounds/elevenlabs-v1/finisher/finisher-confetti_1.mp3"
@@ -83,7 +86,7 @@ export const GENERATED_SFX_URLS = {
     "/sounds/elevenlabs-v1/weapon/hit-headshot_1.mp3"
   ],
   "jump": [
-    "/sounds/elevenlabs-v1/movement/jump-foley/jump_1.mp3"
+    "/sounds/elevenlabs-v1/movement/whoosh-382724-376875/jump_1.mp3"
   ],
   "kill": [
     "/sounds/elevenlabs-v1/weapon/kill_1.mp3"

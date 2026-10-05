@@ -48,6 +48,7 @@ import {
 import { randomBytes } from 'node:crypto';
 import { BotBrain } from '../src/game/bot-brain';
 import { navFor } from '../src/game/bot-nav';
+import { parseAgent, type AgentKind } from '../src/game/agent';
 import { ArcadeVisit, desiredBots } from './arcade-visit';
 import type { ArenaControllers } from './arena-controller';
 import type { CodexEvent, ExitReason } from '../src/game/arcade';
@@ -312,6 +313,7 @@ type PosTimeline = {
 };
 
 type ClientRecord = {
+  agent?: AgentKind;
   actor?: 'human' | 'bot';
   brain?: BotBrain;
   visit?: ArcadeVisit;
@@ -437,7 +439,7 @@ type Room = {
 const movementCueRates = new WeakMap<ClientRecord, { start: number; count: number }>();
 
 type ClientMessage =
-  | { type: 'arena'; controllerToken?: string; attemptId?: string }
+  | { type: 'arena'; agent?: string; controllerToken?: string; attemptId?: string }
   | { type: 'hello'; name?: string }
   | { type: 'list' }
   | { type: 'create'; name?: string; mapId?: string; isPublic?: boolean; capacity?: number; mode?: string }
@@ -445,9 +447,9 @@ type ClientMessage =
   | { type: 'ranked-queue' }
   | { type: 'ranked-cancel' }
   | { type: 'ranked-rooms' }
-  | { type: 'join'; roomId?: string; name?: string }
+  | { type: 'join'; agent?: string; roomId?: string; name?: string }
   | { type: 'spectate'; roomId?: string; name?: string }
-  | { type: 'resume'; token?: string; roomId?: string; name?: string }
+  | { type: 'resume'; agent?: string; token?: string; roomId?: string; name?: string }
   | { type: 'leave' }
   | { type: 'vote'; mapId?: string }
   | { type: 'hat'; id?: string }
@@ -1347,6 +1349,7 @@ export function attachInstagibWs(wss: WebSocketServer, controllers?: ArenaContro
     record.mBestStreak = old.mBestStreak;
     record.mStartedAt = old.mStartedAt;
     record.mSettled = old.mSettled;
+    record.agent = old.agent;
     record.visit = old.visit;
     record.visit?.advance(Date.now(), false, room.humanPhase);
     record.botStreak = old.botStreak;
@@ -1589,6 +1592,7 @@ export function attachInstagibWs(wss: WebSocketServer, controllers?: ArenaContro
   // onto the dynamic snapshot, defaulting gracefully if a profile hasn't arrived.
   const playerMeta = (c: ClientRecord) => ({
     actor: c.actor === 'bot' ? 'bot' : 'human',
+    agent: c.agent ?? 'codex',
     id: c.id,
     name: c.name,
     team: c.team,
@@ -1622,8 +1626,8 @@ export function attachInstagibWs(wss: WebSocketServer, controllers?: ArenaContro
   const broadcastMeta = (room: Room) => broadcastRoom(room, roomMeta(room));
 
   const arenaNotice = (room: Room, clip: 'codex-entered' | 'codex-alone') => {
-    broadcastRoom(room, { type: 'arena-notice', id: `${room.id}:${++room.noticeSeq}`, clip,
-      text: clip === 'codex-entered' ? 'Codex user entered the arena.' : 'All other Codex users left the arena.' });
+    broadcastRoom(room, { type: 'arena-notice', id: `${room.id}:${++room.noticeSeq}`, clip: clip === 'codex-entered' ? 'agent-entered' : undefined,
+      text: clip === 'codex-entered' ? 'Another agent user entered the arena.' : 'All other agent users left the arena.' });
   };
   const broadcastVisitStats = (room: Room) => {
     const players = actors(room).flatMap(id => {
@@ -2601,6 +2605,7 @@ export function attachInstagibWs(wss: WebSocketServer, controllers?: ArenaContro
         }
 
         case 'arena': {
+          record.agent = parseAgent(msg.agent) ?? 'codex';
           leaveRoom(record);
           leaveSpectate(record);
           const visit = new ArcadeVisit();
@@ -2619,6 +2624,7 @@ export function attachInstagibWs(wss: WebSocketServer, controllers?: ArenaContro
         }
 
         case 'join': {
+          record.agent = parseAgent(msg.agent) ?? 'codex';
           rankedQueue.delete(record.id); // joining a room → leave the ranked queue
           const room = msg.roomId ? rooms.get(msg.roomId) : undefined;
           if (!room) {
@@ -2681,6 +2687,7 @@ export function attachInstagibWs(wss: WebSocketServer, controllers?: ArenaContro
         }
 
         case 'resume': {
+          record.agent = parseAgent(msg.agent) ?? 'codex';
           // A reconnecting client presents its previous resume token to reclaim
           // its in-match slot + score. On miss/expiry, fall back to a fresh join.
           const token = typeof msg.token === 'string' ? msg.token : '';

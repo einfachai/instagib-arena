@@ -1,0 +1,338 @@
+{
+  "passed": true,
+  "joints": 65,
+  "inverseBindMatricesIdentical": true,
+  "originalSurfaces": [
+    {
+      "mesh": "Alpha_Joints",
+      "vertices": 12473,
+      "skinWeightsIdentical": true,
+      "jointIndicesIdentical": true,
+      "topologyIdentical": true
+    },
+    {
+      "mesh": "Alpha_Surface",
+      "vertices": 22961,
+      "skinWeightsIdentical": true,
+      "jointIndicesIdentical": true,
+      "topologyIdentical": true
+    }
+  ],
+  "clips": [
+    {
+      "id": "walk.forward",
+      "duration": 1,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666710376739502,
+      "stationaryRoot": true
+    },
+    {
+      "id": "walk.forward-right",
+      "duration": 1,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666710376739502,
+      "stationaryRoot": true
+    },
+    {
+      "id": "walk.right",
+      "duration": 1,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666710376739502,
+      "stationaryRoot": true
+    },
+    {
+      "id": "walk.backward-right",
+      "duration": 1,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666710376739502,
+      "stationaryRoot": true
+    },
+    {
+      "id": "walk.backward",
+      "duration": 0.9666666388511658,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666710376739502,
+      "stationaryRoot": true
+    },
+    {
+      "id": "walk.backward-left",
+      "duration": 1,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666710376739502,
+      "stationaryRoot": true
+    },
+    {
+      "id": "walk.left",
+      "duration": 1,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666710376739502,
+      "stationaryRoot": true
+    },
+    {
+      "id": "walk.forward-left",
+      "duration": 1,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666710376739502,
+      "stationaryRoot": true
+    },
+    {
+      "id": "run.forward",
+      "duration": 0.5,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "run.forward-right",
+      "duration": 0.5,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "run.right",
+      "duration": 0.5,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "run.backward-right",
+      "duration": 0.5,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "run.backward",
+      "duration": 0.5,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "run.backward-left",
+      "duration": 0.5,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "run.left",
+      "duration": 0.5,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "run.forward-left",
+      "duration": 0.5,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "sprint.forward",
+      "duration": 0.5,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "sprint.forward-right",
+      "duration": 0.5,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "sprint.right",
+      "duration": 0.5,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "sprint.backward-right",
+      "duration": 0.5,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "sprint.backward",
+      "duration": 0.5,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "sprint.backward-left",
+      "duration": 0.5,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "sprint.left",
+      "duration": 0.5,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "sprint.forward-left",
+      "duration": 0.5,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "idle.armed",
+      "duration": 2.0999999046325684,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666769981384277,
+      "stationaryRoot": true
+    },
+    {
+      "id": "turn.left",
+      "duration": 1,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666710376739502,
+      "stationaryRoot": true
+    },
+    {
+      "id": "turn.right",
+      "duration": 1,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666710376739502,
+      "stationaryRoot": true
+    },
+    {
+      "id": "jump.up",
+      "duration": 0.5333333611488342,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666710376739502,
+      "stationaryRoot": true
+    },
+    {
+      "id": "jump.loop",
+      "duration": 0.9333333373069763,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666710376739502,
+      "stationaryRoot": true
+    },
+    {
+      "id": "jump.down",
+      "duration": 0.6666666865348816,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666710376739502,
+      "stationaryRoot": true
+    },
+    {
+      "id": "idle.relaxed",
+      "duration": 9.916666984558105,
+      "tracks": 195,
+      "maxSamplingStep": 0.01666736602783203,
+      "stationaryRoot": true
+    },
+    {
+      "id": "dash.forward",
+      "duration": 0.36666667461395264,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "dash.backward",
+      "duration": 0.6166666746139526,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666710376739502,
+      "stationaryRoot": true
+    },
+    {
+      "id": "dash.left",
+      "duration": 0.36666667461395264,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "dash.right",
+      "duration": 0.36666667461395264,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "run.start",
+      "duration": 1.7333333492279053,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666769981384277,
+      "stationaryRoot": true
+    },
+    {
+      "id": "run.stop",
+      "duration": 1.4666666984558105,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666769981384277,
+      "stationaryRoot": true
+    },
+    {
+      "id": "walk.stop",
+      "duration": 3.566666603088379,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666889190673828,
+      "stationaryRoot": true
+    },
+    {
+      "id": "jump.rifle",
+      "duration": 2.25,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666889190673828,
+      "stationaryRoot": true
+    },
+    {
+      "id": "land",
+      "duration": 1.0666667222976685,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666769981384277,
+      "stationaryRoot": true
+    },
+    {
+      "id": "wall.left",
+      "duration": 0.4166666567325592,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "wall.right",
+      "duration": 0.4166666567325592,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "jump.double",
+      "duration": 0.7833333611488342,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666710376739502,
+      "stationaryRoot": true
+    },
+    {
+      "id": "jump.boost",
+      "duration": 0.38333332538604736,
+      "tracks": 195,
+      "maxSamplingStep": 0.016666680574417114,
+      "stationaryRoot": true
+    },
+    {
+      "id": "emote.placeholder",
+      "duration": 8.533333778381348,
+      "tracks": 195,
+      "maxSamplingStep": 0.01666736602783203,
+      "stationaryRoot": true
+    }
+  ]
+}

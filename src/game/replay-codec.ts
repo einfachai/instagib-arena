@@ -18,6 +18,7 @@ import type { Loadout, Look } from './items/types';
 export type ReplayActorKind = 'local' | 'remote' | 'bot';
 
 export type ReplayActorProfile = {
+  agent?: import('./agent').AgentKind;
   id: string;
   name: string;
   kind: ReplayActorKind;
@@ -63,6 +64,7 @@ export type ReplayData = {
   version: number;
   hz: number;
   mapId: string;
+  mapRevision?: number;
   durationMs: number;
   localId: string;
   won: boolean;
@@ -74,9 +76,9 @@ export type ReplayData = {
   movement?: ReplayMovement[]; // v4, cosmetic cues only
 };
 
-// v4 appends cosmetic movement cues. v3 adds taunts, v2 adds actor Looks.
-// Existing stored recordings in all three earlier formats remain readable.
-export const REPLAY_VERSION = 4;
+// v5 records map revisions and actor agents. v4 appends cosmetic movement cues.
+// v3 adds taunts; v2 adds actor Looks. Formats 1–4 remain readable.
+export const REPLAY_VERSION = 5;
 const MIN_REPLAY_VERSION = 1;
 const MAGIC = 0x49475231; // "IGR1"
 
@@ -188,10 +190,16 @@ export function encodeReplay(data: ReplayData): Uint8Array {
   w.u16(Math.min(0xffff, data.kills.length));
   w.u16(Math.min(0xffff, data.shots.length));
   w.str(data.mapId);
+  if (data.version >= 5) {
+    const revision=data.mapRevision ?? 1;
+    if (!Number.isInteger(revision) || revision<1 || revision>65535) throw new Error('replay: invalid map revision');
+    w.u16(revision);
+  }
 
   // Actor table.
   for (const p of data.profiles) {
     w.str(p.id);
+    if (data.version >= 5) w.u8(p.agent === 'claude' ? 1 : 0);
     w.str(p.name);
     w.u8(KIND_TO_N[p.kind] ?? 1);
     w.str(p.hat);
@@ -288,6 +296,8 @@ export function decodeReplay(input: ArrayBuffer | Uint8Array, includeFrames = tr
   const killCount = r.u16();
   const shotCount = r.u16();
   const mapId = r.str();
+  const mapRevision = version>=5?r.u16():1;
+  if (!mapRevision) throw new Error('replay: invalid map revision');
   const bitmaskBytes = Math.ceil(aCount / 8);
   // Validate counts against the actual payload BEFORE allocating arrays.
   if (aCount < 1 || aCount > 16 || hz < 1 || hz > 64 || durationMs > 3_600_000 ||
@@ -300,6 +310,7 @@ export function decodeReplay(input: ArrayBuffer | Uint8Array, includeFrames = tr
   for (let i = 0; i < aCount; i++) {
     const id = r.str();
     if (!id || profiles.some((p) => p.id === id)) throw new Error('replay: invalid actor');
+    const agent = version >= 5 && r.u8() === 1 ? 'claude' : 'codex';
     const name = r.str();
     const kind = N_TO_KIND[r.u8()] ?? 'remote';
     const hat = r.str();
@@ -318,7 +329,7 @@ export function decodeReplay(input: ArrayBuffer | Uint8Array, includeFrames = tr
         }
       }
     }
-    profiles.push({ id, name, kind, hat, unusual, nameColor, team: teamRaw < 0 ? null : teamRaw, looks });
+    profiles.push({ id, agent, name, kind, hat, unusual, nameColor, team: teamRaw < 0 ? null : teamRaw, looks });
   }
   const idName = (idx: number) => (idx === NONE ? '' : profiles[idx]?.name ?? '');
   const idAt = (idx: number) => (idx === NONE ? '' : profiles[idx]?.id ?? '');
@@ -410,7 +421,7 @@ export function decodeReplay(input: ArrayBuffer | Uint8Array, includeFrames = tr
 
   const localId = localIdx === NONE ? '' : profiles[localIdx]?.id ?? '';
   if (r.remaining !== 0) throw new Error('replay: trailing data');
-  return { version, hz, mapId, durationMs, localId, won, profiles, frames, kills, shots, taunts, movement };
+  return { version, hz, mapId, mapRevision, durationMs, localId, won, profiles, frames, kills, shots, taunts, movement };
 }
 
 // Cheap server-side summary used to sanity-check a submitted score against the

@@ -3,6 +3,7 @@ import { SfxEngine, type LocalMoveKind } from './sfx/engine';
 import { GENERATED_SFX_URLS } from './sfx/generated-pack';
 import type { MotionEventKind } from './sfx/motion-tracker';
 import type { StingKind } from './sfx/stings';
+import { MusicPlayer } from './music/player';
 
 export type SoundClipName =
   | 'fire'
@@ -26,7 +27,7 @@ export type SoundClipName =
   | 'victory'
   | 'defeat'
   | 'spawn'
-  | 'codex-entered' | 'codex-alone' | 'codex-complete' | 'codex-attention';
+  | 'agent-entered' | 'codex-entered' | 'codex-alone' | 'codex-complete' | 'codex-attention';
 
 // Keep old saved pack IDs readable. Every spoken event resolves to the same
 // deep male ElevenLabs announcer, including old Kuon selections.
@@ -60,6 +61,7 @@ export const SOUND_URLS: Partial<Record<SoundClipName, string>> = {
   'victory':       '/sounds/elevenlabs-v1/announcer/victor/victory_1.mp3',
   'defeat':        '/sounds/elevenlabs-v1/announcer/victor/defeat_1.mp3',
   'spawn':         '/sounds/elevenlabs-v1/announcer/victor/spawn_1.mp3',
+  'agent-entered': '/sounds/elevenlabs-v1/announcer/victor/agent-entered_1.mp3',
   'codex-entered': '/sounds/elevenlabs-v1/announcer/victor/codex-entered_1.mp3',
   'codex-complete': '/sounds/elevenlabs-v1/announcer/victor/codex-complete_1.mp3',
   'codex-alone': '/sounds/elevenlabs-v1/announcer/victor/codex-alone_1.mp3',
@@ -69,7 +71,7 @@ export const SOUND_URLS: Partial<Record<SoundClipName, string>> = {
 // Which clips are announcer voice lines (vs. weapon SFX). Drives the
 // SFX/announcer volume split and the announcer on/off toggle.
 const ANNOUNCER_CLIPS: ReadonlySet<SoundClipName> = new Set<SoundClipName>([
-  'codex-entered', 'codex-alone', 'codex-complete', 'codex-attention',
+  'agent-entered', 'codex-entered', 'codex-alone', 'codex-complete', 'codex-attention',
   'first-blood',
   'double-kill',
   'triple-kill',
@@ -95,6 +97,11 @@ const ANNOUNCER_CLIPS: ReadonlySet<SoundClipName> = new Set<SoundClipName>([
 export class SoundManager {
   private ctx: AudioContext | null = null;
   private engine: SfxEngine | null = null;
+  private music: MusicPlayer | null = null;
+  private musicEnabled = true;
+  private musicVolume = 0.3;
+  private musicActive = false;
+  private disposed = false;
   private master: GainNode | null = null;
   private sfxBus: GainNode | null = null;
   private announcerBus: GainNode | null = null;
@@ -119,7 +126,7 @@ export class SoundManager {
   private speechGeneration = 0;
 
   async init() {
-    if (this.ctx) return;
+    if (this.ctx || this.disposed) return;
     try {
       const AC =
         window.AudioContext ||
@@ -128,12 +135,18 @@ export class SoundManager {
       if (!AC) return;
       // Request the lowest supported device buffering for combat feedback.
       this.ctx = new AC({ latencyHint: 0 });
-      // The engine builds the whole mix graph (SFX + announcer buses → limiter
+      // The engine builds the whole mix graph (SFX + announcer + music → limiter
       // → master volume → destination) synchronously, so sounds work at once.
       this.engine = new SfxEngine(this.ctx);
       this.master = this.engine.mixer.out;
       this.sfxBus = this.engine.mixer.sfxBus;
       this.announcerBus = this.engine.mixer.announcerBus;
+      this.engine.mixer.musicBus.gain.value = this.musicVolume;
+      try {
+        this.music = new MusicPlayer(this.ctx, this.engine.mixer.musicBus);
+        this.music.setEnabled(this.musicEnabled);
+        this.music.setActive(this.musicActive);
+      } catch { /* A media routing failure must not disable existing game audio. */ }
       this.engine.setMasterVolume(this.volume);
       this.engine.setSfxVolume(this.sfxVolume);
       this.engine.setAnnouncerVolume(this.announcerVolume);
@@ -214,7 +227,7 @@ export class SoundManager {
 
   resume() {
     if (this.ctx && this.ctx.state === 'suspended') {
-      void this.ctx.resume();
+      void this.ctx.resume().catch(() => {});
     }
   }
 
@@ -249,7 +262,7 @@ export class SoundManager {
       if (isAnnouncer) {
         this.announcerSrc = src;
         src.onended = () => { if (this.announcerSrc === src) { this.announcerSrc = null; void this.drainSpeech(); } };
-        this.engine.duck(buf.duration); // ambience dips under the voice
+        if (this.announcerVolume > 0 && this.volume > 0 && volume > 0) this.engine.duck(buf.duration);
       }
       src.start(0);
       return true;
@@ -337,6 +350,15 @@ export class SoundManager {
   gibAt(x: number, y: number, z: number, volume = 1) {
     if (this.ctx?.state !== 'running') return; // see playAt
     this.engine?.gibAt(x, y, z, volume);
+  }
+
+  deathImpactAt(x: number, y: number, z: number, volume = 0.6) {
+    if (this.ctx?.state !== 'running') return;
+    this.engine?.deathImpactAt(x, y, z, volume);
+  }
+
+  async preloadDeathImpact() {
+    await this.engine?.samples.preload(['death-impact', 'death']);
   }
 
   // You got fragged (also cuts the recharge hum).
@@ -444,6 +466,31 @@ export class SoundManager {
     this.engine?.setSfxVolume(this.sfxVolume);
   }
 
+  setMusicVolume(v: number) {
+    this.musicVolume = Number.isFinite(v) ? clamp01(v) : 0.3;
+    if (this.engine) this.engine.mixer.musicBus.gain.value = this.musicVolume;
+  }
+
+  setMusicEnabled(on: boolean) {
+    this.musicEnabled = on;
+    this.music?.setEnabled(on);
+  }
+
+  setMusicActive(on: boolean) {
+    this.musicActive = on;
+    this.music?.setActive(on);
+  }
+
+  playMusicFromGesture() {
+    this.resume();
+    this.music?.playFromGesture();
+  }
+
+  resetMusic() {
+    this.musicActive = false;
+    this.music?.reset();
+  }
+
   setAnnouncerVolume(v: number) {
     this.announcerVolume = clamp01(v);
     this.engine?.setAnnouncerVolume(this.announcerVolume);
@@ -455,6 +502,9 @@ export class SoundManager {
   }
 
   dispose() {
+    this.disposed = true;
+    this.music?.dispose();
+    this.music = null;
     this.speechGeneration++;
     this.speechQueue.length = 0;
     this.stopAnnouncer();

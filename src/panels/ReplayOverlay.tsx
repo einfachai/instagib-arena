@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import type { Settings } from '../app-types';
 import { useModalStack } from '../deck-core';
 import { DeckButton, SegButton, UtilButton } from '../deck';
-import { ReplayViewer, type ReplayViewerState } from '../game/replay-viewer';
+import { RetiredReplayLayoutError, ReplayViewer, type ReplayViewerState } from '../game/replay-viewer';
 import { decodeReplay, type ReplayData } from '../game/replay-codec';
 import { fmtChallengeTime } from './shared';
 
@@ -78,8 +78,10 @@ export function ReplayViewerOverlay({
         );
         viewerRef.current = viewer;
         await viewer.start(); // starts paused on the first frame
-      } catch {
-        if (!cancelled) setError('This run could not be loaded.');
+      } catch (error) {
+        viewerRef.current?.dispose();
+        viewerRef.current=null;
+        if (!cancelled) setError(error instanceof RetiredReplayLayoutError ? error.message : 'This run could not be loaded.');
       }
     })();
     // Esc closes (or exits fullscreen first); Space toggles play.

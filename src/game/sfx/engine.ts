@@ -86,7 +86,7 @@ export class SfxEngine {
     this.mixer.ly = y;
     this.mixer.lz = z;
   }
-  /** Duck the ambience under an announcer line. */
+  /** Duck ambience and music under an announcer line. */
   duck(sec: number) {
     this.mixer.duck(sec);
   }
@@ -220,6 +220,16 @@ export class SfxEngine {
     if (!this.samples.play(v, 'death')) death(v, this.bank);
     this.mixer.toWorld(v, this.mixer.sendLo);
     return this.commit(v, 'self');
+  }
+
+  /** One body collision, positioned at its ground contact for every listener. */
+  deathImpactAt(x: number, y: number, z: number, vol = 0.6, at?: number) {
+    const d = this.mixer.audible(x, y, z, GIB_3D.max);
+    if (d < 0) return null;
+    const v = this.voice(vol, at);
+    if (!this.samples.play(v, 'death-impact') && !this.samples.play(v, 'death')) death(v, this.bank);
+    this.mixer.spatial(v, x, y, z, d, GIB_3D);
+    return this.commit(v, 'impact');
   }
 
   medalSting(kind: StingKind, level: number, vol = 1, at?: number) {

@@ -1,12 +1,15 @@
-// Throwaway listening page: the shipped manifest is the only audio catalog.
+// Listening page: SFX provenance and supplied music have separate catalogs.
 import { BufferedSoundPlayer } from './sound-buffer-player.js';
 const $ = (id) => document.getElementById(id);
-const audio = new BufferedSoundPlayer();
-const categoryNames = { all: 'All sounds', announcer: 'Announcer', weapon: 'Weapons & combat', movement: 'Movement', finisher: 'Finishers', medal: 'Medals', ambience: 'Map ambience', ui: 'Interface' };
-const nameOverrides = { spawn: 'Back in the fight', 'codex-alone': 'All Codex users left', 'codex-attention': 'Codex needs attention', airjump: 'Double jump', walljump: 'Wall jump', 'medal-special': 'Special medal' };
+const sfxAudio = new BufferedSoundPlayer();
+const musicAudio = new Audio();
+musicAudio.preload = 'none';
+let audio = sfxAudio;
+const categoryNames = { all: 'All sounds', music: 'Music', announcer: 'Announcer', weapon: 'Weapons & combat', movement: 'Movement', finisher: 'Finishers', medal: 'Medals', ambience: 'Map ambience', ui: 'Interface' };
+const nameOverrides = { jump: 'Jump · Simple whoosh', airjump: 'Double jump · Cinematic whoosh', 'death-impact': 'Death · Ground impact', spawn: 'Back in the fight', 'codex-alone': 'All Codex users left', 'codex-attention': 'Codex needs attention', walljump: 'Wall jump', 'medal-special': 'Special medal' };
 let announcerName = 'Victor';
 let sounds = [], category = 'all', selected = null, queue = [], queueIndex = -1, advanceTimer = null, playRequest = 0, stopped = false;
-audio.volume = .75;
+sfxAudio.volume = musicAudio.volume = .75;
 const icon = (name) => `<svg class="icon" aria-hidden="true"><use href="#${name}-icon"/></svg>`;
 const escape = (text) => String(text).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const titleCase = (text) => text.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()).replace(/\bXp\b/g, 'XP');
@@ -38,7 +41,7 @@ function renderSounds() {
     return `<section class="sound-group" aria-label="${name}"><h2 class="group-heading">${name}<span>${group.length}</span></h2><div class="sound-grid">${group.map((sound) => `
       <article class="sound${selected?.id === sound.id ? ' selected' : ''}" data-id="${sound.id}">
         <div class="sound-top"><button type="button" class="play-sound" data-play="${sound.id}" aria-label="Play ${escape(sound.name)}">${icon('play')}</button><div><h3 class="sound-name">${escape(sound.name)}</h3><div class="sound-key">${escape(sound.key)}${sound.variant > 1 ? ` · take ${sound.variant}` : ''}</div></div></div>
-        <div class="sound-bottom"><div class="sound-meta"><span>${sound.duration.toFixed(2)} s</span>${sound.voice_id ? `<span class="tag">${escape(announcerName.toUpperCase())} / VOICE</span>` : sound.loopable ? '<span class="tag">LOOP</span>' : ''}</div><a class="download" href="${escape(sound.url)}" download aria-label="Download ${escape(sound.name)}" title="Download MP3">${icon('download')}</a></div>
+        <div class="sound-bottom"><div class="sound-meta"><span>${sound.duration.toFixed(2)} s</span>${sound.voice_id ? `<span class="tag">${escape(announcerName.toUpperCase())} / VOICE</span>` : sound.loopable ? '<span class="tag">LOOP</span>' : ''}${sound.provider === 'user-provided' ? `<span class="tag" title="${escape(sound.source?.filename || sound.filename || 'User-supplied recording')}">USER FILE</span>` : ''}</div><a class="download" href="${escape(sound.url)}" download aria-label="Download ${escape(sound.name)}" title="Download MP3">${icon('download')}</a></div>
       </article>`).join('')}</div></section>`;
   }).join('') || '<div class="empty">No sounds match your search.<button class="action" id="clear-filters" type="button">Clear filters</button></div>';
   syncPlayer();
@@ -81,6 +84,7 @@ async function startSound(sound, keepQueue = false) {
   if (!keepQueue) clearQueue();
   clearTimeout(advanceTimer);
   audio.pause();
+  audio = sound.category === 'music' ? musicAudio : sfxAudio;
   selected = sound;
   stopped = false;
   audio.src = sound.url;
@@ -148,7 +152,10 @@ $('sounds').addEventListener('click', (event) => {
 // Warm a recording before a pointer or keyboard user presses Play.
 for (const event of ['pointerover', 'focusin']) $('sounds').addEventListener(event, (event) => {
   const button = event.target.closest('[data-play]');
-  if (button) void audio.preload(sounds[Number(button.dataset.play)].url).catch(() => {});
+  if (button) {
+    const sound = sounds[Number(button.dataset.play)];
+    if (sound.category !== 'music') void sfxAudio.preload(sound.url).catch(() => {});
+  }
 });
 $('play-all').addEventListener('click', () => {
   clearQueue();
@@ -162,22 +169,24 @@ $('toggle').addEventListener('click', () => void togglePlayback());
 $('stop').addEventListener('click', stopPlayback);
 $('next').addEventListener('click', nextSound);
 $('seek').addEventListener('input', () => { if (Number.isFinite(audio.duration)) audio.currentTime = Number($('seek').value) / 1000 * audio.duration; syncProgress(); });
-$('volume').addEventListener('input', () => { audio.volume = Number($('volume').value) / 100; $('volume-value').textContent = `${$('volume').value}%`; });
+$('volume').addEventListener('input', () => { sfxAudio.volume = musicAudio.volume = Number($('volume').value) / 100; $('volume-value').textContent = `${$('volume').value}%`; });
 $('loop').addEventListener('change', () => { clearQueue(); audio.loop = $('loop').checked; syncPlayer(); });
-for (const event of ['play', 'pause', 'playing', 'loadedmetadata']) audio.addEventListener(event, syncPlayer);
-audio.addEventListener('timeupdate', syncProgress);
-audio.addEventListener('ended', () => { syncPlayer(); if (queue.length) advanceTimer = setTimeout(nextSound, 300); });
-audio.addEventListener('error', () => { clearQueue(); if (selected) showError(`The recording for ${selected.name} could not load.`); syncPlayer(); });
+for (const player of [sfxAudio, musicAudio]) {
+  for (const event of ['play', 'pause', 'playing', 'loadedmetadata']) player.addEventListener(event, () => { if (player === audio) syncPlayer(); });
+  player.addEventListener('timeupdate', () => { if (player === audio) syncProgress(); });
+  player.addEventListener('ended', () => { if (player !== audio) return; syncPlayer(); if (queue.length) advanceTimer = setTimeout(nextSound, 300); });
+  player.addEventListener('error', () => { if (player !== audio) return; clearQueue(); if (selected) showError(`The recording for ${selected.name} could not load.`); syncPlayer(); });
+}
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') stopPlayback();
   if (event.code === 'Space' && !event.target.closest('input, button, a, textarea, select')) { event.preventDefault(); void togglePlayback(); }
 });
-window.addEventListener('pagehide', () => { clearQueue(); audio.pause(); });
+window.addEventListener('pagehide', () => { clearQueue(); sfxAudio.pause(); musicAudio.pause(); });
 async function loadSounds() {
   try {
-    const response = await fetch('/sounds/elevenlabs-v1/manifest.json', { cache: 'no-store' });
-    if (!response.ok) throw new Error('Manifest unavailable');
-    const manifest = await response.json();
+    const responses = await Promise.all(['/sounds/elevenlabs-v1/manifest.json', '/sounds/music/catalog.json'].map((url) => fetch(url, { cache: 'no-store' })));
+    if (responses.some((response) => !response.ok)) throw new Error('Catalog unavailable');
+    const [manifest, music] = await Promise.all(responses.map((response) => response.json()));
     announcerName = manifest.announcer?.display_name || 'Victor';
     $('announcer-voice').textContent = `${announcerName} · Deep male`;
     sounds = manifest.files.map((file, id) => {
@@ -185,9 +194,13 @@ async function loadSounds() {
       if (!categoryNames[category] || !file.path.startsWith('public/sounds/elevenlabs-v1/')) throw new Error('Unexpected sound path');
       return { ...file, id, category, name: soundName(file.key), url: file.path.replace(/^public\//, '/'), loopable: category === 'ambience' || file.key === 'rail-charge' };
     });
+    for (const file of music.files) {
+      if (!file.url.startsWith('/sounds/music/') || !file.url.endsWith('.mp3')) throw new Error('Unexpected music path');
+      sounds.push({ ...file, id: sounds.length, category: 'music', variant: 1 });
+    }
     // The frequently compared short cues are ready before the first click.
-    const warmKeys = new Set(['rail-fire', 'jump', 'airjump', 'dash', 'boost', 'ui-uiHover', 'ui-modalOpen', 'ui-modalClose']);
-    for (const sound of sounds) if (warmKeys.has(sound.key)) void audio.preload(sound.url).catch(() => {});
+    const warmKeys = new Set(['rail-fire', 'death-impact', 'jump', 'airjump', 'dash', 'boost', 'ui-uiHover', 'ui-modalOpen', 'ui-modalClose']);
+    for (const sound of sounds) if (warmKeys.has(sound.key)) void sfxAudio.preload(sound.url).catch(() => {});
     $('total-count').textContent = sounds.length;
     renderCategories();
     renderSounds();

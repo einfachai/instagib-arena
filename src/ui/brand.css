@@ -38,3 +38,19 @@
 @media (prefers-reduced-motion: reduce) {
   .brand-loading-bar::after { animation: none; width: 100%; opacity: .7; }
 }
+
+/* Keep the complete square plugin artwork inside each surface's available space. */
+.brand-agent-logo { aspect-ratio: 1; }
+.brand-agent-logo.brand-loading-logo { width: min(460px, 54vh, 72vw); }
+.brand-agent-logo.brand-pause-logo { width: min(290px, 32vh, 55vw); margin-bottom: 20px; }
+.brand-agent-logo.brand-map-logo { width: min(300px, 37vh, 42vw); }
+.brand-agent-logo.brand-scoreboard-logo, .brand-agent-logo.brand-results-logo { width: 115px; }
+.brand-agent-logo.brand-debrief-logo { width: 95px; }
+@media (max-height: 580px) {
+  .brand-agent-logo.brand-loading-logo { width: min(260px, 45vh); }
+  .brand-agent-logo.brand-pause-logo { width: min(150px, 30vh); margin-bottom: 12px; }
+  .brand-agent-logo.brand-map-logo { width: min(150px, 32vh); }
+}
+
+.brand-menu-wordmark > .brand-agent-logo { width: min(320px, 30vh, 65vw); margin-inline: auto; }
+@media (max-height: 580px) { .brand-menu-wordmark > .brand-agent-logo { width: min(180px, 27vh); } }

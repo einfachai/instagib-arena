@@ -1,0 +1,5656 @@
+{
+  "manifest": {
+    "version": 2,
+    "name": "Claude Android",
+    "revision": 1,
+    "model": "/models/claude-android/model.glb",
+    "fps": 60,
+    "clips": [
+      {
+        "id": "walk.forward",
+        "url": "/models/codex-ybot/clips/walk.forward.glb",
+        "duration": 1.0,
+        "frames": 61,
+        "source": "rifle-pack/walk forward.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "walk.forward-right",
+        "url": "/models/codex-ybot/clips/walk.forward-right.glb",
+        "duration": 1.0,
+        "frames": 61,
+        "source": "rifle-pack/walk forward right.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "walk.right",
+        "url": "/models/codex-ybot/clips/walk.right.glb",
+        "duration": 1.0,
+        "frames": 61,
+        "source": "rifle-pack/walk right.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "walk.backward-right",
+        "url": "/models/codex-ybot/clips/walk.backward-right.glb",
+        "duration": 1.0,
+        "frames": 61,
+        "source": "rifle-pack/walk backward right.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "walk.backward",
+        "url": "/models/codex-ybot/clips/walk.backward.glb",
+        "duration": 0.9666666666666667,
+        "frames": 59,
+        "source": "rifle-pack/walk backward.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "walk.backward-left",
+        "url": "/models/codex-ybot/clips/walk.backward-left.glb",
+        "duration": 1.0,
+        "frames": 61,
+        "source": "rifle-pack/walk backward left.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "walk.left",
+        "url": "/models/codex-ybot/clips/walk.left.glb",
+        "duration": 1.0,
+        "frames": 61,
+        "source": "rifle-pack/walk left.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "walk.forward-left",
+        "url": "/models/codex-ybot/clips/walk.forward-left.glb",
+        "duration": 1.0,
+        "frames": 61,
+        "source": "rifle-pack/walk forward left.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "run.forward",
+        "url": "/models/codex-ybot/clips/run.forward.glb",
+        "duration": 0.5,
+        "frames": 31,
+        "source": "rifle-pack/run forward.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "run.forward-right",
+        "url": "/models/codex-ybot/clips/run.forward-right.glb",
+        "duration": 0.5,
+        "frames": 31,
+        "source": "rifle-pack/run forward right.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "run.right",
+        "url": "/models/codex-ybot/clips/run.right.glb",
+        "duration": 0.5,
+        "frames": 31,
+        "source": "rifle-pack/run right.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "run.backward-right",
+        "url": "/models/codex-ybot/clips/run.backward-right.glb",
+        "duration": 0.5,
+        "frames": 31,
+        "source": "rifle-pack/run backward right.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "run.backward",
+        "url": "/models/codex-ybot/clips/run.backward.glb",
+        "duration": 0.5,
+        "frames": 31,
+        "source": "rifle-pack/run backward.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "run.backward-left",
+        "url": "/models/codex-ybot/clips/run.backward-left.glb",
+        "duration": 0.5,
+        "frames": 31,
+        "source": "rifle-pack/run backward left.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "run.left",
+        "url": "/models/codex-ybot/clips/run.left.glb",
+        "duration": 0.5,
+        "frames": 31,
+        "source": "rifle-pack/run left.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "run.forward-left",
+        "url": "/models/codex-ybot/clips/run.forward-left.glb",
+        "duration": 0.5,
+        "frames": 31,
+        "source": "rifle-pack/run forward left.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "sprint.forward",
+        "url": "/models/codex-ybot/clips/sprint.forward.glb",
+        "duration": 0.5,
+        "frames": 31,
+        "source": "rifle-pack/sprint forward.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "sprint.forward-right",
+        "url": "/models/codex-ybot/clips/sprint.forward-right.glb",
+        "duration": 0.5,
+        "frames": 31,
+        "source": "rifle-pack/sprint forward right.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "sprint.right",
+        "url": "/models/codex-ybot/clips/sprint.right.glb",
+        "duration": 0.5,
+        "frames": 31,
+        "source": "rifle-pack/sprint right.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "sprint.backward-right",
+        "url": "/models/codex-ybot/clips/sprint.backward-right.glb",
+        "duration": 0.5,
+        "frames": 31,
+        "source": "rifle-pack/sprint backward right.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "sprint.backward",
+        "url": "/models/codex-ybot/clips/sprint.backward.glb",
+        "duration": 0.5,
+        "frames": 31,
+        "source": "rifle-pack/sprint backward.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "sprint.backward-left",
+        "url": "/models/codex-ybot/clips/sprint.backward-left.glb",
+        "duration": 0.5,
+        "frames": 31,
+        "source": "rifle-pack/sprint backward left.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "sprint.left",
+        "url": "/models/codex-ybot/clips/sprint.left.glb",
+        "duration": 0.5,
+        "frames": 31,
+        "source": "rifle-pack/sprint left.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "sprint.forward-left",
+        "url": "/models/codex-ybot/clips/sprint.forward-left.glb",
+        "duration": 0.5,
+        "frames": 31,
+        "source": "rifle-pack/sprint forward left.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "idle.armed",
+        "url": "/models/codex-ybot/clips/idle.armed.glb",
+        "duration": 2.1,
+        "frames": 127,
+        "source": "rifle-pack/idle aiming.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "turn.left",
+        "url": "/models/codex-ybot/clips/turn.left.glb",
+        "duration": 1.0,
+        "frames": 61,
+        "source": "rifle-pack/turn 90 left.fbx",
+        "loop": false,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "turn.right",
+        "url": "/models/codex-ybot/clips/turn.right.glb",
+        "duration": 1.0,
+        "frames": 61,
+        "source": "rifle-pack/turn 90 right.fbx",
+        "loop": false,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "jump.up",
+        "url": "/models/codex-ybot/clips/jump.up.glb",
+        "duration": 0.5333333333333333,
+        "frames": 33,
+        "source": "rifle-pack/jump up.fbx",
+        "loop": false,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "jump.loop",
+        "url": "/models/codex-ybot/clips/jump.loop.glb",
+        "duration": 0.9333333333333333,
+        "frames": 57,
+        "source": "rifle-pack/jump loop.fbx",
+        "loop": true,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "jump.down",
+        "url": "/models/codex-ybot/clips/jump.down.glb",
+        "duration": 0.6666666666666666,
+        "frames": 41,
+        "source": "rifle-pack/jump down.fbx",
+        "loop": false,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "idle.relaxed",
+        "url": "/models/codex-ybot/clips/idle.relaxed.glb",
+        "duration": 9.916666666666666,
+        "frames": 596,
+        "source": "Breathing Idle.fbx",
+        "loop": true,
+        "movement": false,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "dash.forward",
+        "url": "/models/codex-ybot/clips/dash.forward.glb",
+        "duration": 0.36666666666666664,
+        "frames": 23,
+        "source": "Standing Dodge Forward.fbx",
+        "loop": false,
+        "movement": true,
+        "segment": [
+          0.12,
+          0.5
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "dash.backward",
+        "url": "/models/codex-ybot/clips/dash.backward.glb",
+        "duration": 0.6166666666666667,
+        "frames": 38,
+        "source": "Standing Dodge Backward.fbx",
+        "loop": false,
+        "movement": true,
+        "segment": [
+          0.12,
+          0.5
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "dash.left",
+        "url": "/models/codex-ybot/clips/dash.left.glb",
+        "duration": 0.36666666666666664,
+        "frames": 23,
+        "source": "Standing Dodge Left.fbx",
+        "loop": false,
+        "movement": true,
+        "segment": [
+          0.12,
+          0.5
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "dash.right",
+        "url": "/models/codex-ybot/clips/dash.right.glb",
+        "duration": 0.36666666666666664,
+        "frames": 23,
+        "source": "Standing Dodge Right.fbx",
+        "loop": false,
+        "movement": true,
+        "segment": [
+          0.12,
+          0.5
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "run.start",
+        "url": "/models/codex-ybot/clips/run.start.glb",
+        "duration": 1.7333333333333334,
+        "frames": 105,
+        "source": "Rifle Start Run.fbx",
+        "loop": false,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "run.stop",
+        "url": "/models/codex-ybot/clips/run.stop.glb",
+        "duration": 1.4666666666666666,
+        "frames": 89,
+        "source": "Rifle Run To Stop.fbx",
+        "loop": false,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "walk.stop",
+        "url": "/models/codex-ybot/clips/walk.stop.glb",
+        "duration": 3.566666666666667,
+        "frames": 215,
+        "source": "Rifle Walk To Stop.fbx",
+        "loop": false,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "jump.rifle",
+        "url": "/models/codex-ybot/clips/jump.rifle.glb",
+        "duration": 2.25,
+        "frames": 136,
+        "source": "Rifle Jump.fbx",
+        "loop": false,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "land",
+        "url": "/models/codex-ybot/clips/land.glb",
+        "duration": 1.0666666666666667,
+        "frames": 65,
+        "source": "Falling To Landing.fbx",
+        "loop": false,
+        "movement": true,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "wall.left",
+        "url": "/models/codex-ybot/clips/wall.left.glb",
+        "duration": 0.4166666666666667,
+        "frames": 26,
+        "source": "Wall Run.fbx",
+        "loop": false,
+        "movement": true,
+        "segment": [
+          0.55,
+          1
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "wall.right",
+        "url": "/models/codex-ybot/clips/wall.right.glb",
+        "duration": 0.4166666666666667,
+        "frames": 26,
+        "source": "Wall Run.fbx",
+        "loop": false,
+        "movement": true,
+        "segment": [
+          0.55,
+          1
+        ],
+        "mirrored": true
+      },
+      {
+        "id": "jump.double",
+        "url": "/models/codex-ybot/clips/jump.double.glb",
+        "duration": 0.7833333333333333,
+        "frames": 48,
+        "source": "Rifle Jump.fbx",
+        "loop": false,
+        "movement": true,
+        "segment": [
+          0.3,
+          0.65
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "jump.boost",
+        "url": "/models/codex-ybot/clips/jump.boost.glb",
+        "duration": 0.38333333333333336,
+        "frames": 24,
+        "source": "rifle-pack/jump up.fbx",
+        "loop": false,
+        "movement": true,
+        "segment": [
+          0.12,
+          0.85
+        ],
+        "mirrored": false
+      },
+      {
+        "id": "emote.placeholder",
+        "url": "/models/codex-ybot/clips/emote.placeholder.glb",
+        "duration": 8.533333333333333,
+        "frames": 513,
+        "source": "Victory.fbx",
+        "loop": true,
+        "movement": false,
+        "segment": [
+          0,
+          1
+        ],
+        "mirrored": false
+      }
+    ],
+    "source": "art/claude-android/claude-android.blend",
+    "sourceSha256": "70036750c2dba20d25289daedeb043b4c5a957947da6860d29d8ca8b52be5dce",
+    "bones": 65,
+    "authoredObjects": 834,
+    "triangles": 66830,
+    "bytes": 2166628,
+    "runtimeDraws": 2,
+    "windows": "Warm-tinted alpha windows; solid thickness and internals retained."
+  },
+  "rigUnchanged": true,
+  "parts": [
+    {
+      "name": "Abdomen / access fastener 0-1-1",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Abdomen / access fastener 0-11",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Abdomen / access fastener 01-1",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Abdomen / access fastener 011",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Abdomen / access fastener 1-1-1",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Abdomen / access fastener 1-11",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Abdomen / access fastener 11-1",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Abdomen / access fastener 111",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Abdomen / access fastener 2-1-1",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Abdomen / access fastener 2-11",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Abdomen / access fastener 21-1",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Abdomen / access fastener 211",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Abdomen / actuator access 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Abdomen / actuator access 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Abdomen / actuator access 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Abdomen / axial piston -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Abdomen / axial piston 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Abdomen / exposed central actuator 0",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Abdomen / exposed central actuator 1",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Abdomen / exposed central actuator 2",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Abdomen / exposed piston 0-1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Abdomen / exposed piston 01",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Abdomen / exposed piston 1-1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Abdomen / exposed piston 11",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Abdomen / exposed piston 2-1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Abdomen / exposed piston 21",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Abdomen / flexible core 0",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Abdomen / flexible core 1",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Abdomen / flexible core 2",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Back / -1 loom 0",
+      "component": "cable",
+      "before": 976,
+      "triangles": 116
+    },
+    {
+      "name": "Back / -1 loom 1",
+      "component": "cable",
+      "before": 976,
+      "triangles": 116
+    },
+    {
+      "name": "Back / 1 loom 0",
+      "component": "cable",
+      "before": 976,
+      "triangles": 116
+    },
+    {
+      "name": "Back / 1 loom 1",
+      "component": "cable",
+      "before": 976,
+      "triangles": 116
+    },
+    {
+      "name": "Back / cable clip -1106",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Back / cable clip -1124",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Back / cable clip -1143",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Back / cable clip 1106",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Back / cable clip 1124",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Back / cable clip 1143",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Back / Clawd insignia",
+      "component": "detail",
+      "before": 352,
+      "triangles": 352
+    },
+    {
+      "name": "Back / insignia left eye",
+      "component": "detail",
+      "before": 2,
+      "triangles": 2
+    },
+    {
+      "name": "Back / insignia right eye",
+      "component": "detail",
+      "before": 2,
+      "triangles": 2
+    },
+    {
+      "name": "Back / optical spine -1",
+      "component": "cable",
+      "before": 976,
+      "triangles": 117
+    },
+    {
+      "name": "Back / optical spine 1",
+      "component": "cable",
+      "before": 976,
+      "triangles": 117
+    },
+    {
+      "name": "Back / service vertebra 0",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Back / service vertebra 1",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Back / service vertebra 2",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Back / vertebra inset 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Back / vertebra inset 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Back / vertebra inset 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Back / vertical status light",
+      "component": "detail",
+      "before": 256,
+      "triangles": 17
+    },
+    {
+      "name": "Chest / Clawd insignia",
+      "component": "detail",
+      "before": 352,
+      "triangles": 352
+    },
+    {
+      "name": "Chest / insignia left eye",
+      "component": "detail",
+      "before": 2,
+      "triangles": 2
+    },
+    {
+      "name": "Chest / insignia right eye",
+      "component": "detail",
+      "before": 2,
+      "triangles": 2
+    },
+    {
+      "name": "Clawd mount / graphite spindle",
+      "component": "frame",
+      "before": 252,
+      "triangles": 20
+    },
+    {
+      "name": "Clawd mount / orange locking collar",
+      "component": "frame",
+      "before": 252,
+      "triangles": 20
+    },
+    {
+      "name": "Collar / inset neck gasket",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Face / left black square eye",
+      "component": "face",
+      "before": 108,
+      "triangles": 108
+    },
+    {
+      "name": "Face / right black square eye",
+      "component": "face",
+      "before": 108,
+      "triangles": 108
+    },
+    {
+      "name": "Head / Clawd terracotta housing",
+      "component": "face",
+      "before": 836,
+      "triangles": 836
+    },
+    {
+      "name": "Head / layered rear housing",
+      "component": "face",
+      "before": 220,
+      "triangles": 220
+    },
+    {
+      "name": "Head / left rounded side housing",
+      "component": "face",
+      "before": 220,
+      "triangles": 220
+    },
+    {
+      "name": "Head / right rounded side housing",
+      "component": "face",
+      "before": 220,
+      "triangles": 220
+    },
+    {
+      "name": "Left / anatomical palm chassis",
+      "component": "frame",
+      "before": 1228,
+      "triangles": 98
+    },
+    {
+      "name": "Left / ankle axle inset -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 116
+    },
+    {
+      "name": "Left / ankle axle inset 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 128
+    },
+    {
+      "name": "Left / ankle axle seal -1",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Left / ankle axle seal 1",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Left / ankle bearing",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Left / ankle recessed axle -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / ankle recessed axle 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / Arm actuator barrel -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / Arm actuator barrel 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / Arm blue hub",
+      "component": "frame",
+      "before": 188,
+      "triangles": 116
+    },
+    {
+      "name": "Left / Arm contoured seam -1",
+      "component": "detail",
+      "before": 1216,
+      "triangles": 84
+    },
+    {
+      "name": "Left / Arm contoured seam 1",
+      "component": "detail",
+      "before": 1216,
+      "triangles": 84
+    },
+    {
+      "name": "Left / Arm front shell",
+      "component": "shell",
+      "before": 6464,
+      "triangles": 904
+    },
+    {
+      "name": "Left / Arm hub pin",
+      "component": "frame",
+      "before": 188,
+      "triangles": 96
+    },
+    {
+      "name": "Left / Arm joint",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Left / Arm machined pivot ring",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Left / Arm piston -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / Arm piston 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / Arm pivot fastener 0",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / Arm pivot fastener 1",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / Arm pivot fastener 2",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / Arm pivot fastener 3",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / Arm pivot fastener 4",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / Arm pivot fastener 5",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / Arm pivot fastener 6",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / Arm pivot fastener 7",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / Arm rear cable",
+      "component": "cable",
+      "before": 496,
+      "triangles": 59
+    },
+    {
+      "name": "Left / Arm rear light guide",
+      "component": "cable",
+      "before": 496,
+      "triangles": 59
+    },
+    {
+      "name": "Left / Arm rear shell",
+      "component": "shell",
+      "before": 6464,
+      "triangles": 904
+    },
+    {
+      "name": "Left / Arm shell screw 0.78-1",
+      "component": "detail",
+      "before": 124,
+      "triangles": 12
+    },
+    {
+      "name": "Left / Arm shell screw 0.781",
+      "component": "detail",
+      "before": 124,
+      "triangles": 12
+    },
+    {
+      "name": "Left / Arm structural drive",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / Arm titanium pivot",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / articulated toe outsole",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / contoured rear outsole",
+      "component": "frame",
+      "before": 228,
+      "triangles": 18
+    },
+    {
+      "name": "Left / deltoid inset vent 0",
+      "component": "detail",
+      "before": 108,
+      "triangles": 12
+    },
+    {
+      "name": "Left / deltoid inset vent 1",
+      "component": "detail",
+      "before": 108,
+      "triangles": 12
+    },
+    {
+      "name": "Left / deltoid inset vent 2",
+      "component": "detail",
+      "before": 108,
+      "triangles": 12
+    },
+    {
+      "name": "Left / dorsal hand armor",
+      "component": "shell",
+      "before": 1116,
+      "triangles": 156
+    },
+    {
+      "name": "Left / dorsal hand fastener 3.3-2.8",
+      "component": "detail",
+      "before": 108,
+      "triangles": 12
+    },
+    {
+      "name": "Left / dorsal hand fastener 3.32.1",
+      "component": "detail",
+      "before": 108,
+      "triangles": 12
+    },
+    {
+      "name": "Left / dorsal hand fastener 9.6-3.4",
+      "component": "detail",
+      "before": 108,
+      "triangles": 12
+    },
+    {
+      "name": "Left / dorsal hand fastener 9.92.0",
+      "component": "detail",
+      "before": 108,
+      "triangles": 12
+    },
+    {
+      "name": "Left / elbow flex 0",
+      "component": "cable",
+      "before": 736,
+      "triangles": 87
+    },
+    {
+      "name": "Left / elbow flex 1",
+      "component": "cable",
+      "before": 736,
+      "triangles": 88
+    },
+    {
+      "name": "Left / ForeArm actuator barrel -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / ForeArm actuator barrel 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / ForeArm blue hub",
+      "component": "frame",
+      "before": 188,
+      "triangles": 112
+    },
+    {
+      "name": "Left / ForeArm contoured seam -1",
+      "component": "detail",
+      "before": 1216,
+      "triangles": 84
+    },
+    {
+      "name": "Left / ForeArm contoured seam 1",
+      "component": "detail",
+      "before": 1216,
+      "triangles": 85
+    },
+    {
+      "name": "Left / ForeArm front shell",
+      "component": "shell",
+      "before": 6932,
+      "triangles": 970
+    },
+    {
+      "name": "Left / ForeArm hub pin",
+      "component": "frame",
+      "before": 188,
+      "triangles": 96
+    },
+    {
+      "name": "Left / ForeArm joint",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Left / ForeArm machined pivot ring",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Left / ForeArm optical bearing",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Left / ForeArm piston -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / ForeArm piston 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / ForeArm pivot fastener 0",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / ForeArm pivot fastener 1",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / ForeArm pivot fastener 2",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / ForeArm pivot fastener 3",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / ForeArm pivot fastener 4",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / ForeArm pivot fastener 5",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / ForeArm pivot fastener 6",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / ForeArm pivot fastener 7",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / ForeArm rear cable",
+      "component": "cable",
+      "before": 496,
+      "triangles": 59
+    },
+    {
+      "name": "Left / ForeArm rear light guide",
+      "component": "cable",
+      "before": 496,
+      "triangles": 59
+    },
+    {
+      "name": "Left / ForeArm rear shell",
+      "component": "shell",
+      "before": 6464,
+      "triangles": 904
+    },
+    {
+      "name": "Left / ForeArm shell screw 0.22-1",
+      "component": "detail",
+      "before": 124,
+      "triangles": 12
+    },
+    {
+      "name": "Left / ForeArm shell screw 0.221",
+      "component": "detail",
+      "before": 124,
+      "triangles": 12
+    },
+    {
+      "name": "Left / ForeArm structural drive",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / ForeArm titanium pivot",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / heel counter -1",
+      "component": "shell",
+      "before": 668,
+      "triangles": 92
+    },
+    {
+      "name": "Left / heel counter 1",
+      "component": "shell",
+      "before": 668,
+      "triangles": 92
+    },
+    {
+      "name": "Left / heel marker",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left / Index metacarpal drive",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / Index metacarpal socket",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Left / instep armor -0.8",
+      "component": "shell",
+      "before": 668,
+      "triangles": 92
+    },
+    {
+      "name": "Left / instep armor 3.8",
+      "component": "shell",
+      "before": 668,
+      "triangles": 92
+    },
+    {
+      "name": "Left / instep armor 7.7",
+      "component": "shell",
+      "before": 668,
+      "triangles": 92
+    },
+    {
+      "name": "Left / instep gasket -0.8",
+      "component": "frame",
+      "before": 668,
+      "triangles": 52
+    },
+    {
+      "name": "Left / instep gasket 3.8",
+      "component": "frame",
+      "before": 668,
+      "triangles": 52
+    },
+    {
+      "name": "Left / instep gasket 7.7",
+      "component": "frame",
+      "before": 668,
+      "triangles": 52
+    },
+    {
+      "name": "Left / knee flex 0",
+      "component": "cable",
+      "before": 736,
+      "triangles": 88
+    },
+    {
+      "name": "Left / knee flex 1",
+      "component": "cable",
+      "before": 736,
+      "triangles": 88
+    },
+    {
+      "name": "Left / kneecap",
+      "component": "shell",
+      "before": 556,
+      "triangles": 76
+    },
+    {
+      "name": "Left / Leg actuator barrel -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / Leg actuator barrel 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / Leg blue hub",
+      "component": "frame",
+      "before": 188,
+      "triangles": 116
+    },
+    {
+      "name": "Left / Leg contoured seam -1",
+      "component": "detail",
+      "before": 1216,
+      "triangles": 84
+    },
+    {
+      "name": "Left / Leg contoured seam 1",
+      "component": "detail",
+      "before": 1216,
+      "triangles": 84
+    },
+    {
+      "name": "Left / Leg exposed upper piston -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / Leg exposed upper piston 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / Leg front shell",
+      "component": "shell",
+      "before": 7052,
+      "triangles": 986
+    },
+    {
+      "name": "Left / Leg hub pin",
+      "component": "frame",
+      "before": 188,
+      "triangles": 96
+    },
+    {
+      "name": "Left / Leg inset optical wire",
+      "component": "cable",
+      "before": 496,
+      "triangles": 58
+    },
+    {
+      "name": "Left / Leg joint",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Left / Leg machined pivot ring",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Left / Leg optical bearing",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Left / Leg piston -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / Leg piston 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / Leg pivot fastener 0",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / Leg pivot fastener 1",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / Leg pivot fastener 2",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / Leg pivot fastener 3",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / Leg pivot fastener 4",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / Leg pivot fastener 5",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / Leg pivot fastener 6",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / Leg pivot fastener 7",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / Leg rear cable",
+      "component": "cable",
+      "before": 496,
+      "triangles": 58
+    },
+    {
+      "name": "Left / Leg rear light guide",
+      "component": "cable",
+      "before": 496,
+      "triangles": 59
+    },
+    {
+      "name": "Left / Leg rear shell",
+      "component": "shell",
+      "before": 6464,
+      "triangles": 904
+    },
+    {
+      "name": "Left / Leg shell screw 0.22-1",
+      "component": "detail",
+      "before": 124,
+      "triangles": 12
+    },
+    {
+      "name": "Left / Leg shell screw 0.221",
+      "component": "detail",
+      "before": 124,
+      "triangles": 12
+    },
+    {
+      "name": "Left / Leg structural drive",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / Leg titanium pivot",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / Leg upper piston sleeve -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / Leg upper piston sleeve 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / metacarpal armor seam 0",
+      "component": "detail",
+      "before": 496,
+      "triangles": 34
+    },
+    {
+      "name": "Left / metacarpal armor seam 1",
+      "component": "detail",
+      "before": 496,
+      "triangles": 34
+    },
+    {
+      "name": "Left / metacarpal armor seam 2",
+      "component": "detail",
+      "before": 496,
+      "triangles": 34
+    },
+    {
+      "name": "Left / Middle metacarpal drive",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / Middle metacarpal socket",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Left / molded heel and instep",
+      "component": "shell",
+      "before": 2880,
+      "triangles": 402
+    },
+    {
+      "name": "Left / outsole side lug -1 -2.5",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left / outsole side lug -1 -6.2",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left / outsole side lug -1 14.5",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left / outsole side lug -1 18.0",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left / outsole side lug -1 4.0",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left / outsole side lug -1 8.1",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left / outsole side lug 1 -2.5",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left / outsole side lug 1 -6.2",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left / outsole side lug 1 14.5",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left / outsole side lug 1 18.0",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left / outsole side lug 1 4.0",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left / outsole side lug 1 8.1",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left / palm grip pad",
+      "component": "frame",
+      "before": 668,
+      "triangles": 52
+    },
+    {
+      "name": "Left / Pinky metacarpal drive",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / Pinky metacarpal socket",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Left / Ring metacarpal drive",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / Ring metacarpal socket",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Left / rounded articulated toe box",
+      "component": "shell",
+      "before": 2112,
+      "triangles": 294
+    },
+    {
+      "name": "Left / shoulder cap",
+      "component": "shell",
+      "before": 8576,
+      "triangles": 1200
+    },
+    {
+      "name": "Left / shoulder concentric bearing 0.41",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Left / shoulder concentric bearing 0.6",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Left / shoulder distal service seam",
+      "component": "detail",
+      "before": 8176,
+      "triangles": 572
+    },
+    {
+      "name": "Left / Thumb metacarpal socket",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Left / thumb saddle",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Left / toe bumper",
+      "component": "shell",
+      "before": 960,
+      "triangles": 134
+    },
+    {
+      "name": "Left / UpLeg actuator barrel -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / UpLeg actuator barrel 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / UpLeg blue hub",
+      "component": "frame",
+      "before": 188,
+      "triangles": 110
+    },
+    {
+      "name": "Left / UpLeg contoured seam -1",
+      "component": "detail",
+      "before": 1216,
+      "triangles": 84
+    },
+    {
+      "name": "Left / UpLeg contoured seam 1",
+      "component": "detail",
+      "before": 1216,
+      "triangles": 85
+    },
+    {
+      "name": "Left / UpLeg exposed upper piston -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / UpLeg exposed upper piston 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / UpLeg front shell",
+      "component": "shell",
+      "before": 6464,
+      "triangles": 904
+    },
+    {
+      "name": "Left / UpLeg hub pin",
+      "component": "frame",
+      "before": 188,
+      "triangles": 96
+    },
+    {
+      "name": "Left / UpLeg inset optical wire",
+      "component": "cable",
+      "before": 496,
+      "triangles": 59
+    },
+    {
+      "name": "Left / UpLeg joint",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Left / UpLeg machined pivot ring",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Left / UpLeg optical bearing",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Left / UpLeg piston -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / UpLeg piston 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / UpLeg pivot fastener 0",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / UpLeg pivot fastener 1",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / UpLeg pivot fastener 2",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / UpLeg pivot fastener 3",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / UpLeg pivot fastener 4",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / UpLeg pivot fastener 5",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / UpLeg pivot fastener 6",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / UpLeg pivot fastener 7",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Left / UpLeg rear cable",
+      "component": "cable",
+      "before": 496,
+      "triangles": 58
+    },
+    {
+      "name": "Left / UpLeg rear light guide",
+      "component": "cable",
+      "before": 496,
+      "triangles": 59
+    },
+    {
+      "name": "Left / UpLeg rear shell",
+      "component": "shell",
+      "before": 6464,
+      "triangles": 904
+    },
+    {
+      "name": "Left / UpLeg shell screw 0.22-1",
+      "component": "detail",
+      "before": 124,
+      "triangles": 12
+    },
+    {
+      "name": "Left / UpLeg shell screw 0.221",
+      "component": "detail",
+      "before": 124,
+      "triangles": 12
+    },
+    {
+      "name": "Left / UpLeg structural drive",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / UpLeg titanium pivot",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / UpLeg upper piston sleeve -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / UpLeg upper piston sleeve 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left / wrist bearing",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Left / wrist collar",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Left / wrist socket",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Left calf inspection / black pocket",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / blue seal",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Left calf inspection / controller 0",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / controller 1",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / metal rim",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Left calf inspection / PCB",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / pin 0 -1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / pin 0 -1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / pin 0 -1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / pin 0 -1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / pin 0 1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / pin 0 1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / pin 0 1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / pin 0 1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / pin 1 -1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / pin 1 -1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / pin 1 -1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / pin 1 -1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / pin 1 1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / pin 1 1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / pin 1 1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / pin 1 1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / polycarbonate lens",
+      "component": "glass",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / status 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / status 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / status 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / trace -1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left calf inspection / trace 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / black pocket",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / blue seal",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Left forearm inspection / controller 0",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / controller 1",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / controller 2",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / metal rim",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Left forearm inspection / PCB",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 0 -1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 0 -1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 0 -1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 0 -1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 0 1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 0 1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 0 1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 0 1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 1 -1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 1 -1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 1 -1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 1 -1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 1 1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 1 1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 1 1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 1 1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 2 -1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 2 -1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 2 -1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 2 -1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 2 1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 2 1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 2 1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / pin 2 1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / polycarbonate lens",
+      "component": "glass",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / status 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / status 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / status 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / trace -1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Left forearm inspection / trace 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "mixamorig:LeftHandIndex1 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:LeftHandIndex1 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandIndex1 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:LeftHandIndex1 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 12
+    },
+    {
+      "name": "mixamorig:LeftHandIndex1 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:LeftHandIndex1 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandIndex2 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:LeftHandIndex2 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandIndex2 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:LeftHandIndex2 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 12
+    },
+    {
+      "name": "mixamorig:LeftHandIndex2 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:LeftHandIndex2 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandIndex3 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:LeftHandIndex3 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandIndex3 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:LeftHandIndex3 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 12
+    },
+    {
+      "name": "mixamorig:LeftHandIndex3 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:LeftHandIndex3 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle1 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle1 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle1 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle1 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 12
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle1 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle1 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle2 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle2 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle2 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle2 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 12
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle2 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle2 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle3 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle3 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle3 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle3 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 12
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle3 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle3 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandPinky1 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:LeftHandPinky1 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandPinky1 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:LeftHandPinky1 / hinge cap -1",
+      "component": "detail",
+      "before": 124,
+      "triangles": 58
+    },
+    {
+      "name": "mixamorig:LeftHandPinky1 / hinge cap 1",
+      "component": "detail",
+      "before": 124,
+      "triangles": 58
+    },
+    {
+      "name": "mixamorig:LeftHandPinky1 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandPinky2 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:LeftHandPinky2 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandPinky2 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:LeftHandPinky2 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:LeftHandPinky2 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:LeftHandPinky2 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandPinky3 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:LeftHandPinky3 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandPinky3 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:LeftHandPinky3 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:LeftHandPinky3 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:LeftHandPinky3 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandRing1 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:LeftHandRing1 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandRing1 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:LeftHandRing1 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:LeftHandRing1 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:LeftHandRing1 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandRing2 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:LeftHandRing2 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandRing2 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:LeftHandRing2 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:LeftHandRing2 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:LeftHandRing2 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandRing3 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:LeftHandRing3 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandRing3 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:LeftHandRing3 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:LeftHandRing3 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:LeftHandRing3 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandThumb1 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:LeftHandThumb1 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandThumb1 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:LeftHandThumb1 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 34
+    },
+    {
+      "name": "mixamorig:LeftHandThumb1 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 12
+    },
+    {
+      "name": "mixamorig:LeftHandThumb1 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandThumb2 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:LeftHandThumb2 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandThumb2 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:LeftHandThumb2 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 12
+    },
+    {
+      "name": "mixamorig:LeftHandThumb2 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 12
+    },
+    {
+      "name": "mixamorig:LeftHandThumb2 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandThumb3 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:LeftHandThumb3 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:LeftHandThumb3 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:LeftHandThumb3 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 12
+    },
+    {
+      "name": "mixamorig:LeftHandThumb3 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 34
+    },
+    {
+      "name": "mixamorig:LeftHandThumb3 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandIndex1 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:RightHandIndex1 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandIndex1 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:RightHandIndex1 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 12
+    },
+    {
+      "name": "mixamorig:RightHandIndex1 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:RightHandIndex1 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandIndex2 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:RightHandIndex2 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandIndex2 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:RightHandIndex2 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 12
+    },
+    {
+      "name": "mixamorig:RightHandIndex2 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:RightHandIndex2 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandIndex3 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:RightHandIndex3 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandIndex3 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:RightHandIndex3 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 12
+    },
+    {
+      "name": "mixamorig:RightHandIndex3 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:RightHandIndex3 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandMiddle1 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:RightHandMiddle1 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandMiddle1 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:RightHandMiddle1 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 12
+    },
+    {
+      "name": "mixamorig:RightHandMiddle1 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:RightHandMiddle1 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandMiddle2 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:RightHandMiddle2 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandMiddle2 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:RightHandMiddle2 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 12
+    },
+    {
+      "name": "mixamorig:RightHandMiddle2 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:RightHandMiddle2 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandMiddle3 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:RightHandMiddle3 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandMiddle3 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:RightHandMiddle3 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 12
+    },
+    {
+      "name": "mixamorig:RightHandMiddle3 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:RightHandMiddle3 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandPinky1 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:RightHandPinky1 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandPinky1 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:RightHandPinky1 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:RightHandPinky1 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:RightHandPinky1 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandPinky2 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:RightHandPinky2 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandPinky2 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:RightHandPinky2 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:RightHandPinky2 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:RightHandPinky2 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandPinky3 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:RightHandPinky3 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandPinky3 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:RightHandPinky3 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:RightHandPinky3 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:RightHandPinky3 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandRing1 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:RightHandRing1 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandRing1 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:RightHandRing1 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:RightHandRing1 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:RightHandRing1 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandRing2 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:RightHandRing2 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandRing2 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:RightHandRing2 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:RightHandRing2 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:RightHandRing2 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandRing3 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:RightHandRing3 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandRing3 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:RightHandRing3 / hinge cap -1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:RightHandRing3 / hinge cap 1",
+      "component": "detail",
+      "before": 116,
+      "triangles": 72
+    },
+    {
+      "name": "mixamorig:RightHandRing3 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandThumb1 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:RightHandThumb1 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandThumb1 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:RightHandThumb1 / hinge cap -1",
+      "component": "detail",
+      "before": 124,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:RightHandThumb1 / hinge cap 1",
+      "component": "detail",
+      "before": 124,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:RightHandThumb1 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandThumb2 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:RightHandThumb2 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandThumb2 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:RightHandThumb2 / hinge cap -1",
+      "component": "detail",
+      "before": 124,
+      "triangles": 12
+    },
+    {
+      "name": "mixamorig:RightHandThumb2 / hinge cap 1",
+      "component": "detail",
+      "before": 124,
+      "triangles": 12
+    },
+    {
+      "name": "mixamorig:RightHandThumb2 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandThumb3 / contoured phalange",
+      "component": "frame",
+      "before": 704,
+      "triangles": 56
+    },
+    {
+      "name": "mixamorig:RightHandThumb3 / dorsal insert",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "mixamorig:RightHandThumb3 / hinge",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "mixamorig:RightHandThumb3 / hinge cap -1",
+      "component": "detail",
+      "before": 124,
+      "triangles": 12
+    },
+    {
+      "name": "mixamorig:RightHandThumb3 / hinge cap 1",
+      "component": "detail",
+      "before": 124,
+      "triangles": 16
+    },
+    {
+      "name": "mixamorig:RightHandThumb3 / tactile pad",
+      "component": "detail",
+      "before": 444,
+      "triangles": 30
+    },
+    {
+      "name": "Neck / articulation ring 0",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Neck / articulation ring 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Neck / blue guide -1",
+      "component": "cable",
+      "before": 736,
+      "triangles": 87
+    },
+    {
+      "name": "Neck / blue guide 1",
+      "component": "cable",
+      "before": 736,
+      "triangles": 87
+    },
+    {
+      "name": "Neck / lower plug -10",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Neck / lower plug -11",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Neck / lower plug 10",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Neck / lower plug 11",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Neck / main bearing",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Neck / paired tendon -10",
+      "component": "cable",
+      "before": 736,
+      "triangles": 87
+    },
+    {
+      "name": "Neck / paired tendon -11",
+      "component": "cable",
+      "before": 736,
+      "triangles": 87
+    },
+    {
+      "name": "Neck / paired tendon 10",
+      "component": "cable",
+      "before": 736,
+      "triangles": 87
+    },
+    {
+      "name": "Neck / paired tendon 11",
+      "component": "cable",
+      "before": 736,
+      "triangles": 87
+    },
+    {
+      "name": "Pelvis / belt indicator",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Pelvis / belt inset",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Pelvis / closed blue flank -1",
+      "component": "shell",
+      "before": 3296,
+      "triangles": 460
+    },
+    {
+      "name": "Pelvis / closed blue flank 1",
+      "component": "shell",
+      "before": 3296,
+      "triangles": 460
+    },
+    {
+      "name": "Pelvis / contoured hip shell",
+      "component": "shell",
+      "before": 6464,
+      "triangles": 904
+    },
+    {
+      "name": "Pelvis / cupped dorsal shell",
+      "component": "shell",
+      "before": 6464,
+      "triangles": 904
+    },
+    {
+      "name": "Pelvis / drive cage",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Pelvis / flank service seam -1",
+      "component": "detail",
+      "before": 1216,
+      "triangles": 84
+    },
+    {
+      "name": "Pelvis / flank service seam 1",
+      "component": "detail",
+      "before": 1216,
+      "triangles": 85
+    },
+    {
+      "name": "Pelvis / upper service seam",
+      "component": "detail",
+      "before": 1456,
+      "triangles": 100
+    },
+    {
+      "name": "Right / anatomical palm chassis",
+      "component": "frame",
+      "before": 1228,
+      "triangles": 98
+    },
+    {
+      "name": "Right / ankle axle inset -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 116
+    },
+    {
+      "name": "Right / ankle axle inset 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 132
+    },
+    {
+      "name": "Right / ankle axle seal -1",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Right / ankle axle seal 1",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Right / ankle bearing",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Right / ankle recessed axle -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / ankle recessed axle 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / Arm actuator barrel -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / Arm actuator barrel 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / Arm blue hub",
+      "component": "frame",
+      "before": 188,
+      "triangles": 114
+    },
+    {
+      "name": "Right / Arm contoured seam -1",
+      "component": "detail",
+      "before": 1216,
+      "triangles": 84
+    },
+    {
+      "name": "Right / Arm contoured seam 1",
+      "component": "detail",
+      "before": 1216,
+      "triangles": 85
+    },
+    {
+      "name": "Right / Arm front shell",
+      "component": "shell",
+      "before": 6464,
+      "triangles": 904
+    },
+    {
+      "name": "Right / Arm hub pin",
+      "component": "frame",
+      "before": 188,
+      "triangles": 96
+    },
+    {
+      "name": "Right / Arm joint",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Right / Arm machined pivot ring",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Right / Arm piston -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / Arm piston 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / Arm pivot fastener 0",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / Arm pivot fastener 1",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / Arm pivot fastener 2",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / Arm pivot fastener 3",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / Arm pivot fastener 4",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / Arm pivot fastener 5",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / Arm pivot fastener 6",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / Arm pivot fastener 7",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / Arm rear cable",
+      "component": "cable",
+      "before": 496,
+      "triangles": 59
+    },
+    {
+      "name": "Right / Arm rear light guide",
+      "component": "cable",
+      "before": 496,
+      "triangles": 59
+    },
+    {
+      "name": "Right / Arm rear shell",
+      "component": "shell",
+      "before": 6464,
+      "triangles": 904
+    },
+    {
+      "name": "Right / Arm shell screw 0.78-1",
+      "component": "detail",
+      "before": 124,
+      "triangles": 12
+    },
+    {
+      "name": "Right / Arm shell screw 0.781",
+      "component": "detail",
+      "before": 124,
+      "triangles": 12
+    },
+    {
+      "name": "Right / Arm structural drive",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / Arm titanium pivot",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / articulated toe outsole",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / contoured rear outsole",
+      "component": "frame",
+      "before": 228,
+      "triangles": 18
+    },
+    {
+      "name": "Right / deltoid inset vent 0",
+      "component": "detail",
+      "before": 108,
+      "triangles": 12
+    },
+    {
+      "name": "Right / deltoid inset vent 1",
+      "component": "detail",
+      "before": 108,
+      "triangles": 12
+    },
+    {
+      "name": "Right / deltoid inset vent 2",
+      "component": "detail",
+      "before": 108,
+      "triangles": 12
+    },
+    {
+      "name": "Right / dorsal hand armor",
+      "component": "shell",
+      "before": 1116,
+      "triangles": 156
+    },
+    {
+      "name": "Right / dorsal hand fastener 3.3-2.8",
+      "component": "detail",
+      "before": 108,
+      "triangles": 12
+    },
+    {
+      "name": "Right / dorsal hand fastener 3.32.1",
+      "component": "detail",
+      "before": 108,
+      "triangles": 12
+    },
+    {
+      "name": "Right / dorsal hand fastener 9.6-3.4",
+      "component": "detail",
+      "before": 108,
+      "triangles": 12
+    },
+    {
+      "name": "Right / dorsal hand fastener 9.92.0",
+      "component": "detail",
+      "before": 108,
+      "triangles": 12
+    },
+    {
+      "name": "Right / elbow flex 0",
+      "component": "cable",
+      "before": 736,
+      "triangles": 87
+    },
+    {
+      "name": "Right / elbow flex 1",
+      "component": "cable",
+      "before": 736,
+      "triangles": 88
+    },
+    {
+      "name": "Right / ForeArm actuator barrel -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / ForeArm actuator barrel 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / ForeArm blue hub",
+      "component": "frame",
+      "before": 188,
+      "triangles": 108
+    },
+    {
+      "name": "Right / ForeArm contoured seam -1",
+      "component": "detail",
+      "before": 1216,
+      "triangles": 85
+    },
+    {
+      "name": "Right / ForeArm contoured seam 1",
+      "component": "detail",
+      "before": 1216,
+      "triangles": 85
+    },
+    {
+      "name": "Right / ForeArm front shell",
+      "component": "shell",
+      "before": 6932,
+      "triangles": 970
+    },
+    {
+      "name": "Right / ForeArm hub pin",
+      "component": "frame",
+      "before": 188,
+      "triangles": 96
+    },
+    {
+      "name": "Right / ForeArm joint",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Right / ForeArm machined pivot ring",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Right / ForeArm optical bearing",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Right / ForeArm piston -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / ForeArm piston 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / ForeArm pivot fastener 0",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / ForeArm pivot fastener 1",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / ForeArm pivot fastener 2",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / ForeArm pivot fastener 3",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / ForeArm pivot fastener 4",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / ForeArm pivot fastener 5",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / ForeArm pivot fastener 6",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / ForeArm pivot fastener 7",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / ForeArm rear cable",
+      "component": "cable",
+      "before": 496,
+      "triangles": 59
+    },
+    {
+      "name": "Right / ForeArm rear light guide",
+      "component": "cable",
+      "before": 496,
+      "triangles": 59
+    },
+    {
+      "name": "Right / ForeArm rear shell",
+      "component": "shell",
+      "before": 6464,
+      "triangles": 904
+    },
+    {
+      "name": "Right / ForeArm shell screw 0.22-1",
+      "component": "detail",
+      "before": 124,
+      "triangles": 12
+    },
+    {
+      "name": "Right / ForeArm shell screw 0.221",
+      "component": "detail",
+      "before": 124,
+      "triangles": 12
+    },
+    {
+      "name": "Right / ForeArm structural drive",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / ForeArm titanium pivot",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / heel counter -1",
+      "component": "shell",
+      "before": 668,
+      "triangles": 92
+    },
+    {
+      "name": "Right / heel counter 1",
+      "component": "shell",
+      "before": 668,
+      "triangles": 92
+    },
+    {
+      "name": "Right / heel marker",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right / Index metacarpal drive",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / Index metacarpal socket",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Right / instep armor -0.8",
+      "component": "shell",
+      "before": 668,
+      "triangles": 92
+    },
+    {
+      "name": "Right / instep armor 3.8",
+      "component": "shell",
+      "before": 668,
+      "triangles": 92
+    },
+    {
+      "name": "Right / instep armor 7.7",
+      "component": "shell",
+      "before": 668,
+      "triangles": 92
+    },
+    {
+      "name": "Right / instep gasket -0.8",
+      "component": "frame",
+      "before": 668,
+      "triangles": 52
+    },
+    {
+      "name": "Right / instep gasket 3.8",
+      "component": "frame",
+      "before": 668,
+      "triangles": 52
+    },
+    {
+      "name": "Right / instep gasket 7.7",
+      "component": "frame",
+      "before": 668,
+      "triangles": 52
+    },
+    {
+      "name": "Right / knee flex 0",
+      "component": "cable",
+      "before": 736,
+      "triangles": 88
+    },
+    {
+      "name": "Right / knee flex 1",
+      "component": "cable",
+      "before": 736,
+      "triangles": 88
+    },
+    {
+      "name": "Right / kneecap",
+      "component": "shell",
+      "before": 556,
+      "triangles": 76
+    },
+    {
+      "name": "Right / Leg actuator barrel -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / Leg actuator barrel 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / Leg blue hub",
+      "component": "frame",
+      "before": 188,
+      "triangles": 110
+    },
+    {
+      "name": "Right / Leg contoured seam -1",
+      "component": "detail",
+      "before": 1216,
+      "triangles": 85
+    },
+    {
+      "name": "Right / Leg contoured seam 1",
+      "component": "detail",
+      "before": 1216,
+      "triangles": 84
+    },
+    {
+      "name": "Right / Leg exposed upper piston -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / Leg exposed upper piston 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / Leg front shell",
+      "component": "shell",
+      "before": 7028,
+      "triangles": 982
+    },
+    {
+      "name": "Right / Leg hub pin",
+      "component": "frame",
+      "before": 188,
+      "triangles": 96
+    },
+    {
+      "name": "Right / Leg inset optical wire",
+      "component": "cable",
+      "before": 496,
+      "triangles": 59
+    },
+    {
+      "name": "Right / Leg joint",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Right / Leg machined pivot ring",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Right / Leg optical bearing",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Right / Leg piston -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / Leg piston 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / Leg pivot fastener 0",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / Leg pivot fastener 1",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / Leg pivot fastener 2",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / Leg pivot fastener 3",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / Leg pivot fastener 4",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / Leg pivot fastener 5",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / Leg pivot fastener 6",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / Leg pivot fastener 7",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / Leg rear cable",
+      "component": "cable",
+      "before": 496,
+      "triangles": 58
+    },
+    {
+      "name": "Right / Leg rear light guide",
+      "component": "cable",
+      "before": 496,
+      "triangles": 59
+    },
+    {
+      "name": "Right / Leg rear shell",
+      "component": "shell",
+      "before": 6464,
+      "triangles": 904
+    },
+    {
+      "name": "Right / Leg shell screw 0.22-1",
+      "component": "detail",
+      "before": 124,
+      "triangles": 12
+    },
+    {
+      "name": "Right / Leg shell screw 0.221",
+      "component": "detail",
+      "before": 124,
+      "triangles": 12
+    },
+    {
+      "name": "Right / Leg structural drive",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / Leg titanium pivot",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / Leg upper piston sleeve -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / Leg upper piston sleeve 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / metacarpal armor seam 0",
+      "component": "detail",
+      "before": 496,
+      "triangles": 34
+    },
+    {
+      "name": "Right / metacarpal armor seam 1",
+      "component": "detail",
+      "before": 496,
+      "triangles": 34
+    },
+    {
+      "name": "Right / metacarpal armor seam 2",
+      "component": "detail",
+      "before": 496,
+      "triangles": 34
+    },
+    {
+      "name": "Right / Middle metacarpal drive",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / Middle metacarpal socket",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Right / molded heel and instep",
+      "component": "shell",
+      "before": 2880,
+      "triangles": 402
+    },
+    {
+      "name": "Right / outsole side lug -1 -2.5",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right / outsole side lug -1 -6.2",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right / outsole side lug -1 14.5",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right / outsole side lug -1 18.0",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right / outsole side lug -1 4.0",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right / outsole side lug -1 8.1",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right / outsole side lug 1 -2.5",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right / outsole side lug 1 -6.2",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right / outsole side lug 1 14.5",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right / outsole side lug 1 18.0",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right / outsole side lug 1 4.0",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right / outsole side lug 1 8.1",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right / palm grip pad",
+      "component": "frame",
+      "before": 668,
+      "triangles": 52
+    },
+    {
+      "name": "Right / Pinky metacarpal drive",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / Pinky metacarpal socket",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Right / Ring metacarpal drive",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / Ring metacarpal socket",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Right / rounded articulated toe box",
+      "component": "shell",
+      "before": 2112,
+      "triangles": 294
+    },
+    {
+      "name": "Right / shoulder cap",
+      "component": "shell",
+      "before": 8576,
+      "triangles": 1200
+    },
+    {
+      "name": "Right / shoulder concentric bearing 0.41",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Right / shoulder concentric bearing 0.6",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Right / shoulder distal service seam",
+      "component": "detail",
+      "before": 8176,
+      "triangles": 572
+    },
+    {
+      "name": "Right / Thumb metacarpal socket",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Right / thumb saddle",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Right / toe bumper",
+      "component": "shell",
+      "before": 960,
+      "triangles": 134
+    },
+    {
+      "name": "Right / UpLeg actuator barrel -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / UpLeg actuator barrel 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / UpLeg blue hub",
+      "component": "frame",
+      "before": 188,
+      "triangles": 116
+    },
+    {
+      "name": "Right / UpLeg contoured seam -1",
+      "component": "detail",
+      "before": 1216,
+      "triangles": 85
+    },
+    {
+      "name": "Right / UpLeg contoured seam 1",
+      "component": "detail",
+      "before": 1216,
+      "triangles": 84
+    },
+    {
+      "name": "Right / UpLeg exposed upper piston -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / UpLeg exposed upper piston 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / UpLeg front shell",
+      "component": "shell",
+      "before": 6464,
+      "triangles": 904
+    },
+    {
+      "name": "Right / UpLeg hub pin",
+      "component": "frame",
+      "before": 188,
+      "triangles": 96
+    },
+    {
+      "name": "Right / UpLeg inset optical wire",
+      "component": "cable",
+      "before": 496,
+      "triangles": 58
+    },
+    {
+      "name": "Right / UpLeg joint",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Right / UpLeg machined pivot ring",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Right / UpLeg optical bearing",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Right / UpLeg piston -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / UpLeg piston 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / UpLeg pivot fastener 0",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / UpLeg pivot fastener 1",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / UpLeg pivot fastener 2",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / UpLeg pivot fastener 3",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / UpLeg pivot fastener 4",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / UpLeg pivot fastener 5",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / UpLeg pivot fastener 6",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / UpLeg pivot fastener 7",
+      "component": "detail",
+      "before": 92,
+      "triangles": 92
+    },
+    {
+      "name": "Right / UpLeg rear cable",
+      "component": "cable",
+      "before": 496,
+      "triangles": 58
+    },
+    {
+      "name": "Right / UpLeg rear light guide",
+      "component": "cable",
+      "before": 496,
+      "triangles": 59
+    },
+    {
+      "name": "Right / UpLeg rear shell",
+      "component": "shell",
+      "before": 6464,
+      "triangles": 904
+    },
+    {
+      "name": "Right / UpLeg shell screw 0.22-1",
+      "component": "detail",
+      "before": 124,
+      "triangles": 12
+    },
+    {
+      "name": "Right / UpLeg shell screw 0.221",
+      "component": "detail",
+      "before": 124,
+      "triangles": 12
+    },
+    {
+      "name": "Right / UpLeg structural drive",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / UpLeg titanium pivot",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / UpLeg upper piston sleeve -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / UpLeg upper piston sleeve 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right / wrist bearing",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Right / wrist collar",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Right / wrist socket",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Right calf inspection / black pocket",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / blue seal",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Right calf inspection / controller 0",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / controller 1",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / metal rim",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Right calf inspection / PCB",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / pin 0 -1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / pin 0 -1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / pin 0 -1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / pin 0 -1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / pin 0 1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / pin 0 1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / pin 0 1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / pin 0 1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / pin 1 -1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / pin 1 -1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / pin 1 -1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / pin 1 -1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / pin 1 1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / pin 1 1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / pin 1 1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / pin 1 1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / polycarbonate lens",
+      "component": "glass",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / status 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / status 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / status 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / trace -1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right calf inspection / trace 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / black pocket",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / blue seal",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Right forearm inspection / controller 0",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / controller 1",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / controller 2",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / metal rim",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Right forearm inspection / PCB",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 0 -1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 0 -1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 0 -1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 0 -1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 0 1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 0 1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 0 1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 0 1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 1 -1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 1 -1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 1 -1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 1 -1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 1 1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 1 1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 1 1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 1 1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 2 -1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 2 -1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 2 -1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 2 -1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 2 1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 2 1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 2 1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / pin 2 1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / polycarbonate lens",
+      "component": "glass",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / status 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / status 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / status 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / trace -1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Right forearm inspection / trace 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax / captive fastener -10.18",
+      "component": "detail",
+      "before": 116,
+      "triangles": 12
+    },
+    {
+      "name": "Thorax / captive fastener -10.8",
+      "component": "detail",
+      "before": 108,
+      "triangles": 12
+    },
+    {
+      "name": "Thorax / captive fastener 10.18",
+      "component": "detail",
+      "before": 116,
+      "triangles": 12
+    },
+    {
+      "name": "Thorax / captive fastener 10.8",
+      "component": "detail",
+      "before": 108,
+      "triangles": 12
+    },
+    {
+      "name": "Thorax / closed flank gasket -1",
+      "component": "shell",
+      "before": 496,
+      "triangles": 68
+    },
+    {
+      "name": "Thorax / closed flank gasket 1",
+      "component": "shell",
+      "before": 496,
+      "triangles": 68
+    },
+    {
+      "name": "Thorax / continuous curved breastplate",
+      "component": "shell",
+      "before": 5448,
+      "triangles": 762
+    },
+    {
+      "name": "Thorax / dorsal panel seam -1",
+      "component": "detail",
+      "before": 976,
+      "triangles": 68
+    },
+    {
+      "name": "Thorax / dorsal panel seam 1",
+      "component": "detail",
+      "before": 976,
+      "triangles": 68
+    },
+    {
+      "name": "Thorax / graphite chassis",
+      "component": "frame",
+      "before": 960,
+      "triangles": 76
+    },
+    {
+      "name": "Thorax / longitudinal spar -1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Thorax / longitudinal spar 1",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Thorax / precision panel seam -1",
+      "component": "detail",
+      "before": 976,
+      "triangles": 68
+    },
+    {
+      "name": "Thorax / precision panel seam 1",
+      "component": "detail",
+      "before": 976,
+      "triangles": 67
+    },
+    {
+      "name": "Thorax / sculpted clavicle yoke",
+      "component": "shell",
+      "before": 2688,
+      "triangles": 376
+    },
+    {
+      "name": "Thorax / shoulder fibre -1",
+      "component": "cable",
+      "before": 736,
+      "triangles": 88
+    },
+    {
+      "name": "Thorax / shoulder fibre 1",
+      "component": "cable",
+      "before": 736,
+      "triangles": 88
+    },
+    {
+      "name": "Thorax / unified dorsal armor",
+      "component": "shell",
+      "before": 6464,
+      "triangles": 904
+    },
+    {
+      "name": "Thorax inspection / black pocket",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / blue seal",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Thorax inspection / controller 0",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / controller 1",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / metal rim",
+      "component": "detail",
+      "before": 768,
+      "triangles": 52
+    },
+    {
+      "name": "Thorax inspection / PCB",
+      "component": "frame",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / pin 0 -1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / pin 0 -1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / pin 0 -1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / pin 0 -1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / pin 0 1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / pin 0 1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / pin 0 1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / pin 0 1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / pin 1 -1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / pin 1 -1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / pin 1 -1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / pin 1 -1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / pin 1 1 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / pin 1 1 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / pin 1 1 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / pin 1 1 3",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / polycarbonate lens",
+      "component": "glass",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / status 0",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / status 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / status 2",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / trace -1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Thorax inspection / trace 1",
+      "component": "detail",
+      "before": 44,
+      "triangles": 44
+    },
+    {
+      "name": "Waist / blue optical fibre -1 1",
+      "component": "cable",
+      "before": 976,
+      "triangles": 117
+    },
+    {
+      "name": "Waist / blue optical fibre -1 3",
+      "component": "cable",
+      "before": 976,
+      "triangles": 116
+    },
+    {
+      "name": "Waist / blue optical fibre 1 1",
+      "component": "cable",
+      "before": 976,
+      "triangles": 117
+    },
+    {
+      "name": "Waist / blue optical fibre 1 3",
+      "component": "cable",
+      "before": 976,
+      "triangles": 116
+    },
+    {
+      "name": "Waist / data loom -1",
+      "component": "cable",
+      "before": 736,
+      "triangles": 88
+    },
+    {
+      "name": "Waist / data loom 1",
+      "component": "cable",
+      "before": 736,
+      "triangles": 88
+    },
+    {
+      "name": "Waist / exposed cable -10",
+      "component": "cable",
+      "before": 976,
+      "triangles": 117
+    },
+    {
+      "name": "Waist / exposed cable -11",
+      "component": "cable",
+      "before": 976,
+      "triangles": 117
+    },
+    {
+      "name": "Waist / exposed cable -12",
+      "component": "cable",
+      "before": 976,
+      "triangles": 117
+    },
+    {
+      "name": "Waist / exposed cable -13",
+      "component": "cable",
+      "before": 976,
+      "triangles": 117
+    },
+    {
+      "name": "Waist / exposed cable -14",
+      "component": "cable",
+      "before": 976,
+      "triangles": 117
+    },
+    {
+      "name": "Waist / exposed cable 10",
+      "component": "cable",
+      "before": 976,
+      "triangles": 117
+    },
+    {
+      "name": "Waist / exposed cable 11",
+      "component": "cable",
+      "before": 976,
+      "triangles": 117
+    },
+    {
+      "name": "Waist / exposed cable 12",
+      "component": "cable",
+      "before": 976,
+      "triangles": 117
+    },
+    {
+      "name": "Waist / exposed cable 13",
+      "component": "cable",
+      "before": 976,
+      "triangles": 117
+    },
+    {
+      "name": "Waist / exposed cable 14",
+      "component": "cable",
+      "before": 976,
+      "triangles": 117
+    },
+    {
+      "name": "Waist / lateral tendon -10",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Waist / lateral tendon -11",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Waist / lateral tendon -12",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Waist / lateral tendon 10",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Waist / lateral tendon 11",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    },
+    {
+      "name": "Waist / lateral tendon 12",
+      "component": "frame",
+      "before": 188,
+      "triangles": 14
+    }
+  ]
+}

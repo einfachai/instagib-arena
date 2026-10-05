@@ -1,5 +1,7 @@
+import type { AgentKind } from './agent';
 import type { MovementCue } from './movement-cues';
 import * as THREE from 'three';
+import type { GroundImpactListener } from './character/gibs';
 import { applyHighlight, type BotModel } from './bots';
 import { CharacterAnimator, type CharacterAnimInput } from './character-anim';
 import { Character, skinColorFor } from './character/character';
@@ -191,7 +193,7 @@ export class RemotePlayer {
   private facing = 0;
   private pitch = 0; // view pitch (radians, + up) — drives the spine aim layer
 
-  constructor(id: string, name: string, scene: THREE.Scene, model: BotModel | null) {
+  constructor(id: string, name: string, scene: THREE.Scene, model: BotModel | null, readonly agent: AgentKind = 'codex') {
     this.id = id;
     this.name = name;
     this.group = new THREE.Group();
@@ -249,7 +251,7 @@ export class RemotePlayer {
     this.deadTimer = DEAD_HIDE_DURATION_SEC;
     this.shieldMesh.visible = false;
     const p = this.group.position;
-    if (this.anim?.die(probeGibFloor(p.x, p.y, p.z) ?? undefined, style)) {
+    if (this.anim?.die(probeGibFloor(p.x, p.y, p.z), style)) {
       // Instagib: the body bursts into gibs where it stood (the killer's kill
       // effect plays on top from Game); it hides once the chunks are gone.
       this.deadHidden = false;
@@ -324,6 +326,11 @@ export class RemotePlayer {
   }
   set onFootfall(fn: FootfallListener | null) {
     if (this.anim) this.anim.onFootfall = fn;
+  }
+  private deathGroundImpact: GroundImpactListener | null = null;
+  set onDeathGroundImpact(listener: GroundImpactListener | null) {
+    this.deathGroundImpact = listener;
+    if (this.anim) this.anim.onDeathGroundImpact = listener;
   }
 
   // Returns true on the single frame this player un-hides (respawns), so the
@@ -433,7 +440,8 @@ export class RemotePlayer {
       // Visible → hidden while playing forward is a death: gib in place (the
       // group stays where they died), then hide once the chunks are gone.
       if (!wasHidden && anim && !anim.isDying() && dt > 0 && dt < 0.25) {
-        anim.die(undefined, this.replayFinisher ?? undefined);
+        const p = this.group.position;
+        anim.die(probeGibFloor(p.x, p.y, p.z), this.replayFinisher ?? undefined);
         this.replayFinisher = null;
         this.setPlateHidden(true);
       }
@@ -576,6 +584,7 @@ export class RemotePlayer {
   }
 
   dispose(scene: THREE.Scene) {
+    this.onDeathGroundImpact = null;
     this.gear?.dispose();
     this.clearTaunt();
     this.eyes?.dispose();
@@ -598,7 +607,7 @@ export class RemotePlayer {
   private installModel(_model: BotModel) {
     // The code-built combatant (see character/): one skinned mesh, a clean
     // rig, sockets for the hat (helmet crown) and the railgun (right hand).
-    const ch = new Character({ colorHex: skinColorFor(this.name) });
+    const ch = new Character({ agent: this.agent, colorHex: skinColorFor(this.name) });
     this.group.add(ch.root);
     this.character = ch;
     this.modelRoot = ch.root;
@@ -609,6 +618,7 @@ export class RemotePlayer {
     // Gait, aim, gun hold, jumps/landings and gibs all live in the animator —
     // the same implementation bots use.
     this.anim = new CharacterAnimator(ch, { driveYaw: true, holdGun: true });
+    this.anim.onDeathGroundImpact = this.deathGroundImpact;
     this.resolveLook();
     this.syncEyes();
   }
